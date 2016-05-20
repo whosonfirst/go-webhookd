@@ -8,10 +8,10 @@ import (
 	"os"
 )
 
-func ensure_ok(err error){
+func ensure_ok(err error) {
 
 	if err != nil {
-	   panic(err)
+		panic(err)
 	}
 
 }

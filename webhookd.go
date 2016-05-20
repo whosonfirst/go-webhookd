@@ -15,7 +15,6 @@ func (e WebhookError) Error() string {
 	return fmt.Sprintf("%d %s", e.Code, e.Message)
 }
 
-
 type WebhookReceiver interface {
 	Receive(*http.Request) ([]byte, *WebhookError)
 }

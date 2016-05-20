@@ -1,7 +1,7 @@
 package dispatchers
 
 import (
-       "fmt"
+	"fmt"
 	"github.com/whosonfirst/go-whosonfirst-webhookd"
 	"gopkg.in/redis.v1"
 )
@@ -41,7 +41,7 @@ func (dispatcher PubSubDispatcher) Dispatch(body []byte) *webhookd.WebhookError 
 		code := 999
 		message := err.Error()
 
-		err := &webhookd.WebhookError{Code: code, Message: message}		
+		err := &webhookd.WebhookError{Code: code, Message: message}
 		return err
 	}
 
