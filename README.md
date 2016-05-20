@@ -84,6 +84,43 @@ _Please write me_
 
 _Please write me_
 
+## Utilities
+
+### webhookd
+
+_This is still a work in progress. It will change._
+
+```
+./bin/webhookd -h
+Usage of ./bin/webhookd:
+  -alsologtostderr
+	log to standard error as well as files
+  -endpoint string
+    	    
+  -host string
+    	The hostname to listen for requests on (default "localhost")
+  -log_backtrace_at value
+    		    when logging hits line file:N, emit a stack trace (default :0)
+  -log_dir string
+    	   If non-empty, write log files in this directory
+  -logtostderr
+	log to standard error instead of files
+  -port int
+    	The port number to listen for requests on (default 8080)
+  -pubsub-channel string
+    		  ... (default "webhookd")
+  -pubsub-host string
+    	       ... (default "localhost")
+  -pubsub-port int
+    	       ... (default 6379)
+  -stderrthreshold value
+    		   logs at or above this threshold go to stderr
+  -v value
+     log level for V logs
+  -vmodule value
+    	   comma-separated list of pattern=N settings for file-filtered logging
+```
+
 ## To do
 
 * Documentation
