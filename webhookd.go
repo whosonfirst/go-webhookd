@@ -114,14 +114,14 @@ func (d *WebhookDaemon) Start() error {
 		body, err := rcvr.Receive(req)
 
 		if err != nil {
-			http.Error(rsp, err.Error(), http.StatusInternalServerError)
+			http.Error(rsp, err.Error(), err.Code)
 			return
 		}
 
 		err = dspt.Dispatch(body)
 
 		if err != nil {
-			http.Error(rsp, err.Error(), 500)
+			http.Error(rsp, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
