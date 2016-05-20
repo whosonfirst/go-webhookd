@@ -32,8 +32,8 @@ dispatcher, _ := dispatchers.NewPubSubDispatcher(*pubsub_host, *pubsub_port, *pu
 receiver, _ := receivers.NewInsecureReceiver()
 
 webhook, _ := webhookd.NewWebhook(*endpoint, receiver, dispatcher)
-
 daemon.AddWebhook(webhook)
+
 daemon.Start()
 ```
 
