@@ -36,8 +36,8 @@ flag.Parse()
 
 daemon, _ := webhookd.NewWebhookDaemon(*host, *port)
 
-dispatcher, _ := dispatchers.NewPubSubDispatcher(*pubsub_host, *pubsub_port, *pubsub_channel)
 receiver, _ := receivers.NewInsecureReceiver()
+dispatcher, _ := dispatchers.NewPubSubDispatcher(*pubsub_host, *pubsub_port, *pubsub_channel)
 
 webhook, _ := webhookd.NewWebhook(*endpoint, receiver, dispatcher)
 daemon.AddWebhook(webhook)
