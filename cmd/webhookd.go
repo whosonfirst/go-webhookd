@@ -2,35 +2,49 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"github.com/whosonfirst/go-whosonfirst-webhookd"
-	"github.com/whosonfirst/go-whosonfirst-webhookd/service"
-	"gopkg.in/redis.v1"
+	"github.com/whosonfirst/go-whosonfirst-webhookd/dispatchers"
+	"github.com/whosonfirst/go-whosonfirst-webhookd/receivers"
 	"os"
 )
+
+func ensure_ok(err error){
+
+	if err != nil {
+	   panic(err)
+	}
+
+}
 
 func main() {
 
 	var host = flag.String("host", "localhost", "The hostname to listen for requests on")
 	var port = flag.Int("port", 8080, "The port number to listen for requests on")
+	var endpoint = flag.String("endpoint", "", "")
+
+	var pubsub_host = flag.String("pubsub-host", "localhost", "...")
+	var pubsub_port = flag.Int("pubsub-port", 6379, "...")
+	var pubsub_channel = flag.String("pubsub-channel", "webhookd", "...")
 
 	flag.Parse()
 
-	endpoint := fmt.Sprintf("%s:%d", *host, *port)
+	daemon, err := webhookd.NewWebhookDaemon(*host, *port)
+	ensure_ok(err)
 
-	pubsub := redis.NewTCPClient(&redis.Options{
-		Addr: "localhost:6379",
-	})
+	dispatcher, err := dispatchers.NewPubSubDispatcher(*pubsub_host, *pubsub_port, *pubsub_channel)
+	ensure_ok(err)
 
-	defer pubsub.Close()
-	pubsub.Publish("foo", "starting up")
+	receiver, err := receivers.NewInsecureReceiver()
+	ensure_ok(err)
 
-	webhook, _ := service.NewInsecureWebhook(pubsub)
+	webhook, err := webhookd.NewWebhook(*endpoint, receiver, dispatcher)
+	ensure_ok(err)
 
-	fmt.Println(endpoint)
+	err = daemon.AddWebhook(webhook)
+	ensure_ok(err)
 
-	daemon, _ := webhookd.NewWebhookDaemon(endpoint, webhook)
-	daemon.Start()
+	err = daemon.Start()
+	ensure_ok(err)
 
 	os.Exit(0)
 }

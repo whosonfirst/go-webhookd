@@ -3,9 +3,11 @@ prep:
 
 self:   prep
 	if test -d src/github.com/whosonfirst/go-whosonfirst-webhookd; then rm -rf src/github.com/whosonfirst/go-whosonfirst-webhookd; fi
-	mkdir -p src/github.com/whosonfirst/go-whosonfirst-webhookd/service
+	mkdir -p src/github.com/whosonfirst/go-whosonfirst-webhookd/receivers
+	mkdir -p src/github.com/whosonfirst/go-whosonfirst-webhookd/dispatchers
 	cp webhookd.go src/github.com/whosonfirst/go-whosonfirst-webhookd/
-	cp service/*.go src/github.com/whosonfirst/go-whosonfirst-webhookd/service/
+	cp receivers/*.go src/github.com/whosonfirst/go-whosonfirst-webhookd/receivers/
+	cp dispatchers/*.go src/github.com/whosonfirst/go-whosonfirst-webhookd/dispatchers/
 
 rmdeps:
 	if test -d src; then rm -rf src; fi 
@@ -17,7 +19,8 @@ deps:   self
 
 fmt:
 	go fmt cmd/*.go
-	go fmt service/*.go
+	go fmt receivers/*.go
+	go fmt dispatchers/*.go
 	go fmt *.go
 
 bin: 	self
