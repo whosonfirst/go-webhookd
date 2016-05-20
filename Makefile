@@ -15,7 +15,7 @@ rmdeps:
 build:	rmdeps deps fmt bin
 
 deps:   self
-	@GOPATH=$(shell pwd) get -u "gopkg.in/redis.v1"
+	@GOPATH=$(shell pwd) go get -u "gopkg.in/redis.v1"
 
 fmt:
 	go fmt cmd/*.go

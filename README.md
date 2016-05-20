@@ -6,6 +6,14 @@ What is the simplest webhook-wrangling server-daemon-thing.
 
 This should be considered "wet paint". It has not been tested much and may yet change in significant ways.
 
+## Install
+
+Use the handy `build` target in the included Makefile.
+
+```
+make build
+```
+
 ## Usage
 
 ### Setting up webhookd

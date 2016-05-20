@@ -1,6 +1,6 @@
 package receivers
 
-/* THIS HAS NOT BEEN TESTED AT ALL YET (20160519/thisisaaronland) */ 
+/* THIS HAS NOT BEEN TESTED AT ALL YET (20160519/thisisaaronland) */
 
 import (
 	"crypto/hmac"
