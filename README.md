@@ -8,9 +8,12 @@ This should be considered "wet paint". It has not been tested much and may yet c
 
 ## Usage
 
+### Setting up webhookd
+
+
 ```
 import (
-       "flag"
+	"flag"
 	"github.com/whosonfirst/go-whosonfirst-webhookd"
 	"github.com/whosonfirst/go-whosonfirst-webhookd/dispatchers"
 	"github.com/whosonfirst/go-whosonfirst-webhookd/receivers"
@@ -34,7 +37,7 @@ daemon.AddWebhook(webhook)
 daemon.Start()
 ```
 
-And then:
+### Sending stuff to webhookd
 
 ```
 curl -v -X POST http://localhost:8080/foo -d @README.md
@@ -57,7 +60,7 @@ curl -v -X POST http://localhost:8080/foo -d @README.md
 * Connection #0 to host localhost left intact
 ```
 
-And then:
+### Where did it go...
 
 ```
 ./bin/subscribe webhookd
