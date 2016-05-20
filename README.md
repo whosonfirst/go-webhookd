@@ -126,3 +126,4 @@ Usage of ./bin/webhookd:
 * Documentation
 * Logging
 * Defining webhooks with a config file or something
+* Add the ability for webhooks to have multiple dispatchers
