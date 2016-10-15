@@ -6,13 +6,15 @@ prep:
 
 self:   prep
 	if test -d src/github.com/whosonfirst/go-whosonfirst-webhookd; then rm -rf src/github.com/whosonfirst/go-whosonfirst-webhookd; fi
-	mkdir -p src/github.com/whosonfirst/go-whosonfirst-webhookd/receivers
-	mkdir -p src/github.com/whosonfirst/go-whosonfirst-webhookd/dispatchers
 	mkdir -p src/github.com/whosonfirst/go-whosonfirst-webhookd/daemon
+	mkdir -p src/github.com/whosonfirst/go-whosonfirst-webhookd/dispatchers
+	mkdir -p src/github.com/whosonfirst/go-whosonfirst-webhookd/github
+	mkdir -p src/github.com/whosonfirst/go-whosonfirst-webhookd/receivers
 	cp webhookd.go src/github.com/whosonfirst/go-whosonfirst-webhookd/
 	cp daemon/*.go src/github.com/whosonfirst/go-whosonfirst-webhookd/daemon/
-	cp receivers/*.go src/github.com/whosonfirst/go-whosonfirst-webhookd/receivers/
 	cp dispatchers/*.go src/github.com/whosonfirst/go-whosonfirst-webhookd/dispatchers/
+	cp github/*.go src/github.com/whosonfirst/go-whosonfirst-webhookd/github/
+	cp receivers/*.go src/github.com/whosonfirst/go-whosonfirst-webhookd/receivers/
 	cp -r vendor/src/* src/
 
 rmdeps:
@@ -32,9 +34,10 @@ vendor-deps: rmdeps deps
 
 fmt:
 	go fmt cmd/*.go
-	go fmt receivers/*.go
-	go fmt dispatchers/*.go
 	go fmt daemon/*.go
+	go fmt dispatchers/*.go
+	go fmt github/*.go
+	go fmt receivers/*.go
 	go fmt *.go
 
 bin: 	rmdeps self

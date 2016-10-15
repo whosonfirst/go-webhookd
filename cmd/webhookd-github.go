@@ -4,12 +4,10 @@ package main
 
 import (
 	"bytes"
-	"crypto/hmac"
-	"crypto/sha1"
-	"encoding/hex"
 	"flag"
 	"fmt"
 	"github.com/whosonfirst/go-whosonfirst-webhookd"
+	"github.com/whosonfirst/go-whosonfirst-webhookd/github"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -38,17 +36,7 @@ func main() {
 
 	secret := config.Receiver.Secret
 
-	// sudo make me a function
-
-	mac := hmac.New(sha1.New, []byte(secret))
-	mac.Write([]byte(body))
-
-	sum := mac.Sum(nil)
-	enc := hex.EncodeToString(sum)
-
-	sig := fmt.Sprintf("sha1=%s", enc)
-
-	// end of sudo make me a function
+	sig, _ := github.GenerateSignature(body, secret)
 
 	client := &http.Client{}
 

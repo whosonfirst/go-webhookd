@@ -2,9 +2,8 @@ package receivers
 
 import (
 	"crypto/hmac"
-	"crypto/sha1"
-	"encoding/hex"
 	"github.com/whosonfirst/go-whosonfirst-webhookd"
+	"github.com/whosonfirst/go-whosonfirst-webhookd/github"
 	"io/ioutil"
 	_ "log"
 	"net/http"
@@ -68,11 +67,7 @@ func (wh GitHubReceiver) Receive(req *http.Request) ([]byte, *webhookd.WebhookEr
 		return nil, err
 	}
 
-	mac := hmac.New(sha1.New, []byte(wh.secret))
-	mac.Write(body)
-
-	expectedMAC := mac.Sum(nil)
-	expectedSig := "sha1=" + hex.EncodeToString(expectedMAC)
+	expectedSig, _ := github.GenerateSignature(string(body), wh.secret)
 
 	if !hmac.Equal([]byte(expectedSig), []byte(sig)) {
 
