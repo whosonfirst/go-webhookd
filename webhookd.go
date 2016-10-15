@@ -2,7 +2,6 @@ package webhookd
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -105,85 +104,4 @@ func (wh Webhook) Receiver() WebhookReceiver {
 
 func (wh Webhook) Dispatcher() WebhookDispatcher {
 	return wh.dispatcher
-}
-
-type WebhookDaemon struct {
-	host     string
-	port     int
-	webhooks map[string]WebhookHandler
-}
-
-func NewWebhookDaemon(host string, port int) (WebhookDaemon, error) {
-
-	webhooks := make(map[string]WebhookHandler)
-
-	d := WebhookDaemon{
-		host:     host,
-		port:     port,
-		webhooks: webhooks,
-	}
-
-	return d, nil
-}
-
-func (d *WebhookDaemon) AddWebhook(wh Webhook) error {
-
-	endpoint := wh.Endpoint()
-	_, ok := d.webhooks[endpoint]
-
-	if ok {
-		return errors.New("endpoint already configured")
-	}
-
-	d.webhooks[endpoint] = wh
-	return nil
-}
-
-func (d *WebhookDaemon) Start() error {
-
-	if len(d.webhooks) == 0 {
-		return errors.New("no webhooks configured")
-	}
-
-	handler := func(rsp http.ResponseWriter, req *http.Request) {
-
-		endpoint := req.URL.Path
-
-		wh, ok := d.webhooks[endpoint]
-
-		if !ok {
-			http.Error(rsp, "404 Not found", http.StatusNotFound)
-			return
-		}
-
-		rcvr := wh.Receiver()
-		dspt := wh.Dispatcher()
-
-		body, err := rcvr.Receive(req)
-
-		if err != nil {
-			http.Error(rsp, err.Error(), err.Code)
-			return
-		}
-
-		err = dspt.Dispatch(body)
-
-		if err != nil {
-			http.Error(rsp, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		return
-	}
-
-	endpoint := fmt.Sprintf("%s:%d", d.host, d.port)
-
-	http.HandleFunc("/", handler)
-	err := http.ListenAndServe(endpoint, nil)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
