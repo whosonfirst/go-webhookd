@@ -31,14 +31,14 @@ func NewWebhookDaemon(host string, port int) (WebhookDaemon, error) {
 
 func (d *WebhookDaemon) AddWebhooksFromConfig(config *webhookd.WebhookConfig) error {
 
-     	/*
+	/*
 
-	See this - ultimately we want to be able to define receivers and dispatchers
-	on a per-webhook basis (...maybe) but today we can not so there you go
-	(20161015/thisisaaronland)
-	
+		See this - ultimately we want to be able to define receivers and dispatchers
+		on a per-webhook basis (...maybe) but today we can not so there you go
+		(20161015/thisisaaronland)
+
 	*/
-	
+
 	dispatcher, err := dispatchers.NewDispatcherFromConfig(config)
 
 	if err != nil {

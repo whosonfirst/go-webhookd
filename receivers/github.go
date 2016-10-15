@@ -1,13 +1,12 @@
 package receivers
 
-/* THIS HAS NOT BEEN TESTED AT ALL YET (20160519/thisisaaronland) */
-
 import (
 	"crypto/hmac"
 	"crypto/sha1"
 	"encoding/hex"
 	"github.com/whosonfirst/go-whosonfirst-webhookd"
 	"io/ioutil"
+	_ "log"
 	"net/http"
 )
 
