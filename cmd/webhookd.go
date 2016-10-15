@@ -38,13 +38,9 @@ func main() {
 	ensure_ok(err)
 
 	dispatcher, err := dispatchers.NewDispatcherFromConfig(config)
-
-	// dispatcher, err := dispatchers.NewPubSubDispatcher(config.Dispatcher.Host, config.Dispatcher.Port, config.Dispatcher.Channel)
 	ensure_ok(err)
 
-	// receiver, err := receivers.NewReceiverFromConfig(config)
-
-	receiver, err := receivers.NewInsecureReceiver()
+	receiver, err := receivers.NewReceiverFromConfig(config)
 	ensure_ok(err)
 
 	webhook, err := webhookd.NewWebhook(*endpoint, receiver, dispatcher)

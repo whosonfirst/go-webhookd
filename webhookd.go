@@ -21,6 +21,7 @@ type WebhookConfig struct {
 	Daemon     WebhookDaemonConfig     `json:"daemon"`
 	Receiver   WebhookReceiverConfig   `json:"receiver"`
 	Dispatcher WebhookDispatcherConfig `json:"dispatcher"`
+	Webhooks   []WebhookWebhooksConfig `json:"webhooks"`
 }
 
 type WebhookDaemonConfig struct {
@@ -38,6 +39,10 @@ type WebhookDispatcherConfig struct {
 	Host    string `json:"host,omitempty"`
 	Port    int    `json:"port,omitempty"`
 	Channel string `json:"channel,omitempty"`
+}
+
+type WebhookWebhooksConfig struct {
+	Endpoint string `json:"endpoint"`
 }
 
 type WebhookReceiver interface {

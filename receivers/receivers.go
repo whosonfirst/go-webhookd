@@ -5,11 +5,11 @@ import (
 	"github.com/whosonfirst/go-whosonfirst-webhookd"
 )
 
-func NewDispatcherFromConfig(config *webhookd.WebhookConfig) (webhookd.WebhookReceiver, error) {
+func NewReceiverFromConfig(config *webhookd.WebhookConfig) (webhookd.WebhookReceiver, error) {
 
-	if config.Dispatcher.Name == "Insecure" {
+	if config.Receiver.Name == "Insecure" {
 		return NewInsecureReceiver()
-	} else if config.Dispatcher.Name == "GitHub" {
+	} else if config.Receiver.Name == "GitHub" {
 		return NewGitHubReceiver(config.Receiver.Secret)
 	} else {
 		return nil, errors.New("Invalid receiver")
