@@ -1,8 +1,10 @@
 package webhookd
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -13,6 +15,29 @@ type WebhookError struct {
 
 func (e WebhookError) Error() string {
 	return fmt.Sprintf("%d %s", e.Code, e.Message)
+}
+
+type WebhookConfig struct {
+	Daemon     WebhookDaemonConfig     `json:"daemon"`
+	Receiver   WebhookReceiverConfig   `json:"receiver"`
+	Dispatcher WebhookDispatcherConfig `json:"dispatcher"`
+}
+
+type WebhookDaemonConfig struct {
+	Host string `json:"host,omitempty"`
+	Port int    `json:"port,omitempty"`
+}
+
+type WebhookReceiverConfig struct {
+	Name   string `json:"name"`
+	Secret string `json:"secret,omitempty"`
+}
+
+type WebhookDispatcherConfig struct {
+	Name    string `json:"name"`
+	Host    string `json:"host,omitempty"`
+	Port    int    `json:"port,omitempty"`
+	Channel string `json:"channel,omitempty"`
 }
 
 type WebhookReceiver interface {
@@ -34,6 +59,24 @@ type Webhook struct {
 	endpoint   string
 	receiver   WebhookReceiver
 	dispatcher WebhookDispatcher
+}
+
+func NewConfigFromFile(file string) (*WebhookConfig, error) {
+
+	body, err := ioutil.ReadFile(file)
+
+	if err != nil {
+		return nil, err
+	}
+
+	c := WebhookConfig{}
+	err = json.Unmarshal(body, &c)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &c, nil
 }
 
 func NewWebhook(endpoint string, receiver WebhookReceiver, dispatcher WebhookDispatcher) (Webhook, error) {

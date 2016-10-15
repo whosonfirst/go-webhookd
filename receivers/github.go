@@ -25,7 +25,7 @@ func NewGitHubReceiver(secret string) (GitHubReceiver, error) {
 	return wh, nil
 }
 
-func (wh GitHubReceiver) Receive(rsp http.ResponseWriter, req *http.Request) ([]byte, *webhookd.WebhookError) {
+func (wh GitHubReceiver) Receive(req *http.Request) ([]byte, *webhookd.WebhookError) {
 
 	if req.Method != "POST" {
 

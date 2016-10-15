@@ -21,7 +21,7 @@ build:	fmt bin
 deps:   
 	@GOPATH=$(shell pwd) go get -u "gopkg.in/redis.v1"
 
-vendor-deps: deps
+vendor-deps: rmdeps deps
 	if test ! -d vendor; then mkdir vendor; fi
 	if test -d vendor/src; then rm -rf vendor/src; fi
 	cp -r src vendor/src
@@ -34,5 +34,5 @@ fmt:
 	go fmt dispatchers/*.go
 	go fmt *.go
 
-bin: 	self
+bin: 	rmdeps self
 	@GOPATH=$(shell pwd) go build -o bin/webhookd cmd/webhookd.go

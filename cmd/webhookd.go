@@ -5,6 +5,7 @@ import (
 	"github.com/whosonfirst/go-whosonfirst-webhookd"
 	"github.com/whosonfirst/go-whosonfirst-webhookd/dispatchers"
 	"github.com/whosonfirst/go-whosonfirst-webhookd/receivers"
+	"log"
 	"os"
 )
 
@@ -18,21 +19,30 @@ func ensure_ok(err error) {
 
 func main() {
 
-	var host = flag.String("host", "localhost", "The hostname to listen for requests on")
-	var port = flag.Int("port", 8080, "The port number to listen for requests on")
+	var cfg = flag.String("config", "", "Path to a valid webhookd config file")
 	var endpoint = flag.String("endpoint", "", "")
-
-	var pubsub_host = flag.String("pubsub-host", "localhost", "...")
-	var pubsub_port = flag.Int("pubsub-port", 6379, "...")
-	var pubsub_channel = flag.String("pubsub-channel", "webhookd", "...")
 
 	flag.Parse()
 
-	daemon, err := webhookd.NewWebhookDaemon(*host, *port)
+	if *cfg == "" {
+		log.Fatal("Missing config file")
+	}
+
+	config, err := webhookd.NewConfigFromFile(*cfg)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	daemon, err := webhookd.NewWebhookDaemon(config.Daemon.Host, config.Daemon.Port)
 	ensure_ok(err)
 
-	dispatcher, err := dispatchers.NewPubSubDispatcher(*pubsub_host, *pubsub_port, *pubsub_channel)
+	dispatcher, err := dispatchers.NewDispatcherFromConfig(config)
+
+	// dispatcher, err := dispatchers.NewPubSubDispatcher(config.Dispatcher.Host, config.Dispatcher.Port, config.Dispatcher.Channel)
 	ensure_ok(err)
+
+	// receiver, err := receivers.NewReceiverFromConfig(config)
 
 	receiver, err := receivers.NewInsecureReceiver()
 	ensure_ok(err)

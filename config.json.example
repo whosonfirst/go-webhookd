@@ -1,0 +1,11 @@
+{
+	"receiver": {
+		"name": "insecure"
+	},
+	"dispatcher": {
+		"name": "pubsub",
+		"host": "localhost",
+		"port": 6379,
+		"channel": "webhookd"
+	}
+}
