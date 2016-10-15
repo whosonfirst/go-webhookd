@@ -18,8 +18,10 @@ func (e WebhookError) Error() string {
 
 type WebhookConfig struct {
 	Daemon     WebhookDaemonConfig     `json:"daemon"`
-	Receiver   WebhookReceiverConfig   `json:"receiver"`
-	Dispatcher WebhookDispatcherConfig `json:"dispatcher"`
+	Receiver   WebhookReceiverConfig   `json:"receiver"`			// deprecated
+	Dispatcher WebhookDispatcherConfig `json:"dispatcher"`			// deprecated
+	Receivers   map[string]WebhookReceiverConfig   `json:"receivers"`
+	Dispatchers map[string]WebhookDispatcherConfig `json:"dispatchers"`	
 	Webhooks   []WebhookWebhooksConfig `json:"webhooks"`
 }
 
