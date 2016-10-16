@@ -247,6 +247,26 @@ The `Slack` receiver has the following properties:
 
 This is always `Slack`.
 
+## Transformations
+
+### Chicken
+
+```
+	{
+		"name": "Chicken",
+		"language": "zxx",
+		"clucking": false
+	}
+```
+
+### Null
+
+```
+	{
+		"name": "Null"
+	}
+``
+
 ## Dispatchers
 
 ### PubSub
