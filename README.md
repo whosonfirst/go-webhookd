@@ -250,3 +250,4 @@ The name of the Redis PubSub channel you want to send messages to.
 
 * https://en.wikipedia.org/wiki/Webhook
 * http://redis.io/topics/pubsub
+* https://github.com/whosonfirst/go-pubssed
