@@ -29,10 +29,7 @@ func main() {
 	config, err := webhookd.NewConfigFromFile(*cfg)
 	ensure_ok(err)
 
-	d, err := daemon.NewWebhookDaemon(config.Daemon.Host, config.Daemon.Port)
-	ensure_ok(err)
-
-	err = d.AddWebhooksFromConfig(config)
+	d, err := daemon.NewWebhookDaemonFromConfig(config)
 	ensure_ok(err)
 
 	err = d.Start()

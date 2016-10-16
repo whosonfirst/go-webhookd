@@ -16,7 +16,24 @@ type WebhookDaemon struct {
 	webhooks map[string]webhookd.WebhookHandler
 }
 
-func NewWebhookDaemon(host string, port int) (WebhookDaemon, error) {
+func NewWebhookDaemonFromConfig(config *webhookd.WebhookConfig) (*WebhookDaemon, error) {
+
+	d, err := NewWebhookDaemon(config.Daemon.Host, config.Daemon.Port)
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = d.AddWebhooksFromConfig(config)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return d, nil
+}
+
+func NewWebhookDaemon(host string, port int) (*WebhookDaemon, error) {
 
 	webhooks := make(map[string]webhookd.WebhookHandler)
 
@@ -26,7 +43,7 @@ func NewWebhookDaemon(host string, port int) (WebhookDaemon, error) {
 		webhooks: webhooks,
 	}
 
-	return d, nil
+	return &d, nil
 }
 
 func (d *WebhookDaemon) AddWebhooksFromConfig(config *webhookd.WebhookConfig) error {

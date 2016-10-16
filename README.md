@@ -58,6 +58,8 @@ daemon.AddWebhook(webhook)
 daemon.Start()
 ```
 
+See the way we're using an `Insecure` receiver and a `PubSub` dispatcher. Both are discussed in detail below.
+
 ### Setting up a `webhookd` server with a handy config file
 
 ```
@@ -68,11 +70,11 @@ import (
 
 config, _ := webhookd.NewConfigFromFile("config.json")
 
-d, _ := daemon.NewWebhookDaemon(config.Daemon.Host, config.Daemon.Port)
-
-d.AddWebhooksFromConfig(config)
+d, _ := daemon.NewWebhookDaemonFromConfig(config)
 d.Start()
 ```
+
+While you can set up a `webhookd` server by hand it's probably easier to all that work with a config file and let code take care of all the details, including registering all the webhooks. Config files are discussed in detail below.
 
 ### Sending stuff to webhookd
 
