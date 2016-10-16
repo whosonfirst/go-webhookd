@@ -55,6 +55,9 @@ dispatcher, _ := dispatchers.NewPubSubDispatcher(*pubsub_host, *pubsub_port, *pu
 webhook, _ := webhookd.NewWebhook(*endpoint, receiver, dispatcher)
 d.AddWebhook(webhook)
 
+// You can also just grab the HTTP handler func with d.HandlerFunc()
+// if you need or want to start webhookd in your own way
+
 d.Start()
 ```
 
@@ -71,12 +74,16 @@ import (
 config, _ := webhookd.NewConfigFromFile("config.json")
 
 d, _ := daemon.NewWebhookDaemonFromConfig(config)
+
+// You can also just grab the HTTP handler func with d.HandlerFunc()
+// if you need or want to start webhookd in your own way
+
 d.Start()
 ```
 
 While you can set up a `webhookd` server by hand it's probably easier to all that work with a config file and let code take care of all the details, including registering all the webhooks. Config files are discussed in detail below.
 
-### Sending stuff to webhookd
+## Sending stuff to webhookd
 
 ```
 curl -v -X POST http://localhost:8080/foo -d @README.md
@@ -90,7 +97,7 @@ curl -v -X POST http://localhost:8080/foo -d @README.md
 * Connection #0 to host localhost left intact
 ```
 
-### Where did it go...
+## Where did it go...
 
 ```
 ./bin/subscribe webhookd
