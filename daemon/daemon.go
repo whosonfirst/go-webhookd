@@ -94,7 +94,9 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(config *webhookd.WebhookConfig) er
 			return err
 		}
 
-		webhook, err := webhookd.NewWebhook(hook.Endpoint, receiver, dispatcher)
+		var transformations []webhookd.WebhookTransformation
+
+		webhook, err := webhookd.NewWebhook(hook.Endpoint, receiver, transformations, dispatcher)
 
 		if err != nil {
 			return err

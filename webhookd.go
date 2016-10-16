@@ -18,10 +18,11 @@ func (e WebhookError) Error() string {
 }
 
 type WebhookConfig struct {
-	Daemon      WebhookDaemonConfig                `json:"daemon"`
-	Receivers   map[string]WebhookReceiverConfig   `json:"receivers"`
-	Dispatchers map[string]WebhookDispatcherConfig `json:"dispatchers"`
-	Webhooks    []WebhookWebhooksConfig            `json:"webhooks"`
+	Daemon          WebhookDaemonConfig                    `json:"daemon"`
+	Receivers       map[string]WebhookReceiverConfig       `json:"receivers"`
+	Dispatchers     map[string]WebhookDispatcherConfig     `json:"dispatchers"`
+	Transformations map[string]WebhookTransformationConfig `json:"transformations"`
+	Webhooks        []WebhookWebhooksConfig                `json:"webhooks"`
 }
 
 type WebhookDaemonConfig struct {
@@ -42,10 +43,15 @@ type WebhookDispatcherConfig struct {
 	Config  string `json:"config,omitempty"`
 }
 
+type WebhookTransformationConfig struct {
+	Name string `json:"name"`
+}
+
 type WebhookWebhooksConfig struct {
-	Endpoint   string `json:"endpoint"`
-	Dispatcher string `json:"dispatcher"`
-	Receiver   string `json:"receiver"`
+	Endpoint        string   `json:"endpoint"`
+	Dispatcher      string   `json:"dispatcher"`
+	Receiver        string   `json:"receiver"`
+	Transformations []string `json:"transformations"`
 }
 
 type WebhookReceiver interface {
@@ -64,14 +70,15 @@ type WebhookHandler interface {
 	Endpoint() string // sudo make me a net.URI or something
 	Receiver() WebhookReceiver
 	Dispatcher() WebhookDispatcher
-	// Tranformations() []WebhookTransformation
+	Tranformations() []WebhookTransformation
 }
 
 type Webhook struct {
 	WebhookHandler
-	endpoint   string
-	receiver   WebhookReceiver
-	dispatcher WebhookDispatcher
+	endpoint        string
+	receiver        WebhookReceiver
+	dispatcher      WebhookDispatcher
+	transformations []WebhookTransformation
 }
 
 func NewConfigFromFile(file string) (*WebhookConfig, error) {
@@ -114,12 +121,24 @@ func (c *WebhookConfig) GetDispatcherConfigByName(name string) (*WebhookDispatch
 	return &config, nil
 }
 
-func NewWebhook(endpoint string, receiver WebhookReceiver, dispatcher WebhookDispatcher) (Webhook, error) {
+func (c *WebhookConfig) GetTransformationConfigByName(name string) (*WebhookTransformationConfig, error) {
+
+	config, ok := c.Transformations[name]
+
+	if !ok {
+		return nil, errors.New("Invalid transformations name")
+	}
+
+	return &config, nil
+}
+
+func NewWebhook(endpoint string, receiver WebhookReceiver, transformations []WebhookTransformation, dispatcher WebhookDispatcher) (Webhook, error) {
 
 	wh := Webhook{
-		endpoint:   endpoint,
-		receiver:   receiver,
-		dispatcher: dispatcher,
+		endpoint:        endpoint,
+		receiver:        receiver,
+		dispatcher:      dispatcher,
+		transformations: transformations,
 	}
 
 	return wh, nil
@@ -135,4 +154,8 @@ func (wh Webhook) Receiver() WebhookReceiver {
 
 func (wh Webhook) Dispatcher() WebhookDispatcher {
 	return wh.dispatcher
+}
+
+func (wh Webhook) Transformations() []WebhookTransformation {
+	return wh.transformations
 }
