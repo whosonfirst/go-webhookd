@@ -265,7 +265,7 @@ This is always `Slack`.
 	{
 		"name": "Null"
 	}
-``
+```
 
 ## Dispatchers
 
