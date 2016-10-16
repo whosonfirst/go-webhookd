@@ -297,9 +297,7 @@ This is always `Slack`.
 
 #### config _string_
 
-The path to a valid [slackcat](https://github.com/whosonfirst/slackcat#configuring) config file.
-
-_Eventually you will be able to specify a plain-vanilla Slack Webhook URL but not today._
+The path to a valid [slackcat](https://github.com/whosonfirst/slackcat#configuring) config file. _Eventually you will be able to specify a plain-vanilla Slack Webhook URL but not today._
 
 ## To do
 
