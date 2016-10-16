@@ -3,6 +3,7 @@ package daemon
 import (
 	"errors"
 	"fmt"
+	"github.com/facebookgo/grace/gracehttp"
 	"github.com/whosonfirst/go-webhookd"
 	"github.com/whosonfirst/go-webhookd/dispatchers"
 	"github.com/whosonfirst/go-webhookd/receivers"
@@ -123,11 +124,7 @@ func (d *WebhookDaemon) AddWebhook(wh webhookd.Webhook) error {
 	return nil
 }
 
-func (d *WebhookDaemon) Start() error {
-
-	if len(d.webhooks) == 0 {
-		return errors.New("no webhooks configured")
-	}
+func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 
 	handler := func(rsp http.ResponseWriter, req *http.Request) {
 
@@ -160,10 +157,23 @@ func (d *WebhookDaemon) Start() error {
 		return
 	}
 
-	endpoint := fmt.Sprintf("%s:%d", d.host, d.port)
+	return http.HandlerFunc(handler), nil
+}
 
-	http.HandleFunc("/", handler)
-	err := http.ListenAndServe(endpoint, nil)
+func (d *WebhookDaemon) Start() error {
+
+	handler, err := d.HandlerFunc()
+
+	if err != nil {
+		return err
+	}
+
+	addr := fmt.Sprintf("%s:%d", d.host, d.port)
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", handler)
+
+	err = gracehttp.Serve(&http.Server{Addr: addr, Handler: mux})
 
 	if err != nil {
 		return err

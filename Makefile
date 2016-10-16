@@ -23,7 +23,8 @@ rmdeps:
 build:	fmt bin
 
 deps:   
-	@GOPATH=$(shell pwd) go get -u "gopkg.in/redis.v1"
+	@GOPATH=$(GOPATH) go get -u "gopkg.in/redis.v1"
+	@GOPATH=$(GOPATH) go get -u "github.com/facebookgo/grace/gracehttp"
 
 vendor-deps: rmdeps deps
 	if test ! -d vendor; then mkdir vendor; fi
