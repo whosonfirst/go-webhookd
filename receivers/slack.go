@@ -1,5 +1,8 @@
 package receivers
 
+// This has not been fully tested with an actual Slack message yet
+// (20161016/thisisaaronland)
+
 import (
 	"github.com/whosonfirst/go-webhookd"
 	"io/ioutil"

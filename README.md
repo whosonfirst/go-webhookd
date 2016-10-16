@@ -239,6 +239,8 @@ This is always `Insecure`.
 	}
 ```
 
+TBW. _This receiver has not been fully tested yet so proceed with caution._
+
 The `Slack` receiver has the following properties:
 
 #### name _string_
@@ -277,6 +279,27 @@ The port number of the Redis host you want to connect to.
 #### channel _string_
 
 The name of the Redis PubSub channel you want to send messages to.
+
+### Slack
+
+```
+	{
+		"name": "Slack",
+		"config": "/path/to/.slackcat.conf"			
+	}
+```
+
+The `Slack` dispatcher has the following properties:
+
+#### name _string_
+
+This is always `Slack`.
+
+#### config _string_
+
+The path to a valid [slackcat](https://github.com/whosonfirst/slackcat#configuring) config file.
+
+_Eventually you will be able to specify a plain-vanilla Slack Webhook URL but not today._
 
 ## To do
 

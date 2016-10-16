@@ -1,5 +1,8 @@
 package receivers
 
+// This has not been fully tested with an actual GitHub message yet
+// (20161016/thisisaaronland)
+
 // https://developer.github.com/webhooks/
 // https://developer.github.com/webhooks/#payloads
 // https://developer.github.com/v3/activity/events/types/#pushevent
