@@ -39,9 +39,9 @@ func (wh GitHubReceiver) Receive(req *http.Request) ([]byte, *webhookd.WebhookEr
 		return nil, err
 	}
 
-	eventType := req.Header.Get("X-GitHub-Event")
+	event_type := req.Header.Get("X-GitHub-Event")
 
-	if eventType == "" {
+	if event_type == "" {
 
 		code := http.StatusBadRequest
 		message := "Bad Request - Missing X-GitHub-Event Header"
