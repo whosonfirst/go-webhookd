@@ -56,7 +56,7 @@ webhook, _ := webhookd.NewWebhook(*endpoint, receiver, dispatcher)
 d.AddWebhook(webhook)
 
 // You can also just grab the HTTP handler func with d.HandlerFunc()
-// if you need or want to start webhookd in your own way
+// if you need or want to start a webhookd daemon in your own way
 
 d.Start()
 ```
@@ -76,7 +76,7 @@ config, _ := webhookd.NewConfigFromFile("config.json")
 d, _ := daemon.NewWebhookDaemonFromConfig(config)
 
 // You can also just grab the HTTP handler func with d.HandlerFunc()
-// if you need or want to start webhookd in your own way
+// if you need or want to start a webhookd daemon in your own way
 
 d.Start()
 ```
