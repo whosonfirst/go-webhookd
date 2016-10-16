@@ -31,26 +31,6 @@ func NewWebhookDaemon(host string, port int) (WebhookDaemon, error) {
 
 func (d *WebhookDaemon) AddWebhooksFromConfig(config *webhookd.WebhookConfig) error {
 
-	/*
-
-		See this - ultimately we want to be able to define receivers and dispatchers
-		on a per-webhook basis (...maybe) but today we can not so there you go
-		(20161015/thisisaaronland)
-
-	*/
-
-	dispatcher, err := dispatchers.NewDispatcherFromConfig(config)
-
-	if err != nil {
-		return err
-	}
-
-	receiver, err := receivers.NewReceiverFromConfig(config)
-
-	if err != nil {
-		return err
-	}
-
 	if len(config.Webhooks) == 0 {
 		return errors.New("No webhooks defined")
 	}
@@ -60,6 +40,42 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(config *webhookd.WebhookConfig) er
 		if hook.Endpoint == "" {
 			msg := fmt.Sprintf("Missing endpoint at offset %d", i+1)
 			return errors.New(msg)
+		}
+
+		if hook.Receiver == "" {
+			msg := fmt.Sprintf("Missing receiver at offset %d", i+1)
+			return errors.New(msg)
+		}
+
+		if hook.Dispatcher == "" {
+			msg := fmt.Sprintf("Missing dispatcher at offset %d", i+1)
+			return errors.New(msg)
+		}
+
+		receiver_config, ok := config.Receivers[hook.Receiver]
+
+		if !ok {
+			msg := fmt.Sprintf("Undefined receiver at offset %d", i+1)
+			return errors.New(msg)
+		}
+
+		receiver, err := receivers.NewReceiverFromConfig(receiver_config)
+
+		if err != nil {
+			return err
+		}
+
+		dispatcher_config, ok := config.Dispatchers[hook.Dispatcher]
+
+		if !ok {
+			msg := fmt.Sprintf("Undefined dispatcher at offset %d", i+1)
+			return errors.New(msg)
+		}
+
+		dispatcher, err := dispatchers.NewDispatcherFromConfig(dispatcher_config)
+
+		if err != nil {
+			return err
 		}
 
 		webhook, err := webhookd.NewWebhook(hook.Endpoint, receiver, dispatcher)

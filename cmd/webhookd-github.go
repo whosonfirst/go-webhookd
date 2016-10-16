@@ -18,6 +18,7 @@ import (
 func main() {
 
 	var cfg = flag.String("config", "", "Path to a valid webhookd config file")
+	var receiver_name = flag.String("receiver", "", "...")
 	var endpoint = flag.String("endpoint", "", "...")
 
 	flag.Parse()
@@ -26,15 +27,25 @@ func main() {
 		log.Fatal("Missing config file")
 	}
 
+	if *receiver_name == "" {
+		log.Fatal("Missing receiver name")
+	}
+
 	config, err := webhookd.NewConfigFromFile(*cfg)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	receiver_config, ok := config.Receivers[*receiver_name]
+
+	if !ok {
+		log.Fatal("Invalid receiver name")
+	}
+
 	body := strings.Join(flag.Args(), " ")
 
-	secret := config.Receiver.Secret
+	secret := receiver_config.Secret
 
 	sig, _ := github.GenerateSignature(body, secret)
 

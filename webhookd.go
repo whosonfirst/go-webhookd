@@ -17,12 +17,10 @@ func (e WebhookError) Error() string {
 }
 
 type WebhookConfig struct {
-	Daemon     WebhookDaemonConfig     `json:"daemon"`
-	Receiver   WebhookReceiverConfig   `json:"receiver"`			// deprecated
-	Dispatcher WebhookDispatcherConfig `json:"dispatcher"`			// deprecated
+	Daemon      WebhookDaemonConfig                `json:"daemon"`
 	Receivers   map[string]WebhookReceiverConfig   `json:"receivers"`
-	Dispatchers map[string]WebhookDispatcherConfig `json:"dispatchers"`	
-	Webhooks   []WebhookWebhooksConfig `json:"webhooks"`
+	Dispatchers map[string]WebhookDispatcherConfig `json:"dispatchers"`
+	Webhooks    []WebhookWebhooksConfig            `json:"webhooks"`
 }
 
 type WebhookDaemonConfig struct {
@@ -43,7 +41,9 @@ type WebhookDispatcherConfig struct {
 }
 
 type WebhookWebhooksConfig struct {
-	Endpoint string `json:"endpoint"`
+	Endpoint   string `json:"endpoint"`
+	Dispatcher string `json:"dispatcher"`
+	Receiver   string `json:"receiver"`
 }
 
 type WebhookReceiver interface {
