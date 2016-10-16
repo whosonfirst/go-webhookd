@@ -2,7 +2,7 @@ package receivers
 
 import (
 	"errors"
-	"github.com/whosonfirst/go-whosonfirst-webhookd"
+	"github.com/whosonfirst/go-webhookd"
 )
 
 func NewReceiverFromConfig(config *webhookd.WebhookReceiverConfig) (webhookd.WebhookReceiver, error) {

@@ -2,8 +2,8 @@ package receivers
 
 import (
 	"crypto/hmac"
-	"github.com/whosonfirst/go-whosonfirst-webhookd"
-	"github.com/whosonfirst/go-whosonfirst-webhookd/github"
+	"github.com/whosonfirst/go-webhookd"
+	"github.com/whosonfirst/go-webhookd/github"
 	"io/ioutil"
 	_ "log"
 	"net/http"

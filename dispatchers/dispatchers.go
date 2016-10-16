@@ -2,7 +2,7 @@ package dispatchers
 
 import (
 	"errors"
-	"github.com/whosonfirst/go-whosonfirst-webhookd"
+	"github.com/whosonfirst/go-webhookd"
 )
 
 func NewDispatcherFromConfig(config *webhookd.WebhookDispatcherConfig) (webhookd.WebhookDispatcher, error) {

@@ -2,7 +2,7 @@ package dispatchers
 
 import (
 	"fmt"
-	"github.com/whosonfirst/go-whosonfirst-webhookd"
+	"github.com/whosonfirst/go-webhookd"
 	"gopkg.in/redis.v1"
 )
 

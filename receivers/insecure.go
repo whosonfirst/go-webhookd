@@ -1,7 +1,7 @@
 package receivers
 
 import (
-	"github.com/whosonfirst/go-whosonfirst-webhookd"
+	"github.com/whosonfirst/go-webhookd"
 	"io/ioutil"
 	"net/http"
 )

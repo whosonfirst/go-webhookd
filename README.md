@@ -1,4 +1,4 @@
-# go-whosonfirst-webhookd
+# go-webhookd
 
 What is the simplest webhook-wrangling server-daemon-thing.
 
@@ -37,9 +37,9 @@ _All error handling has been removed from the examples below for the sake of bre
 ```
 import (
 	"flag"
-	"github.com/whosonfirst/go-whosonfirst-webhookd"
-	"github.com/whosonfirst/go-whosonfirst-webhookd/dispatchers"
-	"github.com/whosonfirst/go-whosonfirst-webhookd/receivers"
+	"github.com/whosonfirst/go-webhookd"
+	"github.com/whosonfirst/go-webhookd/dispatchers"
+	"github.com/whosonfirst/go-webhookd/receivers"
 )
 
 // imagine flags here but also imagine that *pubsub_channel is "webhookd"
@@ -64,8 +64,8 @@ See the way we're using an `Insecure` receiver and a `PubSub` dispatcher. Both a
 
 ```
 import (
-	"github.com/whosonfirst/go-whosonfirst-webhookd"
-	"github.com/whosonfirst/go-whosonfirst-webhookd/daemon"
+	"github.com/whosonfirst/go-webhookd"
+	"github.com/whosonfirst/go-webhookd/daemon"
 )
 
 config, _ := webhookd.NewConfigFromFile("config.json")
@@ -95,7 +95,7 @@ curl -v -X POST http://localhost:8080/foo -d @README.md
 ```
 ./bin/subscribe webhookd
 {'pattern': None, 'type': 'subscribe', 'channel': 'webhookd', 'data': 1L}
-{'pattern': None, 'type': 'message', 'channel': 'webhookd', 'data': '# go-whosonfirst-webhookd## ImportantYou should not try to use this, yet. No. No, really.## UsageIt _should_ work something like this. If you\'re reading this sentence that means it _doesn\'t_.```import (\t"github.com/whosonfirst/go-whosonfirst-webhookd"\t"github.com/whosonfirst/go-whosonfirst-webhookd/dispatchers"\t"github.com/whosonfirst/go-whosonfirst-webhookd/receivers")dispatcher := dispatchers.NewPubSubDispatcher("localhost", 6379, "pubsub-channel")receiver := receivers.NewGitHubReceiver("github-webhook-s33kret")endpoint := "/wubwubwub"webhook := webhookd.NewWebhook(endpoint, receiver, dispatcher)daemon := webhookd.NewWebHookDaemon(webhook)daemon.AddWebhook(webhook)daemon.Start()```## See also'}
+{'pattern': None, 'type': 'message', 'channel': 'webhookd', 'data': '# go-webhookd## ImportantYou should not try to use this, yet. No. No, really.## UsageIt _should_ work something like this. If you\'re reading this sentence that means it _doesn\'t_.```import (\t"github.com/whosonfirst/go-webhookd"\t"github.com/whosonfirst/go-webhookd/dispatchers"\t"github.com/whosonfirst/go-webhookd/receivers")dispatcher := dispatchers.NewPubSubDispatcher("localhost", 6379, "pubsub-channel")receiver := receivers.NewGitHubReceiver("github-webhook-s33kret")endpoint := "/wubwubwub"webhook := webhookd.NewWebhook(endpoint, receiver, dispatcher)daemon := webhookd.NewWebHookDaemon(webhook)daemon.AddWebhook(webhook)daemon.Start()```## See also'}
 ```
 
 It went to Redis [PubSub](http://redis.io/topics/pubsub) land!
@@ -244,7 +244,7 @@ The name of the Redis PubSub channel you want to send messages to.
 ## To do
 
 * More documentation
-* Logging
+* Better logging
 
 ## See also
 

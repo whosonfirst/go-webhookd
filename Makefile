@@ -5,16 +5,16 @@ prep:
 	if test -d pkg; then rm -rf pkg; fi
 
 self:   prep
-	if test -d src/github.com/whosonfirst/go-whosonfirst-webhookd; then rm -rf src/github.com/whosonfirst/go-whosonfirst-webhookd; fi
-	mkdir -p src/github.com/whosonfirst/go-whosonfirst-webhookd/daemon
-	mkdir -p src/github.com/whosonfirst/go-whosonfirst-webhookd/dispatchers
-	mkdir -p src/github.com/whosonfirst/go-whosonfirst-webhookd/github
-	mkdir -p src/github.com/whosonfirst/go-whosonfirst-webhookd/receivers
-	cp webhookd.go src/github.com/whosonfirst/go-whosonfirst-webhookd/
-	cp daemon/*.go src/github.com/whosonfirst/go-whosonfirst-webhookd/daemon/
-	cp dispatchers/*.go src/github.com/whosonfirst/go-whosonfirst-webhookd/dispatchers/
-	cp github/*.go src/github.com/whosonfirst/go-whosonfirst-webhookd/github/
-	cp receivers/*.go src/github.com/whosonfirst/go-whosonfirst-webhookd/receivers/
+	if test -d src/github.com/whosonfirst/go-webhookd; then rm -rf src/github.com/whosonfirst/go-webhookd; fi
+	mkdir -p src/github.com/whosonfirst/go-webhookd/daemon
+	mkdir -p src/github.com/whosonfirst/go-webhookd/dispatchers
+	mkdir -p src/github.com/whosonfirst/go-webhookd/github
+	mkdir -p src/github.com/whosonfirst/go-webhookd/receivers
+	cp webhookd.go src/github.com/whosonfirst/go-webhookd/
+	cp daemon/*.go src/github.com/whosonfirst/go-webhookd/daemon/
+	cp dispatchers/*.go src/github.com/whosonfirst/go-webhookd/dispatchers/
+	cp github/*.go src/github.com/whosonfirst/go-webhookd/github/
+	cp receivers/*.go src/github.com/whosonfirst/go-webhookd/receivers/
 	cp -r vendor/src/* src/
 
 rmdeps:

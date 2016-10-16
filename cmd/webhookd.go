@@ -2,8 +2,8 @@ package main
 
 import (
 	"flag"
-	"github.com/whosonfirst/go-whosonfirst-webhookd"
-	"github.com/whosonfirst/go-whosonfirst-webhookd/daemon"
+	"github.com/whosonfirst/go-webhookd"
+	"github.com/whosonfirst/go-webhookd/daemon"
 	"log"
 	"os"
 )

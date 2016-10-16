@@ -3,9 +3,9 @@ package daemon
 import (
 	"errors"
 	"fmt"
-	"github.com/whosonfirst/go-whosonfirst-webhookd"
-	"github.com/whosonfirst/go-whosonfirst-webhookd/dispatchers"
-	"github.com/whosonfirst/go-whosonfirst-webhookd/receivers"
+	"github.com/whosonfirst/go-webhookd"
+	"github.com/whosonfirst/go-webhookd/dispatchers"
+	"github.com/whosonfirst/go-webhookd/receivers"
 	_ "log"
 	"net/http"
 )
