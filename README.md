@@ -4,22 +4,21 @@ What is the simplest webhook-wrangling server-daemon-thing.
 
 In many ways (at least so far) this is nothing more than a fancy bucket-brigade. By design. Receivers handle the actual webhook side of things, doing auth and basic sanity checking and validation. Assuming everything is as it should be receivers return a bag of bytes (the actual webhook message that may or may not be massaged depending the receiver). That bag is then handed to a dispatcher which does _something_ with those bytes. Those details, including security considerations are left as an exercise to the reader.
 
-## Important
-
-This should be considered "wet paint". It has not been tested much and may yet change in significant ways.
-
 ## Install
 
-Use the handy `build` target in the included Makefile.
+You will need to have both `Go` and the `make` programs installed on your computer. Assuming you do just type:
 
 ```
-make build
+make bin
 ```
+
+All of this package's dependencies are bundled with the code in the `vendor` directory.
 
 ## Usage
 
-### Setting up webhookd
+### Setting up webhookd "by hand"
 
+_All error handling has been removed from the examples below for the sake of brevity._
 
 ```
 import (
@@ -34,8 +33,6 @@ import (
 
 flag.Parse()
 
-// error handling removed for brevity
-
 daemon, _ := webhookd.NewWebhookDaemon(*host, *port)
 
 receiver, _ := receivers.NewInsecureReceiver()
@@ -45,6 +42,22 @@ webhook, _ := webhookd.NewWebhook(*endpoint, receiver, dispatcher)
 daemon.AddWebhook(webhook)
 
 daemon.Start()
+```
+
+### Setting up webhookd with a handy config file
+
+```
+import (
+	"github.com/whosonfirst/go-whosonfirst-webhookd"
+	"github.com/whosonfirst/go-whosonfirst-webhookd/daemon"
+)
+
+config, _ := webhookd.NewConfigFromFile("config.json")
+
+d, _ := daemon.NewWebhookDaemon(config.Daemon.Host, config.Daemon.Port)
+
+d.AddWebhooksFromConfig(config)
+d.Start()
 ```
 
 ### Sending stuff to webhookd
@@ -78,54 +91,75 @@ curl -v -X POST http://localhost:8080/foo -d @README.md
 {'pattern': None, 'type': 'message', 'channel': 'webhookd', 'data': '# go-whosonfirst-webhookd## ImportantYou should not try to use this, yet. No. No, really.## UsageIt _should_ work something like this. If you\'re reading this sentence that means it _doesn\'t_.```import (\t"github.com/whosonfirst/go-whosonfirst-webhookd"\t"github.com/whosonfirst/go-whosonfirst-webhookd/dispatchers"\t"github.com/whosonfirst/go-whosonfirst-webhookd/receivers")dispatcher := dispatchers.NewPubSubDispatcher("localhost", 6379, "pubsub-channel")receiver := receivers.NewGitHubReceiver("github-webhook-s33kret")endpoint := "/wubwubwub"webhook := webhookd.NewWebhook(endpoint, receiver, dispatcher)daemon := webhookd.NewWebHookDaemon(webhook)daemon.AddWebhook(webhook)daemon.Start()```## See also'}
 ```
 
+## Config files
+
+### daemon
+
+```
+	"daemon": {
+		"host": "localhost",
+		"port": 8080
+	}
+```
+
+### receivers
+
+```
+	"receivers": {
+		"insecure": {
+			"name": "Insecure"
+		},
+		"github": {
+			"name": "GitHub",
+			"secret": "s33kret"
+		}
+	}
+```
+
+### dispatchers
+
+```
+	"dispatchers": {
+		"pubsub": {
+			"name": "PubSub",
+			"host": "localhost",
+			"port": 6379,
+			"channel": "webhookd"
+		}
+	}
+```
+
+### webhooks
+
+```
+	"webhooks": [
+		{ "endpoint": "/github-test", "receiver": "github", "dispatcher": "pubsub" },
+		{ "endpoint": "/insecure-test", "receiver": "insecure", "dispatcher": "pubsub" }		
+	]
+```
+
 ## Receivers
 
-_Please write me_
+### Insecure
+
+### GitHub
 
 ## Dispatchers
 
-_Please write me_
+### PubSub
 
 ## Utilities
 
 ### webhookd
 
-_This is still a work in progress. It will change._
-
 ```
 ./bin/webhookd -h
 Usage of ./bin/webhookd:
-  -alsologtostderr
-	log to standard error as well as files
-  -endpoint string
-    	    
-  -host string
-    	The hostname to listen for requests on (default "localhost")
-  -log_backtrace_at value
-    		    when logging hits line file:N, emit a stack trace (default :0)
-  -log_dir string
-    	   If non-empty, write log files in this directory
-  -logtostderr
-	log to standard error instead of files
-  -port int
-    	The port number to listen for requests on (default 8080)
-  -pubsub-channel string
-    		  ... (default "webhookd")
-  -pubsub-host string
-    	       ... (default "localhost")
-  -pubsub-port int
-    	       ... (default 6379)
-  -stderrthreshold value
-    		   logs at or above this threshold go to stderr
-  -v value
-     log level for V logs
-  -vmodule value
-    	   comma-separated list of pattern=N settings for file-filtered logging
+  -config string
+    	Path to a valid webhookd config file
 ```
 
 ## To do
 
 * Documentation
 * Logging
-* Defining webhooks with a config file or something
-* Add the ability for webhooks to have multiple dispatchers
