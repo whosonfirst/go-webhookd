@@ -53,13 +53,18 @@ type WebhookReceiver interface {
 }
 
 type WebhookDispatcher interface {
-	Dispatch([]byte) *WebhookError // sudo make me an io.Reader or something
+	Dispatch([]byte) *WebhookError
+}
+
+type WebhookTransformation interface {
+	Transform([]byte) ([]byte, *WebhookError)
 }
 
 type WebhookHandler interface {
 	Endpoint() string // sudo make me a net.URI or something
 	Receiver() WebhookReceiver
 	Dispatcher() WebhookDispatcher
+	// Tranformations() []WebhookTransformation
 }
 
 type Webhook struct {
