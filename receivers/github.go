@@ -83,5 +83,16 @@ func (wh GitHubReceiver) Receive(req *http.Request) ([]byte, *webhookd.WebhookEr
 		return nil, err
 	}
 
+	/*
+
+		So here's a thing that's not awesome: the event_type is passed in the header
+		rather than anywhere in the payload body. So I don't know... maybe we need to
+		change the signature of Receive method to be something like this:
+		       { Payload: []byte, Extras: map[string]string }
+
+		Which is not something that makes me "happy"... (20161016/thisisaaronland)
+
+	*/
+
 	return body, nil
 }
