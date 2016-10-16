@@ -28,6 +28,7 @@ deps:
 	@GOPATH=$(GOPATH) go get -u "gopkg.in/redis.v1"
 	@GOPATH=$(GOPATH) go get -u "github.com/facebookgo/grace/gracehttp"
 	@GOPATH=$(GOPATH) go get -u "github.com/whosonfirst/go-writer-slackcat"
+	@GOPATH=$(GOPATH) go get -u "github.com/thisisaaronland/go-chicken"
 
 vendor-deps: rmdeps deps
 	if test ! -d vendor; then mkdir vendor; fi

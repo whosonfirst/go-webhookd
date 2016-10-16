@@ -7,6 +7,7 @@ import (
 	"github.com/whosonfirst/go-webhookd"
 	"github.com/whosonfirst/go-webhookd/dispatchers"
 	"github.com/whosonfirst/go-webhookd/receivers"
+	"github.com/whosonfirst/go-webhookd/transformations"
 	_ "log"
 	"net/http"
 )
@@ -94,9 +95,26 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(config *webhookd.WebhookConfig) er
 			return err
 		}
 
-		var transformations []webhookd.WebhookTransformation
+		var steps []webhookd.WebhookTransformation
 
-		webhook, err := webhookd.NewWebhook(hook.Endpoint, receiver, transformations, dispatcher)
+		for _, name := range hook.Transformations {
+
+			transformation_config, err := config.GetTransformationConfigByName(name)
+
+			if err != nil {
+				return err
+			}
+
+			step, err := transformations.NewTransformationFromConfig(transformation_config)
+
+			if err != nil {
+				return err
+			}
+
+			steps = append(steps, step)
+		}
+
+		webhook, err := webhookd.NewWebhook(hook.Endpoint, receiver, steps, dispatcher)
 
 		if err != nil {
 			return err
@@ -147,6 +165,16 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 		if err != nil {
 			http.Error(rsp, err.Error(), err.Code)
 			return
+		}
+
+		for _, step := range wh.Transformations() {
+
+			body, err = step.Transform(body)
+
+			if err != nil {
+				http.Error(rsp, err.Error(), err.Code)
+				return
+			}
 		}
 
 		err = dspt.Dispatch(body)

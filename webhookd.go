@@ -44,7 +44,9 @@ type WebhookDispatcherConfig struct {
 }
 
 type WebhookTransformationConfig struct {
-	Name string `json:"name"`
+	Name     string `json:"name"`
+	Language string `json:"language,omitempty"`
+	Clucking bool   `json:"clucking,omitempty"`
 }
 
 type WebhookWebhooksConfig struct {
@@ -70,7 +72,7 @@ type WebhookHandler interface {
 	Endpoint() string // sudo make me a net.URI or something
 	Receiver() WebhookReceiver
 	Dispatcher() WebhookDispatcher
-	Tranformations() []WebhookTransformation
+	Transformations() []WebhookTransformation
 }
 
 type Webhook struct {
