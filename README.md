@@ -78,16 +78,7 @@ d.Start()
 
 ```
 curl -v -X POST http://localhost:8080/foo -d @README.md
-* Hostname was NOT found in DNS cache
-*   Trying 127.0.0.1...
-* Connected to localhost (127.0.0.1) port 8080 (#0)
-> POST /foo HTTP/1.1
-> User-Agent: curl/7.35.0
-> Host: localhost:8080
-> Accept: */*
-> Content-Length: 703
-> Content-Type: application/x-www-form-urlencoded
-> 
+
 * upload completely sent off: 703 out of 703 bytes
 < HTTP/1.1 200 OK
 < Date: Fri, 20 May 2016 01:31:05 GMT
