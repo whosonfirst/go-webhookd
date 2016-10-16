@@ -91,6 +91,19 @@ curl -v -X POST http://localhost:8080/foo -d @README.md
 {'pattern': None, 'type': 'message', 'channel': 'webhookd', 'data': '# go-whosonfirst-webhookd## ImportantYou should not try to use this, yet. No. No, really.## UsageIt _should_ work something like this. If you\'re reading this sentence that means it _doesn\'t_.```import (\t"github.com/whosonfirst/go-whosonfirst-webhookd"\t"github.com/whosonfirst/go-whosonfirst-webhookd/dispatchers"\t"github.com/whosonfirst/go-whosonfirst-webhookd/receivers")dispatcher := dispatchers.NewPubSubDispatcher("localhost", 6379, "pubsub-channel")receiver := receivers.NewGitHubReceiver("github-webhook-s33kret")endpoint := "/wubwubwub"webhook := webhookd.NewWebhook(endpoint, receiver, dispatcher)daemon := webhookd.NewWebHookDaemon(webhook)daemon.AddWebhook(webhook)daemon.Start()```## See also'}
 ```
 
+It went to Redis [PubSub](http://redis.io/topics/pubsub) land!
+
+## Utilities
+
+### webhookd
+
+```
+./bin/webhookd -h
+Usage of ./bin/webhookd:
+  -config string
+    	Path to a valid webhookd config file
+```
+
 ## Config files
 
 ### daemon
@@ -148,18 +161,11 @@ curl -v -X POST http://localhost:8080/foo -d @README.md
 
 ### PubSub
 
-## Utilities
-
-### webhookd
-
-```
-./bin/webhookd -h
-Usage of ./bin/webhookd:
-  -config string
-    	Path to a valid webhookd config file
-```
-
 ## To do
 
 * Documentation
 * Logging
+
+## See also
+
+* http://redis.io/topics/pubsub
