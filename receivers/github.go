@@ -1,5 +1,10 @@
 package receivers
 
+// https://developer.github.com/webhooks/
+// https://developer.github.com/webhooks/#payloads
+// https://developer.github.com/v3/activity/events/types/#pushevent
+// https://developer.github.com/v3/repos/hooks/#ping-a-hook
+
 import (
 	"crypto/hmac"
 	"github.com/whosonfirst/go-webhookd"
