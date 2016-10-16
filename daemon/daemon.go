@@ -52,11 +52,10 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(config *webhookd.WebhookConfig) er
 			return errors.New(msg)
 		}
 
-		receiver_config, ok := config.Receivers[hook.Receiver]
+		receiver_config, err := config.GetReceiverConfigByName(hook.Receiver)
 
-		if !ok {
-			msg := fmt.Sprintf("Undefined receiver at offset %d", i+1)
-			return errors.New(msg)
+		if err != nil {
+			return err
 		}
 
 		receiver, err := receivers.NewReceiverFromConfig(receiver_config)
@@ -65,11 +64,10 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(config *webhookd.WebhookConfig) er
 			return err
 		}
 
-		dispatcher_config, ok := config.Dispatchers[hook.Dispatcher]
+		dispatcher_config, err := config.GetDispatcherConfigByName(hook.Dispatcher)
 
-		if !ok {
-			msg := fmt.Sprintf("Undefined dispatcher at offset %d", i+1)
-			return errors.New(msg)
+		if err != nil {
+			return err
 		}
 
 		dispatcher, err := dispatchers.NewDispatcherFromConfig(dispatcher_config)

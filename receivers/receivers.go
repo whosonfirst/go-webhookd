@@ -5,7 +5,7 @@ import (
 	"github.com/whosonfirst/go-whosonfirst-webhookd"
 )
 
-func NewReceiverFromConfig(config webhookd.WebhookReceiverConfig) (webhookd.WebhookReceiver, error) {
+func NewReceiverFromConfig(config *webhookd.WebhookReceiverConfig) (webhookd.WebhookReceiver, error) {
 
 	if config.Name == "Insecure" {
 		return NewInsecureReceiver()

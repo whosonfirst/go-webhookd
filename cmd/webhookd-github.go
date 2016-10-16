@@ -37,10 +37,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	receiver_config, ok := config.Receivers[*receiver_name]
+	receiver_config, err := config.GetReceiverConfigByName(*receiver_name)
 
-	if !ok {
-		log.Fatal("Invalid receiver name")
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	body := strings.Join(flag.Args(), " ")
@@ -70,6 +70,10 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if rsp.StatusCode != 200 {
+		log.Fatal(rsp.Status)
+	}
+
 	b, err := ioutil.ReadAll(rsp.Body)
-	log.Println(string(b))
+	log.Println(rsp.Status, string(b))
 }

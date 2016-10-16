@@ -2,6 +2,7 @@ package webhookd
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -83,6 +84,28 @@ func NewConfigFromFile(file string) (*WebhookConfig, error) {
 	}
 
 	return &c, nil
+}
+
+func (c *WebhookConfig) GetReceiverConfigByName(name string) (*WebhookReceiverConfig, error) {
+
+	config, ok := c.Receivers[name]
+
+	if !ok {
+		return nil, errors.New("Invalid receiver name")
+	}
+
+	return &config, nil
+}
+
+func (c *WebhookConfig) GetDispatcherConfigByName(name string) (*WebhookDispatcherConfig, error) {
+
+	config, ok := c.Dispatchers[name]
+
+	if !ok {
+		return nil, errors.New("Invalid dispatcher name")
+	}
+
+	return &config, nil
 }
 
 func NewWebhook(endpoint string, receiver WebhookReceiver, dispatcher WebhookDispatcher) (Webhook, error) {

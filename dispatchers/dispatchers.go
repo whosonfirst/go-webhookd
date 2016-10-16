@@ -5,7 +5,7 @@ import (
 	"github.com/whosonfirst/go-whosonfirst-webhookd"
 )
 
-func NewDispatcherFromConfig(config webhookd.WebhookDispatcherConfig) (webhookd.WebhookDispatcher, error) {
+func NewDispatcherFromConfig(config *webhookd.WebhookDispatcherConfig) (webhookd.WebhookDispatcher, error) {
 
 	if config.Name == "PubSub" {
 		return NewPubSubDispatcher(config.Host, config.Port, config.Channel)
