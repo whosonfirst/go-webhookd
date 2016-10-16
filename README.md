@@ -16,7 +16,21 @@ All of this package's dependencies are bundled with the code in the `vendor` dir
 
 ## Usage
 
-### Setting up webhookd "by hand"
+### webhookd
+
+```
+./bin/webhookd -h
+Usage of ./bin/webhookd:
+  -config string
+    	Path to a valid webhookd config file
+```
+
+`webhookd` is an HTTP daemon for handling webhook requests. Individual webhook endpoints (and how they are processed) are defined in a config file that is read at start-up time.
+
+_In the future there might be dynamic (or runtime) webhook endpoints but today there are not._
+
+
+### Setting up a `webhookd` server "by hand"
 
 _All error handling has been removed from the examples below for the sake of brevity._
 
@@ -44,7 +58,7 @@ daemon.AddWebhook(webhook)
 daemon.Start()
 ```
 
-### Setting up webhookd with a handy config file
+### Setting up a `webhookd` server with a handy config file
 
 ```
 import (
@@ -93,18 +107,9 @@ curl -v -X POST http://localhost:8080/foo -d @README.md
 
 It went to Redis [PubSub](http://redis.io/topics/pubsub) land!
 
-## Utilities
-
-### webhookd
-
-```
-./bin/webhookd -h
-Usage of ./bin/webhookd:
-  -config string
-    	Path to a valid webhookd config file
-```
-
 ## Config files
+
+Config files for `webhookd` are JSON files consisting of four top-level sections. They are:
 
 ### daemon
 
@@ -114,6 +119,8 @@ Usage of ./bin/webhookd:
 		"port": 8080
 	}
 ```
+
+The `daemon` section is a dictionary defining configuration details for the `webhookd` daemon itself.
 
 ### receivers
 
@@ -129,6 +136,8 @@ Usage of ./bin/webhookd:
 	}
 ```
 
+The `receivers` section is a dictionary of "named" receiver configuations. This allows the actual webhook configurations (described below) to signal their respective receivers using the receiver "name" as a simple short-hand.
+
 ### dispatchers
 
 ```
@@ -142,6 +151,8 @@ Usage of ./bin/webhookd:
 	}
 ```
 
+The `dispatchers` section is a dictionary of "named" dispatcher configuations. This allows the actual webhook configurations (described below) to signal their respective dispatchers using the dispatcher "name" as a simple short-hand.
+
 ### webhooks
 
 ```
@@ -151,21 +162,98 @@ Usage of ./bin/webhookd:
 	]
 ```
 
+The `webhooks` section is a list of dictionaries. These are the actual webhook endpoints that clients (out there on the internet) will access.
+
+#### endpoint
+
+This is the path that a client will access. It _is_ the webhook.
+
+#### receiver
+
+The named receiver (defined in the `receivers` section) that the webhook will use to process requests.
+
+#### dispatcher
+
+The named dispatcher (defined in the `dispatchers` section) that the webhook will relay a successful request to.
+
 ## Receivers
 
 ### Insecure
 
+```
+	{
+		"name": "Insecure"
+	}
+```
+
+As the name suggests this receiver is completely insecure. It will happily accept anything you send to it and relay it on to the dispatcher defined for that webhook. This receiver exists primarily for debugging purposes and **you should not deploy it in production**.
+
+The `Insecure` receiver has the following properties:
+
+#### name
+
+This is always `Insecure`.
+
 ### GitHub
+
+```
+	{
+		"name": "GitHub",
+		"secret": "s33kret"
+	}
+```
+
+TBW.
+
+The `GitHub` receiver has the following properties:
+
+#### name
+
+This is always `GitHub`.
+
+#### secret
+
+TBW
 
 ## Dispatchers
 
 ### PubSub
 
+```
+	{
+		"name": "PubSub",
+		"host": "localhost",
+		"port": 6379,
+		"channel": "webhookd"
+	}
+```
+
+TBW.
+
+The `PubSub` dispatcher has the following properties:
+
+#### name _string_
+
+This is always `PubSub`.
+
+#### host _string_
+
+The address of the Redis host you want to connect to.
+
+#### port _int_
+
+The port number of the Redis host you want to connect to.
+
+#### channel _string_
+
+The name of the Redis PubSub channel you want to send messages to.
+
 ## To do
 
-* Documentation
+* More documentation
 * Logging
 
 ## See also
 
+* https://en.wikipedia.org/wiki/Webhook
 * http://redis.io/topics/pubsub
