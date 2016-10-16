@@ -37,7 +37,7 @@ _All error handling has been removed from the examples below for the sake of bre
 ```
 import (
 	"flag"
-	"github.com/whosonfirst/go-webhookd"
+	"github.com/whosonfirst/go-webhookd/daemon"	
 	"github.com/whosonfirst/go-webhookd/dispatchers"
 	"github.com/whosonfirst/go-webhookd/receivers"
 )
@@ -47,15 +47,15 @@ import (
 
 flag.Parse()
 
-daemon, _ := webhookd.NewWebhookDaemon(*host, *port)
+d, _ := daemon.NewWebhookDaemon(*host, *port)
 
 receiver, _ := receivers.NewInsecureReceiver()
 dispatcher, _ := dispatchers.NewPubSubDispatcher(*pubsub_host, *pubsub_port, *pubsub_channel)
 
 webhook, _ := webhookd.NewWebhook(*endpoint, receiver, dispatcher)
-daemon.AddWebhook(webhook)
+d.AddWebhook(webhook)
 
-daemon.Start()
+d.Start()
 ```
 
 See the way we're using an `Insecure` receiver and a `PubSub` dispatcher. Both are discussed in detail below.
@@ -183,7 +183,7 @@ As the name suggests this receiver is completely insecure. It will happily accep
 
 The `Insecure` receiver has the following properties:
 
-#### name
+#### name _string_
 
 This is always `Insecure`.
 
@@ -200,11 +200,11 @@ TBW.
 
 The `GitHub` receiver has the following properties:
 
-#### name
+#### name _string_
 
 This is always `GitHub`.
 
-#### secret
+#### secret _string_
 
 TBW
 
