@@ -3,18 +3,25 @@
 		"host": "localhost",
 		"port": 8080
 	},
-	"receiver": {
-		"x-name": "Insecure",
-		"name": "GitHub",
-		"secret": "s33kret"
+	"receivers": {
+		"insecure": {
+			"name": "Insecure"
+		},
+		"github": {
+			"name": "GitHub",
+			"secret": "s33kret"
+		}
 	},
-	"dispatcher": {
-		"name": "PubSub",
-		"host": "localhost",
-		"port": 6379,
-		"channel": "webhookd"
+	"dispatchers": {
+		"pubsub": {
+			"name": "PubSub",
+			"host": "localhost",
+			"port": 6379,
+			"channel": "webhookd"
+		}
 	},
 	"webhooks": [
-		{ "endpoint": "/pooface" }
+		{ "endpoint": "/github-test", "receiver": "github", "dispatcher": "pubsub" },
+		{ "endpoint": "/insecure-test", "receiver": "insecure", "dispatcher": "pubsub" }		
 	]
 }
