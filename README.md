@@ -29,8 +29,22 @@ Usage of ./bin/webhookd:
 
 #### Caveats
 
-* TLS is not supported yet so you **should not** run `webhookd` on the public internets without first putting a TLS-enabled proxy in front of it.
-* In the future there might be dynamic (or runtime) webhook endpoints but today there are not.
+##### TLS
+
+TLS is not supported yet so you **should not** run `webhookd` on the public internets without first putting a TLS-enabled proxy in front of it.
+
+##### Dynamic endpoints
+
+In the future there might be dynamic (or runtime) webhook endpoints but today there are not. In the meantime you can gracefully restart `webhookd` by sending its PID a `USR2` signal which will cause the config file (and all the endpoints it defines) to be re-read. It's not elegant but it works. For example:
+
+```
+$> ./bin/webhookd -config config.json
+2016/10/16 00:19:47 Serving 127.0.0.1:8080 with pid 2723
+
+$> kill -USR2 2723
+2016/10/16 00:19:59 Graceful handoff of 127.0.0.1:8080 with new pid 2724 and old pid 2723
+2016/10/16 00:19:59 Exiting pid 2723.
+```
 
 ### Setting up a `webhookd` server "by hand"
 
