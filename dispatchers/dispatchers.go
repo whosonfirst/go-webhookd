@@ -9,6 +9,8 @@ func NewDispatcherFromConfig(config *webhookd.WebhookDispatcherConfig) (webhookd
 
 	if config.Name == "PubSub" {
 		return NewPubSubDispatcher(config.Host, config.Port, config.Channel)
+	} else if config.Name == "Slack" {
+		return NewSlackDispatcher(config.Config)
 	} else {
 		return nil, errors.New("Invalid dispatcher")
 	}

@@ -39,6 +39,7 @@ type WebhookDispatcherConfig struct {
 	Host    string `json:"host,omitempty"`
 	Port    int    `json:"port,omitempty"`
 	Channel string `json:"channel,omitempty"`
+	Config	string `json:"config,omitempty"`
 }
 
 type WebhookWebhooksConfig struct {
