@@ -27,8 +27,10 @@ Usage of ./bin/webhookd:
 
 `webhookd` is an HTTP daemon for handling webhook requests. Individual webhook endpoints (and how they are processed) are defined in a config file that is read at start-up time.
 
-_In the future there might be dynamic (or runtime) webhook endpoints but today there are not._
+#### Caveats
 
+* TLS is not supported yet so you **should not** run `webhookd` on the public internets without first putting a TLS-enabled proxy in front of it.
+* In the future there might be dynamic (or runtime) webhook endpoints but today there are not.
 
 ### Setting up a `webhookd` server "by hand"
 
