@@ -194,22 +194,6 @@ The named dispatcher (defined in the `dispatchers` section) that the webhook wil
 
 ## Receivers
 
-### Insecure
-
-```
-	{
-		"name": "Insecure"
-	}
-```
-
-As the name suggests this receiver is completely insecure. It will happily accept anything you send to it and relay it on to the dispatcher defined for that webhook. This receiver exists primarily for debugging purposes and **you should not deploy it in production**.
-
-The `Insecure` receiver has the following properties:
-
-#### name _string_
-
-This is always `Insecure`.
-
 ### GitHub
 
 ```
@@ -230,6 +214,36 @@ This is always `GitHub`.
 #### secret _string_
 
 TBW
+
+### Insecure
+
+```
+	{
+		"name": "Insecure"
+	}
+```
+
+As the name suggests this receiver is completely insecure. It will happily accept anything you send to it and relay it on to the dispatcher defined for that webhook. This receiver exists primarily for debugging purposes and **you should not deploy it in production**.
+
+The `Insecure` receiver has the following properties:
+
+#### name _string_
+
+This is always `Insecure`.
+
+### Slack
+
+```
+	{
+		"name": "Slack"
+	}
+```
+
+The `Slack` receiver has the following properties:
+
+#### name _string_
+
+This is always `Slack`.
 
 ## Dispatchers
 

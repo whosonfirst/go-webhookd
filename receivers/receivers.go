@@ -11,6 +11,8 @@ func NewReceiverFromConfig(config *webhookd.WebhookReceiverConfig) (webhookd.Web
 		return NewInsecureReceiver()
 	} else if config.Name == "GitHub" {
 		return NewGitHubReceiver(config.Secret)
+	} else if config.Name == "Slack" {
+		return NewSlackReceiver()
 	} else {
 		return nil, errors.New("Invalid receiver")
 	}
