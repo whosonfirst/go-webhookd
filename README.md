@@ -377,9 +377,10 @@ The `Slack` dispatcher will send messages to a Slack channel using the [slackcat
 
 ## To do
 
-* More documentation
+* [Add a general purpose "shared-secret/signed-message" receiver](https://github.com/whosonfirst/go-webhookd/issues/5)
+* [Add support for TLS](https://github.com/whosonfirst/go-webhookd/issues/4)
+* [Restrict access to receivers by host/IP](https://github.com/whosonfirst/go-webhookd/issues/6)
 * Better logging
-* Restrict access to receivers by host/IP
 
 ## See also
 
