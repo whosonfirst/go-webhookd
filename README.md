@@ -156,6 +156,10 @@ The `daemon` section is a dictionary defining configuration details for the `web
 
 The `receivers` section is a dictionary of "named" receiver configuations. This allows the actual webhook configurations (described below) to signal their respective receivers using the receiver "name" as a simple short-hand.
 
+### transformations
+
+TBW.
+
 ### dispatchers
 
 ```
@@ -175,8 +179,8 @@ The `dispatchers` section is a dictionary of "named" dispatcher configuations. T
 
 ```
 	"webhooks": [
-		{ "endpoint": "/github-test", "receiver": "github", "dispatcher": "pubsub" },
-		{ "endpoint": "/insecure-test", "receiver": "insecure", "dispatcher": "pubsub" }		
+		{ "endpoint": "/github-test", "receiver": "github", "dispatchers": [ "pubsub" ] },
+		{ "endpoint": "/insecure-test", "receiver": "insecure", "dispatchers": [ "pubsub" ] }		
 	]
 ```
 
@@ -190,9 +194,13 @@ This is the path that a client will access. It _is_ the webhook.
 
 The named receiver (defined in the `receivers` section) that the webhook will use to process requests.
 
-#### dispatcher
+#### transformations
 
-The named dispatcher (defined in the `dispatchers` section) that the webhook will relay a successful request to.
+The list of named transformations (defined in the `transformations` section) that the webhook process the message body with.
+
+#### dispatchers
+
+The list of named dispatchers (defined in the `dispatchers` section) that the webhook will relay a successful request to.
 
 ## Receivers
 
