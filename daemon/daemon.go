@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/facebookgo/grace/gracehttp"
 	"github.com/whosonfirst/go-webhookd"
+	"github.com/whosonfirst/go-webhookd/config"
 	"github.com/whosonfirst/go-webhookd/dispatchers"
 	"github.com/whosonfirst/go-webhookd/receivers"
 	"github.com/whosonfirst/go-webhookd/transformations"
@@ -20,15 +21,15 @@ type WebhookDaemon struct {
 	webhooks map[string]webhookd.WebhookHandler
 }
 
-func NewWebhookDaemonFromConfig(config *webhookd.WebhookConfig) (*WebhookDaemon, error) {
+func NewWebhookDaemonFromConfig(cfg *config.WebhookConfig) (*WebhookDaemon, error) {
 
-	d, err := NewWebhookDaemon(config.Daemon.Host, config.Daemon.Port)
+	d, err := NewWebhookDaemon(cfg.Daemon.Host, cfg.Daemon.Port)
 
 	if err != nil {
 		return nil, err
 	}
 
-	err = d.AddWebhooksFromConfig(config)
+	err = d.AddWebhooksFromConfig(cfg)
 
 	if err != nil {
 		return nil, err
@@ -50,13 +51,13 @@ func NewWebhookDaemon(host string, port int) (*WebhookDaemon, error) {
 	return &d, nil
 }
 
-func (d *WebhookDaemon) AddWebhooksFromConfig(config *webhookd.WebhookConfig) error {
+func (d *WebhookDaemon) AddWebhooksFromConfig(cfg *config.WebhookConfig) error {
 
-	if len(config.Webhooks) == 0 {
+	if len(cfg.Webhooks) == 0 {
 		return errors.New("No webhooks defined")
 	}
 
-	for i, hook := range config.Webhooks {
+	for i, hook := range cfg.Webhooks {
 
 		if hook.Endpoint == "" {
 			msg := fmt.Sprintf("Missing endpoint at offset %d", i+1)
@@ -73,7 +74,7 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(config *webhookd.WebhookConfig) er
 			return errors.New(msg)
 		}
 
-		receiver_config, err := config.GetReceiverConfigByName(hook.Receiver)
+		receiver_config, err := cfg.GetReceiverConfigByName(hook.Receiver)
 
 		if err != nil {
 			return err
@@ -89,7 +90,7 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(config *webhookd.WebhookConfig) er
 
 		for _, name := range hook.Transformations {
 
-			transformation_config, err := config.GetTransformationConfigByName(name)
+			transformation_config, err := cfg.GetTransformationConfigByName(name)
 
 			if err != nil {
 				return err
@@ -108,7 +109,7 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(config *webhookd.WebhookConfig) er
 
 		for _, name := range hook.Dispatchers {
 
-			dispatcher_config, err := config.GetDispatcherConfigByName(name)
+			dispatcher_config, err := cfg.GetDispatcherConfigByName(name)
 
 			if err != nil {
 				return err

@@ -4,18 +4,20 @@ import (
 	"errors"
 	"fmt"
 	"github.com/whosonfirst/go-webhookd"
+	"github.com/whosonfirst/go-webhookd/config"
 )
 
-func NewReceiverFromConfig(config *webhookd.WebhookReceiverConfig) (webhookd.WebhookReceiver, error) {
+func NewReceiverFromConfig(cfg *config.WebhookReceiverConfig) (webhookd.WebhookReceiver, error) {
 
-	if config.Name == "Insecure" {
+	switch cfg.Name {
+	case "GitHub":
+		return NewGitHubReceiver(cfg.Secret)
+	case "Insecure":
 		return NewInsecureReceiver()
-	} else if config.Name == "GitHub" {
-		return NewGitHubReceiver(config.Secret)
-	} else if config.Name == "Slack" {
+	case "Slack":
 		return NewSlackReceiver()
-	} else {
-		msg := fmt.Sprintf("Invalid receiver: '%s'", config.Name)
+	default:
+		msg := fmt.Sprintf("Undefined receiver: '%s'", cfg.Name)
 		return nil, errors.New(msg)
 	}
 }

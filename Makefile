@@ -6,6 +6,7 @@ prep:
 
 self:   prep
 	if test -d src/github.com/whosonfirst/go-webhookd; then rm -rf src/github.com/whosonfirst/go-webhookd; fi
+	mkdir -p src/github.com/whosonfirst/go-webhookd/config
 	mkdir -p src/github.com/whosonfirst/go-webhookd/daemon
 	mkdir -p src/github.com/whosonfirst/go-webhookd/dispatchers
 	mkdir -p src/github.com/whosonfirst/go-webhookd/github
@@ -13,6 +14,7 @@ self:   prep
 	mkdir -p src/github.com/whosonfirst/go-webhookd/transformations
 	mkdir -p src/github.com/whosonfirst/go-webhookd/webhook
 	cp webhookd.go src/github.com/whosonfirst/go-webhookd/
+	cp config/*.go src/github.com/whosonfirst/go-webhookd/config/
 	cp daemon/*.go src/github.com/whosonfirst/go-webhookd/daemon/
 	cp dispatchers/*.go src/github.com/whosonfirst/go-webhookd/dispatchers/
 	cp github/*.go src/github.com/whosonfirst/go-webhookd/github/
@@ -41,6 +43,7 @@ vendor-deps: rmdeps deps
 
 fmt:
 	go fmt cmd/*.go
+	go fmt config/*.go
 	go fmt daemon/*.go
 	go fmt dispatchers/*.go
 	go fmt github/*.go

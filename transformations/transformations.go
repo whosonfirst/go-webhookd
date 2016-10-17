@@ -2,19 +2,22 @@ package transformations
 
 import (
 	"errors"
+	"fmt"
 	"github.com/whosonfirst/go-webhookd"
+	"github.com/whosonfirst/go-webhookd/config"
 )
 
-func NewTransformationFromConfig(config *webhookd.WebhookTransformationConfig) (webhookd.WebhookTransformation, error) {
+func NewTransformationFromConfig(cfg *config.WebhookTransformationConfig) (webhookd.WebhookTransformation, error) {
 
-	switch config.Name {
+	switch cfg.Name {
 	case "Chicken":
-		return NewChickenTransformation(config.Language, config.Clucking)
+		return NewChickenTransformation(cfg.Language, cfg.Clucking)
 	case "Null":
 		return NewNullTransformation()
 	case "Slack":
 		return NewSlackTransformation()
 	default:
-		return nil, errors.New("Undefined transformation")
+		msg := fmt.Sprintf("Undefined transformation: '%s'", cfg.Name)
+		return nil, errors.New(msg)
 	}
 }
