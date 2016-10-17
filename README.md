@@ -4,7 +4,7 @@
 
 What is the simplest webhook-wrangling server-daemon-thing.
 
-In many ways (at least so far) this is nothing more than a fancy bucket-brigade. By design.
+In many ways this is nothing more than a fancy bucket-brigade. By design.
 
 Receivers handle the actual webhook side of things, doing auth and basic sanity checking and validation. Assuming everything is as it should be receivers return a bag of bytes (the actual webhook message that may or may not be massaged depending the receiver). That bag is then handed to one or more dispatchers which do _something_ with those bytes. Those details, including security considerations are left as an exercise to the reader.
 
