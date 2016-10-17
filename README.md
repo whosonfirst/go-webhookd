@@ -260,7 +260,7 @@ TBW. _This receiver has not been fully tested yet so proceed with caution._
 	}
 ```
 
-This will transformation every word to 🐔 using the [go-chicken](https://github.com/thisisaaronland/go-chicken) package. If this seems silly that's because it is. It's also more fun that yet-another "convert all the words to be upper-cased" example.
+This will convert every word in your message to 🐔 using the [go-chicken](https://github.com/thisisaaronland/go-chicken) package. If this seems silly that's because it is. It's also more fun that yet-another "convert all the words to be upper-cased" example.
 
 #### Properties
 
@@ -288,7 +288,7 @@ TBW.
 
 ```
 	{
-		"name": "PubSub"
+		"name": "Null"
 	}
 ```
 
