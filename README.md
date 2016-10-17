@@ -33,7 +33,7 @@ Usage of ./bin/webhookd:
 
 ##### TLS
 
-TLS is not supported yet so you **should not** run `webhookd` on the public internets without first putting a TLS-enabled proxy in front of it.
+TLS is not supported yet so **you should not run `webhookd` on the public internets** without first putting a TLS-enabled proxy in front of it.
 
 ##### Dynamic endpoints
 
