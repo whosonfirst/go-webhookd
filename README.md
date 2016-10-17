@@ -97,7 +97,7 @@ wh_dispatchers, _ := []webhookd.WebhookDispatcher{ pubsub }
 wh, _ := webhook.NewWebhook("/foo", wh_receiver, wh_transformations, wh_dispatchers)
 
 wh_daemon, _ := daemon.NewWebhookDaemon("localhost", 8080)
-wh_daemon.AddWebhook(eh)
+wh_daemon.AddWebhook(wh)
 wh_daemon.Start()
 ```
 
