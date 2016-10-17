@@ -8,6 +8,7 @@ import (
 	"github.com/whosonfirst/go-webhookd/dispatchers"
 	"github.com/whosonfirst/go-webhookd/receivers"
 	"github.com/whosonfirst/go-webhookd/transformations"
+	"github.com/whosonfirst/go-webhookd/webhook"
 	_ "log"
 	"net/http"
 	"sync"
@@ -122,13 +123,13 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(config *webhookd.WebhookConfig) er
 			sendto = append(sendto, dispatcher)
 		}
 
-		webhook, err := webhookd.NewWebhook(hook.Endpoint, receiver, steps, sendto)
+		wh, err := webhook.NewWebhook(hook.Endpoint, receiver, steps, sendto)
 
 		if err != nil {
 			return err
 		}
 
-		err = d.AddWebhook(webhook)
+		err = d.AddWebhook(wh)
 
 		if err != nil {
 			return err
@@ -139,7 +140,7 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(config *webhookd.WebhookConfig) er
 	return nil
 }
 
-func (d *WebhookDaemon) AddWebhook(wh webhookd.Webhook) error {
+func (d *WebhookDaemon) AddWebhook(wh webhook.Webhook) error {
 
 	endpoint := wh.Endpoint()
 	_, ok := d.webhooks[endpoint]

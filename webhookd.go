@@ -75,14 +75,6 @@ type WebhookHandler interface {
 	Dispatchers() []WebhookDispatcher
 }
 
-type Webhook struct {
-	WebhookHandler
-	endpoint        string
-	receiver        WebhookReceiver
-	dispatchers     []WebhookDispatcher
-	transformations []WebhookTransformation
-}
-
 func NewConfigFromFile(file string) (*WebhookConfig, error) {
 
 	body, err := ioutil.ReadFile(file)
@@ -132,32 +124,4 @@ func (c *WebhookConfig) GetTransformationConfigByName(name string) (*WebhookTran
 	}
 
 	return &config, nil
-}
-
-func NewWebhook(endpoint string, receiver WebhookReceiver, transformations []WebhookTransformation, dispatchers []WebhookDispatcher) (Webhook, error) {
-
-	wh := Webhook{
-		endpoint:        endpoint,
-		receiver:        receiver,
-		transformations: transformations,
-		dispatchers:     dispatchers,
-	}
-
-	return wh, nil
-}
-
-func (wh Webhook) Endpoint() string {
-	return wh.endpoint
-}
-
-func (wh Webhook) Receiver() WebhookReceiver {
-	return wh.receiver
-}
-
-func (wh Webhook) Dispatchers() []WebhookDispatcher {
-	return wh.dispatchers
-}
-
-func (wh Webhook) Transformations() []WebhookTransformation {
-	return wh.transformations
 }

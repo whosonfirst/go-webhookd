@@ -11,12 +11,14 @@ self:   prep
 	mkdir -p src/github.com/whosonfirst/go-webhookd/github
 	mkdir -p src/github.com/whosonfirst/go-webhookd/receivers
 	mkdir -p src/github.com/whosonfirst/go-webhookd/transformations
+	mkdir -p src/github.com/whosonfirst/go-webhookd/webhook
 	cp webhookd.go src/github.com/whosonfirst/go-webhookd/
 	cp daemon/*.go src/github.com/whosonfirst/go-webhookd/daemon/
 	cp dispatchers/*.go src/github.com/whosonfirst/go-webhookd/dispatchers/
 	cp github/*.go src/github.com/whosonfirst/go-webhookd/github/
 	cp receivers/*.go src/github.com/whosonfirst/go-webhookd/receivers/
 	cp transformations/*.go src/github.com/whosonfirst/go-webhookd/transformations/
+	cp webhook/*.go src/github.com/whosonfirst/go-webhookd/webhook/
 	cp -r vendor/src/* src/
 
 rmdeps:
@@ -44,6 +46,7 @@ fmt:
 	go fmt github/*.go
 	go fmt receivers/*.go
 	go fmt transformations/*.go
+	go fmt webhook/*.go
 	go fmt *.go
 
 bin: 	rmdeps self
