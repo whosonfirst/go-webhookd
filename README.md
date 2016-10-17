@@ -41,7 +41,9 @@ TLS is not supported yet so **you should not run `webhookd` on the public intern
 
 ##### Dynamic endpoints
 
-In the future there might be dynamic (or runtime) webhook endpoints but today there are not. In the meantime you can gracefully restart `webhookd` by sending its PID a `USR2` signal which will cause the config file (and all the endpoints it defines) to be re-read. It's not elegant but it works. For example:
+At some point there might be dynamic (or runtime) webhook endpoints but today there are not.
+
+In the meantime you can gracefully restart `webhookd` by sending its PID a `USR2` signal which will cause the config file (and all the endpoints it defines) to be re-read. It's not elegant but it works. For example:
 
 ```
 $> ./bin/webhookd -config config.json
@@ -377,6 +379,7 @@ The `Slack` dispatcher will send messages to a Slack channel using the [slackcat
 
 * More documentation
 * Better logging
+* Restrict access to receivers by host/IP
 
 ## See also
 
