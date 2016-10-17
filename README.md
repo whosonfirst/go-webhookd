@@ -56,7 +56,7 @@ $> kill -USR2 2723
 
 While you can set up a `webhookd` server by hand it's probably easier to all that work with a config file and let code take care of all the details, including registering all the webhooks. [Config files](#config-files) are discussed in detail below.
 
-_All error handling has been removed from the examples below for the sake of brevity._
+_All error handling in the examples below have been removed for the sake of brevity._
 
 #### Setting up a `webhookd` server with a handy config file
 
@@ -69,44 +69,39 @@ import (
 wh_config, _ := config.NewConfigFromFile("config.json")
 
 wh_daemon, _ := daemon.NewWebhookDaemonFromConfig(wh_config)
-
-// You can also just grab the HTTP handler func with d.HandlerFunc()
-// if you need or want to start a webhookd daemon in your own way
-
 wh_daemon.Start()
 ```
 
-#### Setting up a `webhookd` server "by hand"
+_You can also just grab the HTTP handler func with `wh_daemon.HandlerFunc()` if you need or want to start a webhookd daemon in your own way._
 
-Imagine flags here but also imagine that *pubsub_channel is "webhookd" and *endpoint is "/foo"
+#### Setting up a `webhookd` server "by hand"
 
 ```
 import (
-	"flag"
+	"github.com/whosonfirst/go-webhookd"		
 	"github.com/whosonfirst/go-webhookd/daemon"	
 	"github.com/whosonfirst/go-webhookd/dispatchers"
-	"github.com/whosonfirst/go-webhookd/transformations"	
 	"github.com/whosonfirst/go-webhookd/receivers"
+	"github.com/whosonfirst/go-webhookd/transformations"
+	"github.com/whosonfirst/go-webhookd/webhook"	
 )
 
-flag.Parse()
+wh_receiver, _ := receivers.NewInsecureReceiver()
 
-d, _ := daemon.NewWebhookDaemon(*host, *port)
+null, _ := transfromations.NewNullTransformation()
+wh_transformations := []webhookd.WebhookTransformation{ null }
 
-receiver, _ := receivers.NewInsecureReceiver()
+pubsub, _ := dispatchers.NewPubSubDispatcher("localhost", 6379, "websocketd")
+wh_dispatchers, _ := []webhookd.WebhookDispatcher{ pubsub }
 
-transformations := []webhookd.WebhookTransformation{}
+wh, _ := webhook.NewWebhook("/foo", wh_receiver, wh_transformations, wh_dispatchers)
 
-pubsub, _ := dispatchers.NewPubSubDispatcher(*pubsub_host, *pubsub_port, *pubsub_channel)
-dispatchers, _ :=[]webhookd.WebhookDispatcher{ pubsub }
-
-webhook, _ := webhookd.NewWebhook(*endpoint, receiver, transformations, dispatchers)
-d.AddWebhook(webhook)
-
-d.Start()
+wh_daemon, _ := daemon.NewWebhookDaemon("localhost", 8080)
+wh_daemon.AddWebhook(eh)
+wh_daemon.Start()
 ```
 
-See the way we're using an `Insecure` receiver and a `PubSub` dispatcher and an empty set of transformations? All are these are discussed in detail below.
+See the way we're using an `Insecure` receiver and a `PubSub` dispatcher with a `Null` transformation? All are these are discussed in detail below.
 
 ## Sending stuff to webhookd
 
