@@ -277,7 +277,7 @@ This receiver handles Webhooks sent from Slack. It does not process the message 
 	}
 ```
 
-The `Chicken` transformation will convert every word in your message to 🐔 using the [go-chicken](https://github.com/thisisaaronland/go-chicken) package. If this seems silly that's because it is. It's also more fun that yet-another "convert all the words to be upper-cased" example.
+The `Chicken` transformation will convert every word in your message to 🐔 using the [go-chicken](https://github.com/thisisaaronland/go-chicken) package. If this seems silly that's because it is. It's also more fun that yet-another boring _"make all the words upper-cased"_ example.
 
 #### Properties
 
