@@ -133,7 +133,7 @@ curl -v -X POST http://localhost:8080/foo -d @README.md
 {'pattern': None, 'type': 'message', 'channel': 'webhookd', 'data': '# go-webhookd## ImportantYou should not try to use this, yet. No. No, really.## UsageIt _should_ work something like this. If you\'re reading this sentence that means it _doesn\'t_.```import (\t"github.com/whosonfirst/go-webhookd"\t"github.com/whosonfirst/go-webhookd/dispatchers"\t"github.com/whosonfirst/go-webhookd/receivers")dispatcher := dispatchers.NewPubSubDispatcher("localhost", 6379, "pubsub-channel")receiver := receivers.NewGitHubReceiver("github-webhook-s33kret")endpoint := "/wubwubwub"webhook := webhookd.NewWebhook(endpoint, receiver, dispatcher)daemon := webhookd.NewWebHookDaemon(webhook)daemon.AddWebhook(webhook)daemon.Start()```## See also'}
 ```
 
-It went to Redis [PubSub](http://redis.io/topics/pubsub) land!
+In this case, it went to Redis [PubSub](http://redis.io/topics/pubsub) land!
 
 ## Config files
 
@@ -215,10 +215,9 @@ The `webhooks` section is a list of dictionaries. These are the actual webhook e
 
 TBW.
 
-The `GitHub` receiver has the following properties:
+#### Properties
 
 * **name**  _string_ This is always `GitHub`.
-
 * **secret** _string_ TBW
 
 ### Insecure
@@ -231,7 +230,7 @@ The `GitHub` receiver has the following properties:
 
 As the name suggests this receiver is completely insecure. It will happily accept anything you send to it and relay it on to the dispatcher defined for that webhook. This receiver exists primarily for debugging purposes and **you should not deploy it in production**.
 
-The `Insecure` receiver has the following properties:
+#### Properties
 
 * **name** _string_ This is always `Insecure`.
 
@@ -245,7 +244,7 @@ The `Insecure` receiver has the following properties:
 
 TBW. _This receiver has not been fully tested yet so proceed with caution._
 
-The `Slack` receiver has the following properties:
+#### Properties
 
 * **name** _string_ This is always `Slack`.
 
@@ -263,7 +262,7 @@ The `Slack` receiver has the following properties:
 
 This will transformation every word to 🐔 using the [go-chicken](https://github.com/thisisaaronland/go-chicken) package. If this seems silly that's because it is. It's also more fun that yet-another "convert all the words to be upper-cased" example.
 
-The `Chicken` transformation has the following properties:
+#### Properties
 
 * **name** _string_ This is always `Chicken`.
 * **language** _string_ A three-letter language code specifying which language `go-chicken` should use.
@@ -279,11 +278,25 @@ The `Chicken` transformation has the following properties:
 
 TBW.
 
-The `Slack` transformation has the following properties:
+#### Properties
 
 * **name** _string_ This is always `Slack`.
 
 ## Dispatchers
+
+### Null
+
+```
+	{
+		"name": "PubSub"
+	}
+```
+
+The `Null` dispatcher will send messages in to the vortex, never to be seen again. This can be useful for debugging.
+
+#### Properties
+
+* **name** _string_ This is always `Null`.
 
 ### PubSub
 
@@ -298,7 +311,7 @@ The `Slack` transformation has the following properties:
 
 TBW.
 
-The `PubSub` dispatcher has the following properties:
+#### Properties
 
 * **name** _string_ This is always `PubSub`.
 * **host** _string_ The address of the Redis host you want to connect to.
@@ -314,10 +327,9 @@ The `PubSub` dispatcher has the following properties:
 	}
 ```
 
-The `Slack` dispatcher has the following properties:
+#### Properties
 
 * **name** _string_ This is always `Slack`.
-
 * **config** _string_ The path to a valid [slackcat](https://github.com/whosonfirst/slackcat#configuring) config file. _Eventually you will be able to specify a plain-vanilla Slack Webhook URL but not today._
 
 ## To do
