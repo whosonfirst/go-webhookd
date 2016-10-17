@@ -7,11 +7,16 @@ import (
 
 func NewDispatcherFromConfig(config *webhookd.WebhookDispatcherConfig) (webhookd.WebhookDispatcher, error) {
 
-	if config.Name == "PubSub" {
+	switch config.Name {
+	case "Log":
+		return NewLogDispatcher()
+	case "Null":
+		return NewNullDispatcher()
+	case "PubSub":
 		return NewPubSubDispatcher(config.Host, config.Port, config.Channel)
-	} else if config.Name == "Slack" {
+	case "Slack":
 		return NewSlackDispatcher(config.Config)
-	} else {
+	default:
 		return nil, errors.New("Invalid dispatcher")
 	}
 }

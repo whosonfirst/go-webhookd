@@ -7,11 +7,14 @@ import (
 
 func NewTransformationFromConfig(config *webhookd.WebhookTransformationConfig) (webhookd.WebhookTransformation, error) {
 
-	if config.Name == "Chicken" {
+	switch config.Name {
+	case "Chicken":
 		return NewChickenTransformation(config.Language, config.Clucking)
-	} else if config.Name == "Null" {
+	case "Null":
 		return NewNullTransformation()
-	} else {
-		return nil, errors.New("Invalid receiver")
+	case "Slack":
+		return NewSlackTransformation()
+	default:
+		return nil, errors.New("Undefined transformation")
 	}
 }

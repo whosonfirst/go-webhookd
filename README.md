@@ -259,14 +259,6 @@ This is always `Slack`.
 	}
 ```
 
-### Null
-
-```
-	{
-		"name": "Null"
-	}
-```
-
 ## Dispatchers
 
 ### PubSub

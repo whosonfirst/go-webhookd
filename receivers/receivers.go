@@ -2,6 +2,7 @@ package receivers
 
 import (
 	"errors"
+	"fmt"
 	"github.com/whosonfirst/go-webhookd"
 )
 
@@ -14,6 +15,7 @@ func NewReceiverFromConfig(config *webhookd.WebhookReceiverConfig) (webhookd.Web
 	} else if config.Name == "Slack" {
 		return NewSlackReceiver()
 	} else {
-		return nil, errors.New("Invalid receiver")
+		msg := fmt.Sprintf("Invalid receiver: '%s'", config.Name)
+		return nil, errors.New(msg)
 	}
 }
