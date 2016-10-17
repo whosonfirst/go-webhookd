@@ -2,19 +2,11 @@ package main
 
 import (
 	"flag"
-	"github.com/whosonfirst/go-webhookd"
+	"github.com/whosonfirst/go-webhookd/config"
 	"github.com/whosonfirst/go-webhookd/daemon"
 	"log"
 	"os"
 )
-
-func ensure_ok(err error) {
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-}
 
 func main() {
 
@@ -26,14 +18,23 @@ func main() {
 		log.Fatal("Missing config file")
 	}
 
-	config, err := webhookd.NewConfigFromFile(*cfg)
-	ensure_ok(err)
+	wh_config, err := config.NewConfigFromFile(*cfg)
 
-	d, err := daemon.NewWebhookDaemonFromConfig(config)
-	ensure_ok(err)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	err = d.Start()
-	ensure_ok(err)
+	wh_daemon, err := daemon.NewWebhookDaemonFromConfig(wh_config)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = wh_daemon.Start()
+
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	os.Exit(0)
 }

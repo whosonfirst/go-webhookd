@@ -6,7 +6,7 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"github.com/whosonfirst/go-webhookd"
+	"github.com/whosonfirst/go-webhookd/config"
 	"github.com/whosonfirst/go-webhookd/github"
 	"io/ioutil"
 	"log"
@@ -31,13 +31,13 @@ func main() {
 		log.Fatal("Missing receiver name")
 	}
 
-	config, err := webhookd.NewConfigFromFile(*cfg)
+	wh_config, err := config.NewConfigFromFile(*cfg)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	receiver_config, err := config.GetReceiverConfigByName(*receiver_name)
+	receiver_config, err := wh_config.GetReceiverConfigByName(*receiver_name)
 
 	if err != nil {
 		log.Fatal(err)
@@ -51,7 +51,7 @@ func main() {
 
 	client := &http.Client{}
 
-	uri := fmt.Sprintf("http://%s:%d%s", config.Daemon.Host, config.Daemon.Port, *endpoint)
+	uri := fmt.Sprintf("http://%s:%d%s", wh_config.Daemon.Host, wh_config.Daemon.Port, *endpoint)
 
 	req, err := http.NewRequest("POST", uri, bytes.NewBufferString(body))
 

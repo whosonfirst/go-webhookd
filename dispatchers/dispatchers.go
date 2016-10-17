@@ -2,14 +2,24 @@ package dispatchers
 
 import (
 	"errors"
+	"fmt"
 	"github.com/whosonfirst/go-webhookd"
+	"github.com/whosonfirst/go-webhookd/config"
 )
 
-func NewDispatcherFromConfig(config *webhookd.WebhookDispatcherConfig) (webhookd.WebhookDispatcher, error) {
+func NewDispatcherFromConfig(cfg *config.WebhookDispatcherConfig) (webhookd.WebhookDispatcher, error) {
 
-	if config.Name == "PubSub" {
-		return NewPubSubDispatcher(config.Host, config.Port, config.Channel)
-	} else {
-		return nil, errors.New("Invalid dispatcher")
+	switch cfg.Name {
+	case "Log":
+		return NewLogDispatcher()
+	case "Null":
+		return NewNullDispatcher()
+	case "PubSub":
+		return NewPubSubDispatcher(cfg.Host, cfg.Port, cfg.Channel)
+	case "Slack":
+		return NewSlackDispatcher(cfg.Config)
+	default:
+		msg := fmt.Sprintf("Undefined dispatcher: '%s'", cfg.Name)
+		return nil, errors.New(msg)
 	}
 }
