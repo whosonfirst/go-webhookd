@@ -12,6 +12,7 @@ import (
 	"github.com/whosonfirst/go-webhookd/webhook"
 	_ "log"
 	"net/http"
+	"strings"
 	"sync"
 )
 
@@ -187,7 +188,7 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 		}
 
 		wg := new(sync.WaitGroup)
-		errors := make([]*webhookd.WebhookError, 0)
+		ch := make(chan *webhookd.WebhookError)
 
 		for _, d := range wh.Dispatchers() {
 
@@ -200,16 +201,30 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 				err = d.Dispatch(body)
 
 				if err != nil {
-					// FIX ME
+					ch <- err
 				}
+
+				// err = &webhookd.WebhookError{Code: 000, Message: "o_O"}
+				// ch <- err
 
 			}(d, body)
 		}
 
+		errors := make([]string, 0)
+
+		go func() {
+
+			for e := range ch {
+				errors = append(errors, e.Error())
+			}
+		}()
+
 		wg.Wait()
 
 		if len(errors) > 0 {
-			http.Error(rsp, "FIX ME", http.StatusInternalServerError)
+
+			msg := strings.Join(errors, "\n\n")
+			http.Error(rsp, msg, http.StatusInternalServerError)
 			return
 		}
 
