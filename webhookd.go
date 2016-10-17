@@ -51,9 +51,9 @@ type WebhookTransformationConfig struct {
 
 type WebhookWebhooksConfig struct {
 	Endpoint        string   `json:"endpoint"`
-	Dispatcher      string   `json:"dispatcher"`
 	Receiver        string   `json:"receiver"`
 	Transformations []string `json:"transformations"`
+	Dispatchers     []string `json:"dispatchers"`
 }
 
 type WebhookReceiver interface {
@@ -71,15 +71,15 @@ type WebhookTransformation interface {
 type WebhookHandler interface {
 	Endpoint() string // sudo make me a net.URI or something
 	Receiver() WebhookReceiver
-	Dispatcher() WebhookDispatcher
 	Transformations() []WebhookTransformation
+	Dispatchers() []WebhookDispatcher
 }
 
 type Webhook struct {
 	WebhookHandler
 	endpoint        string
 	receiver        WebhookReceiver
-	dispatcher      WebhookDispatcher
+	dispatchers     []WebhookDispatcher
 	transformations []WebhookTransformation
 }
 
@@ -134,13 +134,13 @@ func (c *WebhookConfig) GetTransformationConfigByName(name string) (*WebhookTran
 	return &config, nil
 }
 
-func NewWebhook(endpoint string, receiver WebhookReceiver, transformations []WebhookTransformation, dispatcher WebhookDispatcher) (Webhook, error) {
+func NewWebhook(endpoint string, receiver WebhookReceiver, transformations []WebhookTransformation, dispatchers []WebhookDispatcher) (Webhook, error) {
 
 	wh := Webhook{
 		endpoint:        endpoint,
 		receiver:        receiver,
-		dispatcher:      dispatcher,
 		transformations: transformations,
+		dispatchers:     dispatchers,
 	}
 
 	return wh, nil
@@ -154,8 +154,8 @@ func (wh Webhook) Receiver() WebhookReceiver {
 	return wh.receiver
 }
 
-func (wh Webhook) Dispatcher() WebhookDispatcher {
-	return wh.dispatcher
+func (wh Webhook) Dispatchers() []WebhookDispatcher {
+	return wh.dispatchers
 }
 
 func (wh Webhook) Transformations() []WebhookTransformation {

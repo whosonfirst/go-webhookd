@@ -10,6 +10,7 @@ import (
 	"github.com/whosonfirst/go-webhookd/transformations"
 	_ "log"
 	"net/http"
+	"sync"
 )
 
 type WebhookDaemon struct {
@@ -66,8 +67,8 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(config *webhookd.WebhookConfig) er
 			return errors.New(msg)
 		}
 
-		if hook.Dispatcher == "" {
-			msg := fmt.Sprintf("Missing dispatcher at offset %d", i+1)
+		if len(hook.Dispatchers) == 0 {
+			msg := fmt.Sprintf("Missing dispatchers at offset %d", i+1)
 			return errors.New(msg)
 		}
 
@@ -78,18 +79,6 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(config *webhookd.WebhookConfig) er
 		}
 
 		receiver, err := receivers.NewReceiverFromConfig(receiver_config)
-
-		if err != nil {
-			return err
-		}
-
-		dispatcher_config, err := config.GetDispatcherConfigByName(hook.Dispatcher)
-
-		if err != nil {
-			return err
-		}
-
-		dispatcher, err := dispatchers.NewDispatcherFromConfig(dispatcher_config)
 
 		if err != nil {
 			return err
@@ -114,7 +103,26 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(config *webhookd.WebhookConfig) er
 			steps = append(steps, step)
 		}
 
-		webhook, err := webhookd.NewWebhook(hook.Endpoint, receiver, steps, dispatcher)
+		var sendto []webhookd.WebhookDispatcher
+
+		for _, name := range hook.Dispatchers {
+
+			dispatcher_config, err := config.GetDispatcherConfigByName(name)
+
+			if err != nil {
+				return err
+			}
+
+			dispatcher, err := dispatchers.NewDispatcherFromConfig(dispatcher_config)
+
+			if err != nil {
+				return err
+			}
+
+			sendto = append(sendto, dispatcher)
+		}
+
+		webhook, err := webhookd.NewWebhook(hook.Endpoint, receiver, steps, sendto)
 
 		if err != nil {
 			return err
@@ -158,7 +166,6 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 		}
 
 		rcvr := wh.Receiver()
-		dspt := wh.Dispatcher()
 
 		body, err := rcvr.Receive(req)
 
@@ -177,10 +184,30 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 			}
 		}
 
-		err = dspt.Dispatch(body)
+		wg := new(sync.WaitGroup)
+		errors := make([]*webhookd.WebhookError, 0)
 
-		if err != nil {
-			http.Error(rsp, err.Error(), http.StatusInternalServerError)
+		for _, d := range wh.Dispatchers() {
+
+			wg.Add(1)
+
+			go func(d webhookd.WebhookDispatcher, body []byte) {
+
+				defer wg.Done()
+
+				err = d.Dispatch(body)
+
+				if err != nil {
+					// FIX ME
+				}
+
+			}(d, body)
+		}
+
+		wg.Wait()
+
+		if len(errors) > 0 {
+			http.Error(rsp, "FIX ME", http.StatusInternalServerError)
 			return
 		}
 
