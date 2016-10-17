@@ -31,7 +31,7 @@ Usage of ./bin/webhookd:
     	Path to a valid webhookd config file
 ```
 
-`webhookd` is an HTTP daemon for handling webhook requests. Individual webhook endpoints (and how they are processed) are defined in a config file that is read at start-up time.
+`webhookd` is an HTTP daemon for handling webhook requests. Individual webhook endpoints (and how they are processed) are defined in a [config file](#config-files) that is read at start-up time.
 
 #### Caveats
 
@@ -52,46 +52,13 @@ $> kill -USR2 2723
 2016/10/16 00:19:59 Exiting pid 2723.
 ```
 
-### Setting up a `webhookd` server "by hand"
+### Setting up a `webhookd` server
+
+While you can set up a `webhookd` server by hand it's probably easier to all that work with a config file and let code take care of all the details, including registering all the webhooks. [Config files](#config-files) are discussed in detail below.
 
 _All error handling has been removed from the examples below for the sake of brevity._
 
-```
-import (
-	"flag"
-	"github.com/whosonfirst/go-webhookd/daemon"	
-	"github.com/whosonfirst/go-webhookd/dispatchers"
-	"github.com/whosonfirst/go-webhookd/transformations"	
-	"github.com/whosonfirst/go-webhookd/receivers"
-)
-
-// imagine flags here but also imagine that *pubsub_channel is "webhookd"
-// and *endpoint is "/foo"
-
-flag.Parse()
-
-d, _ := daemon.NewWebhookDaemon(*host, *port)
-
-receiver, _ := receivers.NewInsecureReceiver()
-
-transformations := []webhookd.WebhookTransformation{}
-
-pubsub, _ := dispatchers.NewPubSubDispatcher(*pubsub_host, *pubsub_port, *pubsub_channel)
-
-dispatchers, _ :=[]webhookd.WebhookDispatcher{ pubsub }
-
-webhook, _ := webhookd.NewWebhook(*endpoint, receiver, transformations, dispatchers)
-d.AddWebhook(webhook)
-
-// You can also just grab the HTTP handler func with d.HandlerFunc()
-// if you need or want to start a webhookd daemon in your own way
-
-d.Start()
-```
-
-See the way we're using an `Insecure` receiver and a `PubSub` dispatcher and an empty set of transformations? All are these are discussed in detail below.
-
-### Setting up a `webhookd` server with a handy config file
+#### Setting up a `webhookd` server with a handy config file
 
 ```
 import (
@@ -109,12 +76,42 @@ wh_daemon, _ := daemon.NewWebhookDaemonFromConfig(wh_config)
 wh_daemon.Start()
 ```
 
-While you can set up a `webhookd` server by hand it's probably easier to all that work with a config file and let code take care of all the details, including registering all the webhooks. Config files are discussed in detail below.
+#### Setting up a `webhookd` server "by hand"
+
+Imagine flags here but also imagine that *pubsub_channel is "webhookd" and *endpoint is "/foo"
+
+```
+import (
+	"flag"
+	"github.com/whosonfirst/go-webhookd/daemon"	
+	"github.com/whosonfirst/go-webhookd/dispatchers"
+	"github.com/whosonfirst/go-webhookd/transformations"	
+	"github.com/whosonfirst/go-webhookd/receivers"
+)
+
+flag.Parse()
+
+d, _ := daemon.NewWebhookDaemon(*host, *port)
+
+receiver, _ := receivers.NewInsecureReceiver()
+
+transformations := []webhookd.WebhookTransformation{}
+
+pubsub, _ := dispatchers.NewPubSubDispatcher(*pubsub_host, *pubsub_port, *pubsub_channel)
+dispatchers, _ :=[]webhookd.WebhookDispatcher{ pubsub }
+
+webhook, _ := webhookd.NewWebhook(*endpoint, receiver, transformations, dispatchers)
+d.AddWebhook(webhook)
+
+d.Start()
+```
+
+See the way we're using an `Insecure` receiver and a `PubSub` dispatcher and an empty set of transformations? All are these are discussed in detail below.
 
 ## Sending stuff to webhookd
 
 ```
-curl -v -X POST http://localhost:8080/foo -d @README.md
+curl -v -X POST http://localhost:8080/foo -data-binary @README.md
 
 * upload completely sent off: 703 out of 703 bytes
 < HTTP/1.1 200 OK
@@ -133,11 +130,11 @@ curl -v -X POST http://localhost:8080/foo -d @README.md
 {'pattern': None, 'type': 'message', 'channel': 'webhookd', 'data': '# go-webhookd## ImportantYou should not try to use this, yet. No. No, really.## UsageIt _should_ work something like this. If you\'re reading this sentence that means it _doesn\'t_.```import (\t"github.com/whosonfirst/go-webhookd"\t"github.com/whosonfirst/go-webhookd/dispatchers"\t"github.com/whosonfirst/go-webhookd/receivers")dispatcher := dispatchers.NewPubSubDispatcher("localhost", 6379, "pubsub-channel")receiver := receivers.NewGitHubReceiver("github-webhook-s33kret")endpoint := "/wubwubwub"webhook := webhookd.NewWebhook(endpoint, receiver, dispatcher)daemon := webhookd.NewWebHookDaemon(webhook)daemon.AddWebhook(webhook)daemon.Start()```## See also'}
 ```
 
-In this case, it went to Redis [PubSub](http://redis.io/topics/pubsub) land!
+In this case, it went to Redis [PubSub](http://redis.io/topics/pubsub) land! Where things go depend on how you've configured your [dispatchers](#dispatchers-1).
 
 ## Config files
 
-Config files for `webhookd` are JSON files consisting of four top-level sections. They are:
+Config files for `webhookd` are JSON files consisting of five top-level sections. An [example config file](config.json.example) is included with this repository. The five top-level sections are:
 
 ### daemon
 
@@ -164,11 +161,21 @@ The `daemon` section is a dictionary defining configuration details for the `web
 	}
 ```
 
-The `receivers` section is a dictionary of "named" receiver configuations. This allows the actual webhook configurations (described below) to signal their respective receivers using the receiver "name" as a simple short-hand.
+The `receivers` section is a dictionary of "named" receiver configuations. This allows the actual [webhook configurations (described below)](#webhooks) to signal their respective receivers using the dictionary "name" as a simple short-hand.
 
 ### transformations
 
-TBW.
+```
+	"transformations": {
+		"chicken": {
+			"name": "Chicken",
+			"language": "zxx",
+			"clucking": false
+		}
+	}
+```
+
+The `transformations` section is a dictionary of "named" tranformation configuations. This allows the actual [webhook configurations (described below)](#webhooks) to signal their respective transformations using the dictionary "name" as a simple short-hand.
 
 ### dispatchers
 
@@ -183,23 +190,36 @@ TBW.
 	}
 ```
 
-The `dispatchers` section is a dictionary of "named" dispatcher configuations. This allows the actual webhook configurations (described below) to signal their respective dispatchers using the dispatcher "name" as a simple short-hand.
+The `dispatchers` section is a dictionary of "named" dispatcher configuations. This allows the actual [webhook configurations (described below)](#webhooks) to signal their respective dispatchers using the dictionary "name" as a simple short-hand.
 
 ### webhooks
 
 ```
 	"webhooks": [
-		{ "endpoint": "/github-test", "receiver": "github", "dispatchers": [ "pubsub" ] },
-		{ "endpoint": "/insecure-test", "receiver": "insecure", "dispatchers": [ "pubsub" ] },
-		{ "endpoint": "/slack-test", "receiver": "slack", "transformations": [ "chicken" ], "dispatchers": [ "log", "pubsub" ] }				
+		{
+			"endpoint": "/github-test",
+			"receiver": "github",
+			"dispatchers": [ "pubsub" ]
+		},
+		{
+			"endpoint": "/insecure-test",
+		 	"receiver": "insecure",
+			"dispatchers": [ "pubsub" ]
+		},
+		{
+			"endpoint": "/slack-test",
+			"receiver": "slack",
+			"transformations": [ "slack", "chicken" ],
+			"dispatchers": [ "slack", "log"]
+		}
 	]
 ```
 
 The `webhooks` section is a list of dictionaries. These are the actual webhook endpoints that clients (out there on the internet) will access.
 
-* **endpoint** This is the path that a client will access. It _is_ the webhook.
+* **endpoint** This is the path that a client will access. It _is_ the webhook URI that clients will send requests to.
 * **receiver** The named receiver (defined in the `receivers` section) that the webhook will use to process requests.
-* **transformations** The list of named transformations (defined in the `transformations` section) that the webhook process the message body with.
+* **transformations** An optional list of named transformations (defined in the `transformations` section) that the webhook process the message body with.
 * **dispatchers** The list of named dispatchers (defined in the `dispatchers` section) that the webhook will relay a successful request to.
 
 ## Receivers
@@ -213,7 +233,7 @@ The `webhooks` section is a list of dictionaries. These are the actual webhook e
 	}
 ```
 
-TBW.
+This receiver handles Webhooks sent from [GitHub](https://developer.github.com/webhooks/). It validates that the message sent is actually from GitHub (by way of the `X-Hub-Signature` header) but performs no other processing.
 
 #### Properties
 
@@ -242,7 +262,7 @@ As the name suggests this receiver is completely insecure. It will happily accep
 	}
 ```
 
-TBW. _This receiver has not been fully tested yet so proceed with caution._
+This receiver handles Webhooks sent from Slack. It does not process the message at all. _This receiver has not been fully tested yet so proceed with caution._
 
 #### Properties
 
@@ -260,13 +280,23 @@ TBW. _This receiver has not been fully tested yet so proceed with caution._
 	}
 ```
 
-This will convert every word in your message to 🐔 using the [go-chicken](https://github.com/thisisaaronland/go-chicken) package. If this seems silly that's because it is. It's also more fun that yet-another "convert all the words to be upper-cased" example.
+The `Chicken` transformation will convert every word in your message to 🐔 using the [go-chicken](https://github.com/thisisaaronland/go-chicken) package. If this seems silly that's because it is. It's also more fun that yet-another "convert all the words to be upper-cased" example.
 
 #### Properties
 
 * **name** _string_ This is always `Chicken`.
 * **language** _string_ A three-letter language code specifying which language `go-chicken` should use.
 * **clucking** _bool_ A boolean flag indicating whether or not to [cluck](https://github.com/thisisaaronland/go-chicken#clucking) when generating results.
+
+### Null
+
+```
+	{
+		"name": "Null"
+	}
+```
+
+The `Null` transformation will not do _anything_. It's not clear why you would ever use this outside of debugging but that's your business.
 
 ### Slack
 
@@ -276,13 +306,27 @@ This will convert every word in your message to 🐔 using the [go-chicken](http
 	}
 ```
 
-TBW.
+The `Slack` transformation will extract and return the `text` property from a Webhook sent by Slack. _Eventually it will be possible to extract other properties from a Slack message but not today._
 
 #### Properties
 
 * **name** _string_ This is always `Slack`.
 
 ## Dispatchers
+
+### Log
+
+```
+	{
+		"name": "Log"
+	}
+```
+
+The `Log` dispatcher will send messages to Go's logging facility. As of this writing that means everything is logged to STDOUT but eventually it will be more sophisticated.
+
+#### Properties
+
+* **name** _string_ This is always `Null`.
 
 ### Null
 
@@ -309,7 +353,7 @@ The `Null` dispatcher will send messages in to the vortex, never to be seen agai
 	}
 ```
 
-TBW.
+The `PubSub` dispatcher will send messages to a Redis PubSub channel.
 
 #### Properties
 
@@ -327,6 +371,8 @@ TBW.
 	}
 ```
 
+The `Slack` dispatcher will send messages to a Slack channel using the [slackcat](https://github.com/whosonfirst/slackcat#configuring) package.
+
 #### Properties
 
 * **name** _string_ This is always `Slack`.
@@ -340,5 +386,7 @@ TBW.
 ## See also
 
 * https://en.wikipedia.org/wiki/Webhook
-* http://redis.io/topics/pubsub
+
+## Related
+
 * https://github.com/whosonfirst/go-pubssed
