@@ -230,7 +230,7 @@ The `webhooks` section is a list of dictionaries. These are the actual webhook e
 	}
 ```
 
-This receiver handles Webhooks sent from [GitHub](https://developer.github.com/webhooks/). It validates that the message sent is actually from GitHub (by way of the `X-Hub-Signature` header) but performs no other processing.
+This receiver handles Webhooks sent from [GitHub](https://developer.github.com/webhooks/). It validates that the message sent is actually from GitHub (by way of the `X-Hub-Signature` header) but performs no other processing.  _This receiver has not been fully tested yet so proceed with caution._
 
 #### Properties
 
@@ -259,7 +259,7 @@ As the name suggests this receiver is completely insecure. It will happily accep
 	}
 ```
 
-This receiver handles Webhooks sent from Slack. It does not process the message at all. _This receiver has not been fully tested yet so proceed with caution._
+This receiver handles Webhooks sent from [Slack](https://api.slack.com/outgoing-webhooks). It does not process the message at all. _This receiver has not been fully tested yet so proceed with caution._
 
 #### Properties
 
@@ -303,7 +303,7 @@ The `Null` transformation will not do _anything_. It's not clear why you would e
 	}
 ```
 
-The `Slack` transformation will extract and return the `text` property from a Webhook sent by Slack. _Eventually it will be possible to extract other properties from a Slack message but not today._
+The `Slack` transformation will extract and return [the `text` property](https://api.slack.com/outgoing-webhooks) from a Webhook sent by Slack. _Eventually it will be possible to extract other properties from a Slack message but not today._
 
 #### Properties
 
