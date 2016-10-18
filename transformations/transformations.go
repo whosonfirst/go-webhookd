@@ -16,8 +16,8 @@ func NewTransformationFromConfig(cfg *config.WebhookTransformationConfig) (webho
 		return NewGitHubCommitsTransformation()
 	case "Null":
 		return NewNullTransformation()
-	case "Slack":
-		return NewSlackTransformation()
+	case "SlackText":
+		return NewSlackTextTransformation()
 	default:
 		msg := fmt.Sprintf("Undefined transformation: '%s'", cfg.Name)
 		return nil, errors.New(msg)

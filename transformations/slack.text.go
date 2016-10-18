@@ -10,21 +10,21 @@ import (
 	"strings"
 )
 
-type SlackTransformation struct {
+type SlackTextTransformation struct {
 	webhookd.WebhookTransformation
 	key string
 }
 
-func NewSlackTransformation() (*SlackTransformation, error) {
+func NewSlackTextTransformation() (*SlackTextTransformation, error) {
 
-	p := SlackTransformation{
+	p := SlackTextTransformation{
 		key: "text",
 	}
 
 	return &p, nil
 }
 
-func (p *SlackTransformation) Transform(body []byte) ([]byte, *webhookd.WebhookError) {
+func (p *SlackTextTransformation) Transform(body []byte) ([]byte, *webhookd.WebhookError) {
 
 	buf := bytes.NewBuffer(body)
 	scanner := bufio.NewScanner(buf)

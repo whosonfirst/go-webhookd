@@ -313,19 +313,19 @@ The `Null` transformation will not do _anything_. It's not clear why you would e
 
 * **name** _string_ This is always `Null`.
 
-### Slack
+### SlackText
 
 ```
 	{
-		"name": "Slack"
+		"name": "SlackText"
 	}
 ```
 
-The `Slack` transformation will extract and return [the `text` property](https://api.slack.com/outgoing-webhooks) from a Webhook sent by Slack. _Eventually it will be possible to extract other properties from a Slack message but not today._
+The `Slack` transformation will extract and return [the `text` property](https://api.slack.com/outgoing-webhooks) from a Webhook sent by Slack.
 
 #### Properties
 
-* **name** _string_ This is always `Slack`.
+* **name** _string_ This is always `SlackText`.
 
 ## Dispatchers
 
