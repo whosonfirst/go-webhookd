@@ -12,6 +12,8 @@ func NewTransformationFromConfig(cfg *config.WebhookTransformationConfig) (webho
 	switch cfg.Name {
 	case "Chicken":
 		return NewChickenTransformation(cfg.Language, cfg.Clucking)
+	case "GitHubCommits":
+		return NewGitHubCommitsTransformation()
 	case "Null":
 		return NewNullTransformation()
 	case "Slack":
