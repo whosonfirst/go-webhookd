@@ -285,6 +285,20 @@ The `Chicken` transformation will convert every word in your message to 🐔 usi
 * **language** _string_ A three-letter language code specifying which language `go-chicken` should use.
 * **clucking** _bool_ A boolean flag indicating whether or not to [cluck](https://github.com/thisisaaronland/go-chicken#clucking) when generating results.
 
+### GitHubCommits
+
+```
+	{
+		"name": "GitHubCommits"
+	}
+```
+
+The `GitHubCommits` transformation will extract all the commits (added, modified, removed) from a `push` event and return a JSON encoded list of paths.
+
+#### Properties
+
+* **name** _string_ This is always `GitHubCommits`.
+
 ### Null
 
 ```
@@ -294,6 +308,10 @@ The `Chicken` transformation will convert every word in your message to 🐔 usi
 ```
 
 The `Null` transformation will not do _anything_. It's not clear why you would ever use this outside of debugging but that's your business.
+
+#### Properties
+
+* **name** _string_ This is always `Null`.
 
 ### Slack
 
