@@ -230,7 +230,7 @@ The `webhooks` section is a list of dictionaries. These are the actual webhook e
 	}
 ```
 
-This receiver handles Webhooks sent from [GitHub](https://developer.github.com/webhooks/). It validates that the message sent is actually from GitHub (by way of the `X-Hub-Signature` header) but performs no other processing.  _This receiver has not been fully tested yet so proceed with caution._
+This receiver handles Webhooks sent from [GitHub](https://developer.github.com/webhooks/). It validates that the message sent is actually from GitHub (by way of the `X-Hub-Signature` header) but performs no other processing.
 
 #### Properties
 
