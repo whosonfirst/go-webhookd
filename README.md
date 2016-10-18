@@ -245,7 +245,9 @@ This receiver handles Webhooks sent from [GitHub](https://developer.github.com/w
 	}
 ```
 
-As the name suggests this receiver is completely insecure. It will happily accept anything you send to it and relay it on to the dispatcher defined for that webhook. This receiver exists primarily for debugging purposes and **you should not deploy it in production**.
+As the name suggests this receiver is completely insecure. It will happily accept anything you send to it and relay it on to the dispatcher defined for that webhook.
+
+This receiver exists primarily for debugging purposes and **you should not deploy it in production**.
 
 #### Properties
 
