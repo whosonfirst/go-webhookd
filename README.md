@@ -235,7 +235,7 @@ This receiver handles Webhooks sent from [GitHub](https://developer.github.com/w
 #### Properties
 
 * **name**  _string_ This is always `GitHub`.
-* **secret** _string_ TBW
+* **secret** _string_ The secret used to generate [the HMA hex digest](https://developer.github.com/webhooks/#delivery-headers) of the message payload.
 
 ### Insecure
 
