@@ -1,9 +1,10 @@
 package transformations
 
 import (
+	"encoding/json"
+	gogithub "github.com/google/go-github/github"
 	"github.com/whosonfirst/go-webhookd"
-	"github.com/whosonfirst/go-webhookd/github"
-	"log"
+	_ "log"
 )
 
 type GitHubCommitsTransformation struct {
@@ -18,14 +19,38 @@ func NewGitHubCommitsTransformation() (*GitHubCommitsTransformation, error) {
 
 func (p *GitHubCommitsTransformation) Transform(body []byte) ([]byte, *webhookd.WebhookError) {
 
-	event, err := github.UnmarshalEvent("push", body)
+	var event gogithub.PushEvent
+
+	err := json.Unmarshal(body, &event)
 
 	if err != nil {
-
 		err := &webhookd.WebhookError{Code: 999, Message: err.Error()}
 		return nil, err
 	}
 
-	log.Println(event)
+	commits := make([]string, 0)
+
+	for _, c := range event.Commits {
+
+		for _, path := range c.Added {
+			commits = append(commits, path)
+		}
+
+		for _, path := range c.Modified {
+			commits = append(commits, path)
+		}
+
+		for _, path := range c.Removed {
+			commits = append(commits, path)
+		}
+	}
+
+	body, err = json.Marshal(commits)
+
+	if err != nil {
+		err := &webhookd.WebhookError{Code: 999, Message: err.Error()}
+		return nil, err
+	}
+
 	return body, nil
 }
