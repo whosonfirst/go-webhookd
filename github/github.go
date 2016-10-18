@@ -23,6 +23,10 @@ func GenerateSignature(body string, secret string) (string, error) {
 	return sig, nil
 }
 
+// this doesn't really work as I'd like it only returns an interface{}
+// and not a typed thing that the compiler knows what to do with after
+// the fact... (20161017/thisisaaronland)
+
 func UnmarshalEvent(event_type string, body []byte) (interface{}, error) {
 
 	var event interface{}
