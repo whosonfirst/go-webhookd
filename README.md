@@ -321,7 +321,7 @@ The `Null` transformation will not do _anything_. It's not clear why you would e
 	}
 ```
 
-The `Slack` transformation will extract and return [the `text` property](https://api.slack.com/outgoing-webhooks) from a Webhook sent by Slack.
+The `SlackText` transformation will extract and return [the `text` property](https://api.slack.com/outgoing-webhooks) from a Webhook sent by Slack.
 
 #### Properties
 
