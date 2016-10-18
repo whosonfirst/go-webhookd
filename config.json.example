@@ -30,8 +30,12 @@
 			"clucking": true
 		},
 		"slack": {
-			"name": "Slack"
+			"name": "SlackText"
+		},
+		"commits": {
+			"name": "GitHubCommits"
 		}				
+		
 	},
 	"dispatchers": {
 		"null": {
