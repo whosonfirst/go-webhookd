@@ -12,7 +12,7 @@ type PubSubDispatcher struct {
 	channel string
 }
 
-func NewPubSubDispatcher(host string, port int, channel string) (PubSubDispatcher, error) {
+func NewPubSubDispatcher(host string, port int, channel string) (*PubSubDispatcher, error) {
 
 	endpoint := fmt.Sprintf("%s:%d", host, port)
 
@@ -22,15 +22,21 @@ func NewPubSubDispatcher(host string, port int, channel string) (PubSubDispatche
 
 	// defer client.Close()
 
+	_, err := client.Ping().Result()
+
+	if err != nil {
+		return nil, err
+	}
+
 	dispatcher := PubSubDispatcher{
 		client:  client,
 		channel: channel,
 	}
 
-	return dispatcher, nil
+	return &dispatcher, nil
 }
 
-func (dispatcher PubSubDispatcher) Dispatch(body []byte) *webhookd.WebhookError {
+func (dispatcher *PubSubDispatcher) Dispatch(body []byte) *webhookd.WebhookError {
 
 	rsp := dispatcher.client.Publish(dispatcher.channel, string(body))
 
