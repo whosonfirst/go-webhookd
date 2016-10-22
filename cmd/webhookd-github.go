@@ -20,6 +20,7 @@ func main() {
 	var cfg = flag.String("config", "", "Path to a valid webhookd config file")
 	var receiver_name = flag.String("receiver", "", "...")
 	var endpoint = flag.String("endpoint", "", "...")
+	var file = flag.String("file", "", "...")
 
 	flag.Parse()
 
@@ -43,7 +44,19 @@ func main() {
 		log.Fatal(err)
 	}
 
-	body := strings.Join(flag.Args(), " ")
+	var body string
+
+	if *file != "" {
+		stuff, err := ioutil.ReadFile(*file)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		body = string(stuff)
+	} else {
+		body = strings.Join(flag.Args(), " ")
+	}
 
 	secret := receiver_config.Secret
 

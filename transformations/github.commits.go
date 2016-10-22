@@ -2,6 +2,7 @@ package transformations
 
 import (
 	"encoding/json"
+	"fmt"
 	gogithub "github.com/google/go-github/github"
 	"github.com/whosonfirst/go-webhookd"
 	_ "log"
@@ -28,20 +29,23 @@ func (p *GitHubCommitsTransformation) Transform(body []byte) ([]byte, *webhookd.
 		return nil, err
 	}
 
+	repo := event.Repo
+	repo_name := *repo.Name
+
 	commits := make([]string, 0)
 
 	for _, c := range event.Commits {
 
 		for _, path := range c.Added {
-			commits = append(commits, path)
+			commits = append(commits, fmt.Sprintf("%s#%s", repo_name, path))
 		}
 
 		for _, path := range c.Modified {
-			commits = append(commits, path)
+			commits = append(commits, fmt.Sprintf("%s#%s", repo_name, path))
 		}
 
 		for _, path := range c.Removed {
-			commits = append(commits, path)
+			commits = append(commits, fmt.Sprintf("%s#%s", repo_name, path))
 		}
 	}
 
