@@ -55,3 +55,4 @@ fmt:
 
 bin: 	rmdeps self
 	@GOPATH=$(shell pwd) go build -o bin/webhookd cmd/webhookd.go
+	@GOPATH=$(shell pwd) go build -o bin/webhookd-generate-hook cmd/webhookd-generate-hook.go
