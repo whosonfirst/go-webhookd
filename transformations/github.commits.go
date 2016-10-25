@@ -1,8 +1,10 @@
 package transformations
 
 import (
+	"bytes"
+	"encoding/csv"
 	"encoding/json"
-	"fmt"
+	_ "fmt"
 	gogithub "github.com/google/go-github/github"
 	"github.com/whosonfirst/go-webhookd"
 	_ "log"
@@ -29,32 +31,32 @@ func (p *GitHubCommitsTransformation) Transform(body []byte) ([]byte, *webhookd.
 		return nil, err
 	}
 
+	buf := new(bytes.Buffer)
+	wr := csv.NewWriter(buf)
+
 	repo := event.Repo
 	repo_name := *repo.Name
-
-	commits := make([]string, 0)
+	commit_hash := *event.HeadCommit.ID
 
 	for _, c := range event.Commits {
 
 		for _, path := range c.Added {
-			commits = append(commits, fmt.Sprintf("%s#%s", repo_name, path))
+			commit := []string{commit_hash, repo_name, path}
+			wr.Write(commit)
 		}
 
 		for _, path := range c.Modified {
-			commits = append(commits, fmt.Sprintf("%s#%s", repo_name, path))
+			commit := []string{commit_hash, repo_name, path}
+			wr.Write(commit)
 		}
 
 		for _, path := range c.Removed {
-			commits = append(commits, fmt.Sprintf("%s#%s", repo_name, path))
+			commit := []string{commit_hash, repo_name, path}
+			wr.Write(commit)
 		}
 	}
 
-	body, err = json.Marshal(commits)
+	wr.Flush()
 
-	if err != nil {
-		err := &webhookd.WebhookError{Code: 999, Message: err.Error()}
-		return nil, err
-	}
-
-	return body, nil
+	return buf.Bytes(), nil
 }

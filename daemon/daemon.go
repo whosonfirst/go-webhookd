@@ -185,7 +185,13 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 				http.Error(rsp, err.Error(), err.Code)
 				return
 			}
+
+			// check to see if there is anything left the transformation
+			// https://github.com/whosonfirst/go-webhookd/issues/7
 		}
+
+		// check to see if there is anything to dispatch
+		// https://github.com/whosonfirst/go-webhookd/issues/7
 
 		wg := new(sync.WaitGroup)
 		ch := make(chan *webhookd.WebhookError)
