@@ -236,6 +236,7 @@ This receiver handles Webhooks sent from [GitHub](https://developer.github.com/w
 
 * **name**  _string_ This is always `GitHub`.
 * **secret** _string_ The secret used to generate [the HMAC hex digest](https://developer.github.com/webhooks/#delivery-headers) of the message payload.
+* **ref** _string_ An optional Git `ref` to filter by. If present and a WebHook is sent with a different ref then the daemon will return a `666` error response.
 
 ### Insecure
 
