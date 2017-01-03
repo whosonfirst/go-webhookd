@@ -20,12 +20,14 @@ import (
 type GitHubReceiver struct {
 	webhookd.WebhookReceiver
 	secret string
+	ref    string
 }
 
-func NewGitHubReceiver(secret string) (GitHubReceiver, error) {
+func NewGitHubReceiver(secret string, ref string) (GitHubReceiver, error) {
 
 	wh := GitHubReceiver{
 		secret: secret,
+		ref:    ref,
 	}
 
 	return wh, nil
@@ -84,6 +86,12 @@ func (wh GitHubReceiver) Receive(req *http.Request) ([]byte, *webhookd.WebhookEr
 
 		err := &webhookd.WebhookError{Code: code, Message: message}
 		return nil, err
+	}
+
+	if wh.ref != "" {
+
+		// https://github.com/whosonfirst/go-webhookd/issues/11
+		// check ref here... maybe?
 	}
 
 	/*

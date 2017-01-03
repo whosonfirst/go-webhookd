@@ -11,7 +11,7 @@ func NewReceiverFromConfig(cfg *config.WebhookReceiverConfig) (webhookd.WebhookR
 
 	switch cfg.Name {
 	case "GitHub":
-		return NewGitHubReceiver(cfg.Secret)
+		return NewGitHubReceiver(cfg.Secret, cfg.Ref)
 	case "Insecure":
 		return NewInsecureReceiver()
 	case "Slack":
