@@ -10,6 +10,8 @@ package receivers
 
 import (
 	"crypto/hmac"
+	"encoding/json"
+	gogithub "github.com/google/go-github/github"
 	"github.com/whosonfirst/go-webhookd"
 	"github.com/whosonfirst/go-webhookd/github"
 	"io/ioutil"
@@ -90,8 +92,21 @@ func (wh GitHubReceiver) Receive(req *http.Request) ([]byte, *webhookd.WebhookEr
 
 	if wh.ref != "" {
 
-		// https://github.com/whosonfirst/go-webhookd/issues/11
-		// check ref here... maybe?
+		var event gogithub.PushEvent
+
+		err := json.Unmarshal(body, &event)
+
+		if err != nil {
+			err := &webhookd.WebhookError{Code: 999, Message: err.Error()}
+			return nil, err
+		}
+
+		if wh.ref != *event.Ref {
+
+			msg := "Invalid ref for commit"
+			err := &webhookd.WebhookError{Code: 999, Message: msg}
+			return nil, err
+		}
 	}
 
 	/*
