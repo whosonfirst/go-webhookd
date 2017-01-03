@@ -22,6 +22,7 @@ type WebhookDaemonConfig struct {
 type WebhookReceiverConfig struct {
 	Name   string `json:"name"`
 	Secret string `json:"secret,omitempty"`
+	Ref    string `json:ref,omitempty"`
 }
 
 type WebhookDispatcherConfig struct {
