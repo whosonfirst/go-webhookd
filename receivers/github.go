@@ -104,7 +104,7 @@ func (wh GitHubReceiver) Receive(req *http.Request) ([]byte, *webhookd.WebhookEr
 		if wh.ref != *event.Ref {
 
 			msg := "Invalid ref for commit"
-			err := &webhookd.WebhookError{Code: 999, Message: msg}
+			err := &webhookd.WebhookError{Code: 666, Message: msg}
 			return nil, err
 		}
 	}
