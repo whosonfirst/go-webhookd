@@ -34,9 +34,12 @@ type WebhookDispatcherConfig struct {
 }
 
 type WebhookTransformationConfig struct {
-	Name     string `json:"name"`
-	Language string `json:"language,omitempty"`
-	Clucking bool   `json:"clucking,omitempty"`
+	Name                 string `json:"name"`
+	Language             string `json:"language,omitempty"`
+	Clucking             bool   `json:"clucking,omitempty"`
+	IncludeAdditions     bool   `json:"additions,omitempty"`
+	IncludeModifications bool   `json:"modifications,omitempty"`
+	IncludeDeletions     bool   `json:"deletions,omitempty"`
 }
 
 type WebhookWebhooksConfig struct {
