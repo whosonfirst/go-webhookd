@@ -3,3 +3,5 @@ pkg
 *.json
 src
 !vendor/src
+bin/chicken*
+bin/rooster*

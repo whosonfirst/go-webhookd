@@ -202,6 +202,28 @@ cluck cluck bok bok b'gawk() {
 }
 ```
 
+### Rooster
+
+`rooster` is an HTTP daemon for `chicken`. For example:
+
+```
+$> bin/rooster
+2017/04/30 09:53:53 🐓 on localhost:1280
+```
+
+And then:
+
+```
+$> curl -X POST 'http://localhost:1280' -d 'Hello world'
+🐔 🐔
+
+$> curl -X POST 'http://localhost:1280?language=eng' -d 'Hello world'
+chicken chicken
+
+$> curl -X POST 'http://localhost:1280?language=kor&clucking' -d 'Hello world'
+꼬꼬댁 꼬꼬댁
+```
+
 ### Emoji
 
 `chicken` uses the [go-ucd](https://github.com/cooperhewitt/go-ucd) library to convert Emoji (and other symbolic characters) in to named strings. For example:

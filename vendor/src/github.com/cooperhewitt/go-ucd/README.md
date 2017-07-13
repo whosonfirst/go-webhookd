@@ -63,6 +63,20 @@ This will build the `ucd` and `ucd-server` applications and place them in the `b
 	  -host="localhost": host
 	  -port=8080: port
 
+#### Install as a service
+
+To install as an init.d script, copy the example provided, replace the values of UCD_USER, UCD_DAEMON and UCD_PORT, and start the service.
+
+        $> sudo cp init.d/ucd-server.sh.example /etc/init.d/ucd-server.sh
+        $> sudo service ucd-server start
+
+If using [cooperhewitt-vagrant](https://github.com/cooperhewitt/cooperhewitt-vagrant), and assuming you cloned this repository and compiled from `/vagrant/go-ucd`, you can use these values:
+
+        UCD_USER=www-data
+        UCD_DAEMON=/vagrant/go-ucd/bin/ucd-server
+        UCD_PORT=3456
+
+
 #### as JSON
 
 	$> curl -X GET -s 'http://localhost:8080/?text=♕%20HAT' | python -mjson.tool

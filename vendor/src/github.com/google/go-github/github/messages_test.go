@@ -117,12 +117,24 @@ func TestParseWebHook(t *testing.T) {
 			messageType: "gollum",
 		},
 		{
+			payload:     &InstallationEvent{},
+			messageType: "installation",
+		},
+		{
+			payload:     &InstallationRepositoriesEvent{},
+			messageType: "installation_repositories",
+		},
+		{
 			payload:     &IssueCommentEvent{},
 			messageType: "issue_comment",
 		},
 		{
 			payload:     &IssuesEvent{},
 			messageType: "issues",
+		},
+		{
+			payload:     &LabelEvent{},
+			messageType: "label",
 		},
 		{
 			payload:     &MemberEvent{},
@@ -133,8 +145,36 @@ func TestParseWebHook(t *testing.T) {
 			messageType: "membership",
 		},
 		{
+			payload:     &MilestoneEvent{},
+			messageType: "milestone",
+		},
+		{
+			payload:     &OrganizationEvent{},
+			messageType: "organization",
+		},
+		{
+			payload:     &OrgBlockEvent{},
+			messageType: "org_block",
+		},
+		{
 			payload:     &PageBuildEvent{},
 			messageType: "page_build",
+		},
+		{
+			payload:     &PingEvent{},
+			messageType: "ping",
+		},
+		{
+			payload:     &ProjectEvent{},
+			messageType: "project",
+		},
+		{
+			payload:     &ProjectCardEvent{},
+			messageType: "project_card",
+		},
+		{
+			payload:     &ProjectColumnEvent{},
+			messageType: "project_column",
 		},
 		{
 			payload:     &PublicEvent{},
@@ -143,6 +183,10 @@ func TestParseWebHook(t *testing.T) {
 		{
 			payload:     &PullRequestEvent{},
 			messageType: "pull_request",
+		},
+		{
+			payload:     &PullRequestReviewEvent{},
+			messageType: "pull_request_review",
 		},
 		{
 			payload:     &PullRequestReviewCommentEvent{},
@@ -163,6 +207,10 @@ func TestParseWebHook(t *testing.T) {
 		{
 			payload:     &StatusEvent{},
 			messageType: "status",
+		},
+		{
+			payload:     &TeamEvent{},
+			messageType: "team",
 		},
 		{
 			payload:     &TeamAddEvent{},
@@ -186,5 +234,19 @@ func TestParseWebHook(t *testing.T) {
 		if want := test.payload; !reflect.DeepEqual(got, want) {
 			t.Errorf("ParseWebHook(%#v, %#v) = %#v, want %#v", test.messageType, p, got, want)
 		}
+	}
+}
+
+func TestDeliveryID(t *testing.T) {
+	id := "8970a780-244e-11e7-91ca-da3aabcb9793"
+	req, err := http.NewRequest("POST", "http://localhost", nil)
+	if err != nil {
+		t.Fatalf("DeliveryID: %v", err)
+	}
+	req.Header.Set("X-Github-Delivery", id)
+
+	got := DeliveryID(req)
+	if got != id {
+		t.Errorf("DeliveryID(%#v) = %q, want %q", req, got, id)
 	}
 }
