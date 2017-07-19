@@ -19,12 +19,12 @@ type GitHubCommitsTransformation struct {
 	ExcludeDeletions     bool
 }
 
-func NewGitHubCommitsTransformation() (*GitHubCommitsTransformation, error) {
+func NewGitHubCommitsTransformation(exclude_additions bool, exclude_modifications bool, exclude_deletions bool) (*GitHubCommitsTransformation, error) {
 
 	p := GitHubCommitsTransformation{
-		ExcludeAdditions:     false,
-		ExcludeModifications: false,
-		ExcludeDeletions:     false,
+		ExcludeAdditions:     exclude_additions,
+		ExcludeModifications: exclude_modifications,
+		ExcludeDeletions:     exclude_deletions,
 	}
 
 	return &p, nil
