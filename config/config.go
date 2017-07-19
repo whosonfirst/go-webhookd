@@ -37,9 +37,9 @@ type WebhookTransformationConfig struct {
 	Name                 string `json:"name"`
 	Language             string `json:"language,omitempty"`
 	Clucking             bool   `json:"clucking,omitempty"`
-	IncludeAdditions     bool   `json:"additions,omitempty"`
-	IncludeModifications bool   `json:"modifications,omitempty"`
-	IncludeDeletions     bool   `json:"deletions,omitempty"`
+	ExcludeAdditions     bool   `json:"exclude_additions,omitempty"`
+	ExcludeModifications bool   `json:"exclude_modifications,omitempty"`
+	ExcludeDeletions     bool   `json:"exclude_deletions,omitempty"`
 }
 
 type WebhookWebhooksConfig struct {

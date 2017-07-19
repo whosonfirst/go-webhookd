@@ -14,17 +14,17 @@ import (
 
 type GitHubCommitsTransformation struct {
 	webhookd.WebhookTransformation
-	IncludeAdditions     bool
-	IncludeModifications bool
-	IncludeDeletions     bool
+	ExcludeAdditions     bool
+	ExcludeModifications bool
+	ExcludeDeletions     bool
 }
 
 func NewGitHubCommitsTransformation() (*GitHubCommitsTransformation, error) {
 
 	p := GitHubCommitsTransformation{
-		IncludeAdditions:     true,
-		IncludeModifications: true,
-		IncludeDeletions:     true,
+		ExcludeAdditions:     false,
+		ExcludeModifications: false,
+		ExcludeDeletions:     false,
 	}
 
 	return &p, nil
@@ -50,21 +50,21 @@ func (p *GitHubCommitsTransformation) Transform(body []byte) ([]byte, *webhookd.
 
 	for _, c := range event.Commits {
 
-		if p.IncludeAdditions {
+		if !p.ExcludeAdditions {
 			for _, path := range c.Added {
 				commit := []string{commit_hash, repo_name, path}
 				wr.Write(commit)
 			}
 		}
 
-		if p.IncludeModifications {
+		if !p.ExcludeModifications {
 			for _, path := range c.Modified {
 				commit := []string{commit_hash, repo_name, path}
 				wr.Write(commit)
 			}
 		}
 
-		if p.IncludeDeletions {
+		if !p.ExcludeDeletions {
 			for _, path := range c.Removed {
 				commit := []string{commit_hash, repo_name, path}
 				wr.Write(commit)

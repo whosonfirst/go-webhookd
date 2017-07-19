@@ -33,7 +33,10 @@
 			"name": "SlackText"
 		},
 		"commits": {
-			"name": "GitHubCommits"
+			"name": "GitHubCommits",
+			"exclude_additions": true,
+			"exclude_modifications": true,
+			"exclude_deletions": true
 		}				
 		
 	},
