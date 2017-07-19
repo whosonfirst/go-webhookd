@@ -292,7 +292,10 @@ The `Chicken` transformation will convert every word in your message to 🐔 usi
 
 ```
 	{
-		"name": "GitHubCommits"
+		"name": "GitHubCommits",
+		"exclude_additions":false,
+		"exclude_modification":false,
+		"exclude_deletions":true,
 	}
 ```
 
@@ -301,6 +304,9 @@ The `GitHubCommits` transformation will extract all the commits (added, modified
 #### Properties
 
 * **name** _string_ This is always `GitHubCommits`.
+* **exclude_additions** _bool_ A flag to indicate that new additions in a commit should be ignored. Optional; default false.
+* **exclude_modification** _bool_ A flag to indicate that modifications in a commit should be ignored. Optional; default false.
+* **exclude_deletions** _bool_ A flag to indicate that deletions in a commit should be ignored. Optional; default false.
 
 ### Null
 
