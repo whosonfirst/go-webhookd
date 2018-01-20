@@ -10,10 +10,11 @@ import (
 	"github.com/whosonfirst/go-webhookd/receivers"
 	"github.com/whosonfirst/go-webhookd/transformations"
 	"github.com/whosonfirst/go-webhookd/webhook"
-	_ "log"
+	"log"
 	"net/http"
 	"strings"
 	"sync"
+	"time"
 )
 
 type WebhookDaemon struct {
@@ -168,6 +169,17 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 			return
 		}
 
+		t1 := time.Now()
+
+		var ta time.Time
+		var tb time.Duration
+
+		var ttr time.Duration // time to receive
+		var ttt time.Duration // time to transform
+		var ttd time.Duration // time to dispatch
+
+		ta = time.Now()
+
 		rcvr := wh.Receiver()
 
 		body, err := rcvr.Receive(req)
@@ -176,6 +188,12 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 			http.Error(rsp, err.Error(), err.Code)
 			return
 		}
+
+		tb = time.Since(ta)
+
+		ttr = tb
+
+		ta = time.Now()
 
 		for _, step := range wh.Transformations() {
 
@@ -190,8 +208,13 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 			// https://github.com/whosonfirst/go-webhookd/issues/7
 		}
 
+		tb = time.Since(ta)
+		ttt = tb
+
 		// check to see if there is anything to dispatch
 		// https://github.com/whosonfirst/go-webhookd/issues/7
+
+		ta = time.Now()
 
 		wg := new(sync.WaitGroup)
 		ch := make(chan *webhookd.WebhookError)
@@ -234,6 +257,24 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 			return
 		}
 
+		tb = time.Since(ta)
+		ttd = tb
+
+		t2 := time.Since(t1)
+
+		rsp.Header().Set("X-Webhookd-Time-To-Receive", fmt.Sprintf("%v", ttr))
+		rsp.Header().Set("X-Webhookd-Time-To-Transform", fmt.Sprintf("%v", ttt))
+		rsp.Header().Set("X-Webhookd-Time-To-Dispatch", fmt.Sprintf("%v", ttd))
+		rsp.Header().Set("X-Webhookd-Time-To-Process", fmt.Sprintf("%v", t2))
+
+		query := req.URL.Query()
+
+		if query.Get("debug") != "" {
+			rsp.Header().Set("Content-Type", "text/plain")
+			rsp.Header().Set("Access-Control-Allow-Origin", "*")
+			rsp.Write(body)
+		}
+
 		return
 	}
 
@@ -249,6 +290,7 @@ func (d *WebhookDaemon) Start() error {
 	}
 
 	addr := fmt.Sprintf("%s:%d", d.host, d.port)
+	log.Printf("webhookd listening for requests on %s\n", addr)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", handler)

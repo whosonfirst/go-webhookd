@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	_ "log"
+	"path/filepath"
 )
 
 type WebhookConfig struct {
@@ -49,9 +51,15 @@ type WebhookWebhooksConfig struct {
 	Dispatchers     []string `json:"dispatchers"`
 }
 
-func NewConfigFromFile(file string) (*WebhookConfig, error) {
+func NewConfigFromFile(path string) (*WebhookConfig, error) {
 
-	body, err := ioutil.ReadFile(file)
+	abs_path, err := filepath.Abs(path)
+
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := ioutil.ReadFile(abs_path)
 
 	if err != nil {
 		return nil, err
