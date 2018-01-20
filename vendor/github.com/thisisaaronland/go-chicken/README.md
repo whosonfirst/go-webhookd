@@ -255,7 +255,7 @@ hello :smiley_cat:
 🐔 🐔 🐔 🐔 🐔 🐔 🐔
 ```
 
-### Unicode 9.0 Emoji
+### Unicode 10.0 Emoji
 
 Yes.
 
@@ -309,6 +309,18 @@ _Note: this assumes you're using `bash`._
 ## Translations
 
 * The current [list of translations](strings/strings.go) is very short and [your help is welcome](https://github.com/thisisaaronland/go-chicken/pulls)! The goal is to have a 🐔 for every language listed in [ISO 639-3](https://en.wikipedia.org/wiki/List_of_ISO_639-3_codes).
+
+## Docker
+
+[Yes](Dockerfile), for `rooster`.
+
+```
+docker build -t rooster .
+docker run -it -p 1280:1280 rooster
+
+$> curl -X POST 'http://localhost:1280' -d 'Hello world'
+🐔 🐔
+```
 
 ## Background
 

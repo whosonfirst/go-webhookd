@@ -3,7 +3,6 @@ package daemon
 import (
 	"errors"
 	"fmt"
-	"github.com/facebookgo/grace/gracehttp"
 	"github.com/whosonfirst/go-webhookd"
 	"github.com/whosonfirst/go-webhookd/config"
 	"github.com/whosonfirst/go-webhookd/dispatchers"
@@ -296,7 +295,7 @@ func (d *WebhookDaemon) Start() error {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", handler)
 
-	err = gracehttp.Serve(&http.Server{Addr: addr, Handler: mux})
+	err = http.ListenAndServe(addr, mux)
 
 	if err != nil {
 		return err

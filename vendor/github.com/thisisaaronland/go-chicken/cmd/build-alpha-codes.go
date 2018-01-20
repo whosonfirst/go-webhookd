@@ -16,7 +16,7 @@ import (
 
 func main() {
 
-	alphacode_data := "https://raw.githubusercontent.com/Ranks/emoji-alpha-codes/master/eac.csv"
+	alphacode_data := "https://raw.githubusercontent.com/emojione/emojione/master/extras/alpha-codes/eac.csv"
 
 	rsp, err := http.Get(alphacode_data)
 	defer rsp.Body.Close()

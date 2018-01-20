@@ -5,7 +5,6 @@ package sanitize
 // https://golang.org/pkg/regexp/syntax/
 // http://www.fileformat.info/info/unicode/char/search.htm
 // http://www.regular-expressions.info/unicode.html
-// http://www.unicode.org/faq/security.html
 
 import (
 	"errors"
@@ -164,9 +163,6 @@ func init() {
 		range which is inclusive of things like control character (trapped above) and private
 		use characters and so on... computers, right? (20160909/thisisaaronland)
 
-		see also:
-		http://www.unicode.org/charts/PDF/U9FF80.pdf <-- Unassigned Range: 9FF80–9FFFF Unicode v6		
-		
 	*/
 
 	re_reserved = regexp.MustCompile(`\p{C}`)
