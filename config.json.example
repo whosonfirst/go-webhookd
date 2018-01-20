@@ -9,7 +9,8 @@
 		},
 		"github": {
 			"name": "GitHub",
-			"secret": "s33kret"
+			"secret": "s33kret",
+			"ref": "refs/heads/master"
 		},
 		"slack": {
 			"name": "Slack"

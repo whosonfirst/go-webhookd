@@ -18,9 +18,9 @@ import (
 func main() {
 
 	var cfg = flag.String("config", "", "Path to a valid webhookd config file")
-	var receiver_name = flag.String("receiver", "", "...")
-	var endpoint = flag.String("endpoint", "", "...")
-	var file = flag.String("file", "", "...")
+	var receiver_name = flag.String("receiver", "", "A valid webhookd config receiver name to test")
+	var endpoint = flag.String("endpoint", "", "A valid webhookd (relative) endpoint")
+	var file = flag.String("file", "", "The path to a file to test the endpoint with. If empty the webhookd-test-github tool will concatenate arguments passed on the command line.")
 
 	flag.Parse()
 

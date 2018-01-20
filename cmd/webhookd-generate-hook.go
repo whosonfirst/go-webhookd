@@ -38,7 +38,7 @@ func RandomString(n int) string {
 
 func main() {
 
-	var length = flag.Int("length", 64, "...")
+	var length = flag.Int("length", 64, "The length of your webhook")
 
 	flag.Parse()
 
