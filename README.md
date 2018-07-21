@@ -179,7 +179,7 @@ See the way we're using an `Insecure` receiver and a `PubSub` dispatcher with a 
 ## Sending stuff to webhookd
 
 ```
-curl -v -X POST http://localhost:8080/foo -data-binary @README.md
+curl -v http://localhost:8080/foo -d @README.md
 
 * upload completely sent off: 703 out of 703 bytes
 < HTTP/1.1 200 OK
