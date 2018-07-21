@@ -6,21 +6,16 @@ prep:
 
 self:   prep
 	if test -d src/github.com/whosonfirst/go-webhookd; then rm -rf src/github.com/whosonfirst/go-webhookd; fi
-	mkdir -p src/github.com/whosonfirst/go-webhookd/config
-	mkdir -p src/github.com/whosonfirst/go-webhookd/daemon
-	mkdir -p src/github.com/whosonfirst/go-webhookd/dispatchers
-	mkdir -p src/github.com/whosonfirst/go-webhookd/github
-	mkdir -p src/github.com/whosonfirst/go-webhookd/receivers
-	mkdir -p src/github.com/whosonfirst/go-webhookd/transformations
-	mkdir -p src/github.com/whosonfirst/go-webhookd/webhook
+	mkdir -p src/github.com/whosonfirst/go-webhookd
 	cp webhookd.go src/github.com/whosonfirst/go-webhookd/
-	cp config/*.go src/github.com/whosonfirst/go-webhookd/config/
-	cp daemon/*.go src/github.com/whosonfirst/go-webhookd/daemon/
-	cp dispatchers/*.go src/github.com/whosonfirst/go-webhookd/dispatchers/
-	cp github/*.go src/github.com/whosonfirst/go-webhookd/github/
-	cp receivers/*.go src/github.com/whosonfirst/go-webhookd/receivers/
-	cp transformations/*.go src/github.com/whosonfirst/go-webhookd/transformations/
-	cp webhook/*.go src/github.com/whosonfirst/go-webhookd/webhook/
+	cp -r config src/github.com/whosonfirst/go-webhookd/
+	cp -r daemon src/github.com/whosonfirst/go-webhookd/
+	cp -r dispatchers src/github.com/whosonfirst/go-webhookd/
+	cp -r github src/github.com/whosonfirst/go-webhookd/
+	cp -r receivers src/github.com/whosonfirst/go-webhookd/
+	cp -r server src/github.com/whosonfirst/go-webhookd/
+	cp -r transformations src/github.com/whosonfirst/go-webhookd/
+	cp -r webhook src/github.com/whosonfirst/go-webhookd/
 	cp -r vendor/* src/
 
 rmdeps:
@@ -32,6 +27,7 @@ deps:
 	@GOPATH=$(GOPATH) go get -u "gopkg.in/redis.v1"
 	@GOPATH=$(GOPATH) go get -u "github.com/google/go-github/github"
 	@GOPATH=$(GOPATH) go get -u "github.com/whosonfirst/go-writer-slackcat"
+	@GOPATH=$(GOPATH) go get -u "github.com/whosonfirst/algnhsa"
 	@GOPATH=$(GOPATH) go get -u "github.com/thisisaaronland/go-chicken"
 
 vendor-deps: rmdeps deps
@@ -48,6 +44,7 @@ fmt:
 	go fmt dispatchers/*.go
 	go fmt github/*.go
 	go fmt receivers/*.go
+	go fmt server/*.go
 	go fmt transformations/*.go
 	go fmt webhook/*.go
 	go fmt *.go
