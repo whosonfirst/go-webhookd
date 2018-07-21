@@ -13,20 +13,31 @@ type Server interface {
 	Address() string
 }
 
-func NewStaticServer(proto string, u *url.URL, args ...interface{}) (Server, error) {
+func NewServerFromString(addr string, args ...interface{}) (Server, error) {
+
+	u, err := url.Parse(addr)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return NewServer(u)
+}
+
+func NewServer(addr *url.URL, args ...interface{}) (Server, error) {
 
 	var svr Server
 	var err error
 
-	switch strings.ToUpper(proto) {
+	switch strings.ToUpper(addr.Scheme) {
 
 	case "HTTP":
 
-		svr, err = NewHTTPServer(u, args...)
+		svr, err = NewHTTPServer(addr, args...)
 
 	case "LAMBDA":
 
-		svr, err = NewLambdaServer(u, args...)
+		svr, err = NewLambdaServer(addr, args...)
 
 	default:
 		return nil, errors.New("Invalid server protocol")

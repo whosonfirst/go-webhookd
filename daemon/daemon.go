@@ -7,6 +7,7 @@ import (
 	"github.com/whosonfirst/go-webhookd/config"
 	"github.com/whosonfirst/go-webhookd/dispatchers"
 	"github.com/whosonfirst/go-webhookd/receivers"
+	"github.com/whosonfirst/go-webhookd/server"
 	"github.com/whosonfirst/go-webhookd/transformations"
 	"github.com/whosonfirst/go-webhookd/webhook"
 	"log"
@@ -17,6 +18,7 @@ import (
 )
 
 type WebhookDaemon struct {
+	protocol string
 	host     string
 	port     int
 	webhooks map[string]webhookd.WebhookHandler
@@ -44,6 +46,7 @@ func NewWebhookDaemon(host string, port int) (*WebhookDaemon, error) {
 	webhooks := make(map[string]webhookd.WebhookHandler)
 
 	d := WebhookDaemon{
+		protocol: "http", // PLEASE MAKE ME DYNAMIC...
 		host:     host,
 		port:     port,
 		webhooks: webhooks,
@@ -283,19 +286,26 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 
 func (d *WebhookDaemon) Start() error {
 
+	addr := fmt.Sprintf("%s://%s:%d", d.protocol, d.host, d.port)
+
+	s, err := server.NewServerFromString(addr)
+
+	if err != nil {
+		return err
+	}
+
 	handler, err := d.HandlerFunc()
 
 	if err != nil {
 		return err
 	}
 
-	addr := fmt.Sprintf("%s:%d", d.host, d.port)
-	log.Printf("webhookd listening for requests on %s\n", addr)
-
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", handler)
 
-	err = http.ListenAndServe(addr, mux)
+	log.Printf("webhookd listening for requests on %s\n", s.Address())
+
+	err = s.ListenAndServe(mux)
 
 	if err != nil {
 		return err
