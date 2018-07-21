@@ -3,7 +3,7 @@
 		"protocol": "http",
 		"host": "localhost",
 		"port": 8080,
-		"enable_debug": true
+		"allow_debug": false
 	},
 	"receivers": {
 		"insecure": {

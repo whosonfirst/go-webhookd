@@ -18,9 +18,9 @@ import (
 )
 
 type WebhookDaemon struct {
-	// config *config.WebhookConfig
-	server   server.Server
-	webhooks map[string]webhookd.WebhookHandler
+	server     server.Server
+	webhooks   map[string]webhookd.WebhookHandler
+	AllowDebug bool
 }
 
 func NewWebhookDaemonFromConfig(cfg *config.WebhookConfig) (*WebhookDaemon, error) {
@@ -39,6 +39,8 @@ func NewWebhookDaemonFromConfig(cfg *config.WebhookConfig) (*WebhookDaemon, erro
 		return nil, err
 	}
 
+	d.AllowDebug = cfg.Daemon.AllowDebug
+
 	return d, nil
 }
 
@@ -55,8 +57,9 @@ func NewWebhookDaemon(protocol string, host string, port int) (*WebhookDaemon, e
 	webhooks := make(map[string]webhookd.WebhookHandler)
 
 	d := WebhookDaemon{
-		server:   srv,
-		webhooks: webhooks,
+		server:     srv,
+		webhooks:   webhooks,
+		AllowDebug: false,
 	}
 
 	return &d, nil
@@ -273,13 +276,16 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 		rsp.Header().Set("X-Webhookd-Time-To-Dispatch", fmt.Sprintf("%v", ttd))
 		rsp.Header().Set("X-Webhookd-Time-To-Process", fmt.Sprintf("%v", t2))
 
-		query := req.URL.Query()
-		debug := query.Get("debug")
+		if d.AllowDebug {
 
-		if debug != "" {
-			rsp.Header().Set("Content-Type", "text/plain")
-			rsp.Header().Set("Access-Control-Allow-Origin", "*")
-			rsp.Write(body)
+			query := req.URL.Query()
+			debug := query.Get("debug")
+
+			if debug != "" {
+				rsp.Header().Set("Content-Type", "text/plain")
+				rsp.Header().Set("Access-Control-Allow-Origin", "*")
+				rsp.Write(body)
+			}
 		}
 
 		return

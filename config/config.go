@@ -17,10 +17,10 @@ type WebhookConfig struct {
 }
 
 type WebhookDaemonConfig struct {
-	Protocol string `json:"protocol,omitempty"`
-	Host     string `json:"host,omitempty"`
-	Port     int    `json:"port,omitempty"`
-	Debug    bool   `json:"enable_debug"`
+	Protocol   string `json:"protocol,omitempty"`
+	Host       string `json:"host,omitempty"`
+	Port       int    `json:"port,omitempty"`
+	AllowDebug bool   `json:"allow_debug"`
 }
 
 type WebhookReceiverConfig struct {

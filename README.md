@@ -35,19 +35,28 @@ Usage of ./bin/webhookd:
 
 #### Example
 
-Let's assume an insecure receiver that reads input, transforms it using the
-[go-chicken](https://github.com/aaronland/go-chicken) `clucking` method and
-drops the results on the floor.
+Let's assume an insecure receiver with debugging enabled that reads input,
+transforms it using the [go-chicken](https://github.com/aaronland/go-chicken)
+`clucking` method and drops the results on the floor.
 
 ```
-"webhooks": [
-	{
-		"endpoint": "/insecure-test",
-	 	"receiver": "insecure",
-		"transformations": [ "clucking" ],
-		"dispatchers": [ "null" ]
-	}
-]
+{
+	"daemon": {
+		"protocol": "http",
+		"host": "localhost",
+		"port": 8080,
+		"allow_debug": false
+	},
+	...
+	"webhooks": [
+		{
+			"endpoint": "/insecure-test",
+	 		"receiver": "insecure",
+			"transformations": [ "clucking" ],
+			"dispatchers": [ "null" ]
+		}
+	]
+}
 ```
 
 First we start `webhookd`
@@ -156,7 +165,7 @@ wh_dispatchers, _ := []webhookd.WebhookDispatcher{ pubsub }
 
 wh, _ := webhook.NewWebhook("/foo", wh_receiver, wh_transformations, wh_dispatchers)
 
-wh_daemon, _ := daemon.NewWebhookDaemon("localhost", 8080)
+wh_daemon, _ := daemon.NewWebhookDaemon("http", "localhost", 8080)
 wh_daemon.AddWebhook(wh)
 wh_daemon.Start()
 ```
