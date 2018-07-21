@@ -18,6 +18,7 @@ import (
 )
 
 type WebhookDaemon struct {
+	// config *config.WebhookConfig
 	server   server.Server
 	webhooks map[string]webhookd.WebhookHandler
 }
@@ -240,9 +241,6 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 				if err != nil {
 					ch <- err
 				}
-
-				// err = &webhookd.WebhookError{Code: 000, Message: "o_O"}
-				// ch <- err
 
 			}(d, body)
 		}

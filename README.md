@@ -33,6 +33,64 @@ Usage of ./bin/webhookd:
 
 `webhookd` is an HTTP daemon for handling webhook requests. Individual webhook endpoints (and how they are processed) are defined in a [config file](#config-files) that is read at start-up time.
 
+#### Example
+
+Let's assume an insecure receiver that reads input, transforms it using the
+[go-chicken](https://github.com/aaronland/go-chicken) `clucking` method and
+drops the results on the floor.
+
+```
+"webhooks": [
+	{
+		"endpoint": "/insecure-test",
+	 	"receiver": "insecure",
+		"transformations": [ "clucking" ],
+		"dispatchers": [ "null" ]
+	}
+]
+```
+
+First we start `webhookd`
+
+```
+./bin/webhookd -config ./config.json
+2018/07/21 08:43:37 webhookd listening for requests on http://localhost:8080
+```
+
+Then we pass `webhookd` a file along with a `debug=1` query parameter so that we
+can see the output:
+
+```
+curl -v 'http://localhost:8080/insecure-test?debug=1' -d @README.md
+* Connected to localhost (127.0.0.1) port 8080 (#0)
+> POST /insecure-test?debug=1 HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.54.0
+> Accept: */*
+> Content-Length: 12790
+> Content-Type: application/x-www-form-urlencoded
+> Expect: 100-continue
+> 
+< HTTP/1.1 100 Continue
+* We are completely uploaded and fine
+< HTTP/1.1 200 OK
+< Access-Control-Allow-Origin: *
+< Content-Type: text/plain
+< X-Webhookd-Time-To-Dispatch: 16.907µs
+< X-Webhookd-Time-To-Process: 13.033089ms
+< X-Webhookd-Time-To-Receive: 209.332µs
+< X-Webhookd-Time-To-Transform: 12.802186ms
+< Date: Sat, 21 Jul 2018 15:43:40 GMT
+< Transfer-Encoding: chunked
+< 
+# bok bok b'gawk-cluck cluck![](bok bok b'gawk/bok bok b'gawk-bok bok bok.cluck
+cluck)bok bok bok bok bok b'gawk bok bok bok cluck cluck bok bok b'gawk-bok bok
+bok cluck cluck-bok bok b'gawk-bok bok bok.bok bok b'gawk cluck cluck bok bok
+b'gawk bok bok b'gawk bok bok b'gawk bok bok b'gawk cluck cluck bok bok b'gawk
+bok bok bok cluck cluck bok bok bok-bok bok bok. bok bok
+... and so on
+```
+
 #### Caveats
 
 ##### TLS
