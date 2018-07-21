@@ -18,37 +18,43 @@ import (
 )
 
 type WebhookDaemon struct {
-	protocol string
-	host     string
-	port     int
+	server   server.Server
 	webhooks map[string]webhookd.WebhookHandler
 }
 
 func NewWebhookDaemonFromConfig(cfg *config.WebhookConfig) (*WebhookDaemon, error) {
 
-	d, err := NewWebhookDaemon(cfg.Daemon.Host, cfg.Daemon.Port)
+	d, err := NewWebhookDaemon(cfg.Daemon.Protocol, cfg.Daemon.Host, cfg.Daemon.Port)
 
 	if err != nil {
+		log.Println("WTF 1", err)
 		return nil, err
 	}
 
 	err = d.AddWebhooksFromConfig(cfg)
 
 	if err != nil {
+		log.Println("WTF 2", err)
 		return nil, err
 	}
 
 	return d, nil
 }
 
-func NewWebhookDaemon(host string, port int) (*WebhookDaemon, error) {
+func NewWebhookDaemon(protocol string, host string, port int) (*WebhookDaemon, error) {
+
+	addr := fmt.Sprintf("%s://%s:%d", protocol, host, port)
+
+	srv, err := server.NewServerFromString(addr)
+
+	if err != nil {
+		return nil, err
+	}
 
 	webhooks := make(map[string]webhookd.WebhookHandler)
 
 	d := WebhookDaemon{
-		protocol: "http", // PLEASE MAKE ME DYNAMIC...
-		host:     host,
-		port:     port,
+		server:   srv,
 		webhooks: webhooks,
 	}
 
@@ -286,14 +292,6 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 
 func (d *WebhookDaemon) Start() error {
 
-	addr := fmt.Sprintf("%s://%s:%d", d.protocol, d.host, d.port)
-
-	s, err := server.NewServerFromString(addr)
-
-	if err != nil {
-		return err
-	}
-
 	handler, err := d.HandlerFunc()
 
 	if err != nil {
@@ -303,9 +301,11 @@ func (d *WebhookDaemon) Start() error {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", handler)
 
-	log.Printf("webhookd listening for requests on %s\n", s.Address())
+	svr := d.server
 
-	err = s.ListenAndServe(mux)
+	log.Printf("webhookd listening for requests on %s\n", svr.Address())
+
+	err = svr.ListenAndServe(mux)
 
 	if err != nil {
 		return err
