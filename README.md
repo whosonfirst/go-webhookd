@@ -39,7 +39,9 @@ This is a deliberately juvenile example, just to keep things simple.
 
 Let's assume an insecure receiver with debugging enabled that reads input,
 transforms it using the [go-chicken](https://github.com/aaronland/go-chicken)
-`clucking` method and drops the results on the floor:
+`clucking` method and drops the results on the floor.
+
+Here are the relevant settings in the config file:
 
 ```
 {
