@@ -95,7 +95,7 @@ func TestAppsService_ListInstallations(t *testing.T) {
 		t.Errorf("Apps.ListInstallations returned error: %v", err)
 	}
 
-	date := time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC)
+	date := Timestamp{Time: time.Date(2018, time.January, 1, 0, 0, 0, 0, time.UTC)}
 	want := []*Installation{{
 		ID:                  Int64(1),
 		AppID:               Int64(1),
@@ -168,7 +168,7 @@ func TestAppsService_CreateInstallationToken(t *testing.T) {
 	client, mux, _, teardown := setup()
 	defer teardown()
 
-	mux.HandleFunc("/installations/1/access_tokens", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/app/installations/1/access_tokens", func(w http.ResponseWriter, r *http.Request) {
 		testMethod(t, r, "POST")
 		testHeader(t, r, "Accept", mediaTypeIntegrationPreview)
 		fmt.Fprint(w, `{"token":"t"}`)
@@ -224,6 +224,27 @@ func TestAppsService_FindRepositoryInstallation(t *testing.T) {
 	want := &Installation{ID: Int64(1), AppID: Int64(1), TargetID: Int64(1), TargetType: String("Organization")}
 	if !reflect.DeepEqual(installation, want) {
 		t.Errorf("Apps.FindRepositoryInstallation returned %+v, want %+v", installation, want)
+	}
+}
+
+func TestAppsService_FindRepositoryInstallationByID(t *testing.T) {
+	client, mux, _, teardown := setup()
+	defer teardown()
+
+	mux.HandleFunc("/repositories/1/installation", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "GET")
+		testHeader(t, r, "Accept", mediaTypeIntegrationPreview)
+		fmt.Fprint(w, `{"id":1, "app_id":1, "target_id":1, "target_type": "Organization"}`)
+	})
+
+	installation, _, err := client.Apps.FindRepositoryInstallationByID(context.Background(), 1)
+	if err != nil {
+		t.Errorf("Apps.FindRepositoryInstallationByID returned error: %v", err)
+	}
+
+	want := &Installation{ID: Int64(1), AppID: Int64(1), TargetID: Int64(1), TargetType: String("Organization")}
+	if !reflect.DeepEqual(installation, want) {
+		t.Errorf("Apps.FindRepositoryInstallationByID returned %+v, want %+v", installation, want)
 	}
 }
 
