@@ -308,6 +308,26 @@ The `GitHubCommits` transformation will extract all the commits (added, modified
 * **exclude_modification** _bool_ A flag to indicate that modifications in a commit should be ignored. Optional; default false.
 * **exclude_deletions** _bool_ A flag to indicate that deletions in a commit should be ignored. Optional; default false.
 
+### GitHubRepo
+
+```
+	{
+		"name": "GitHubRepo",
+		"exclude_additions":false,
+		"exclude_modification":false,
+		"exclude_deletions":true,
+	}
+```
+
+The `GitHubRepo` transformation will extract the reporsitory name for all the commits matching (added, modified, removed) criteria.
+
+#### Properties
+
+* **name** _string_ This is always `GitHubRepo`.
+* **exclude_additions** _bool_ A flag to indicate that new additions in a commit should be ignored. Optional; default false.
+* **exclude_modification** _bool_ A flag to indicate that modifications in a commit should be ignored. Optional; default false.
+* **exclude_deletions** _bool_ A flag to indicate that deletions in a commit should be ignored. Optional; default false.
+
 ### Null
 
 ```
