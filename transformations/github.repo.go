@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	gogithub "github.com/google/go-github/github"
 	"github.com/whosonfirst/go-webhookd"
+	_ "log"
 )
 
 // see also: https://github.com/whosonfirst/go-whosonfirst-updated/issues/8

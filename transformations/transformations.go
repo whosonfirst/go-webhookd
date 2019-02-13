@@ -15,7 +15,7 @@ func NewTransformationFromConfig(cfg *config.WebhookTransformationConfig) (webho
 	case "GitHubCommits":
 		return NewGitHubCommitsTransformation(cfg.ExcludeAdditions, cfg.ExcludeModifications, cfg.ExcludeDeletions)
 	case "GitHubRepo":
-		return NewGitHubRepoTransformation(cfg.ExcludeAdditions, cfg.ExcludeModifications, cfg.ExcludeDeletions)		
+		return NewGitHubRepoTransformation(cfg.ExcludeAdditions, cfg.ExcludeModifications, cfg.ExcludeDeletions)
 	case "Null":
 		return NewNullTransformation()
 	case "SlackText":
