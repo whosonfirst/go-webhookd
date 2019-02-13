@@ -14,19 +14,19 @@ type LambdaDispatcher struct {
 	LambdaService  *lambda.Lambda
 }
 
-func NewLambdaDispatcher(session_dsn string, function string) (*LambdaDispatcher, error) {
+func NewLambdaDispatcher(lambda_dsn string, lambda_function string) (*LambdaDispatcher, error) {
 
-	sess, err := session.NewSessionWithDSN(session_dsn)
+	lambda_sess, err := session.NewSessionWithDSN(lambda_dsn)
 
 	if err != nil {
 		return nil, err
 	}
 
-	svc := lambda.New(sess)
+	lambda_svc := lambda.New(lambda_sess)
 
 	d := LambdaDispatcher{
-		LambdaFunction: function,
-		LambdaService:  svc,
+		LambdaFunction: lambda_function,
+		LambdaService:  lambda_svc,
 	}
 
 	return &d, nil
