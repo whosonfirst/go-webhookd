@@ -358,6 +358,24 @@ The `SlackText` transformation will extract and return [the `text` property](htt
 
 ## Dispatchers
 
+### Lambda
+
+```
+	{
+		"name": "Lambda",
+		"dsn": "region=us-east-1",
+		"function": "WebhookdLambdaFunction"
+	}
+```
+
+The `Lambda` dispatcher will send messages to an AWS Lambda function.
+
+#### Properties
+
+* **name** _string_ This is always `Lambda`.
+* **dsn** _string_ A valid `go-whosonfirst-aws` Lambda DSN string.
+* **name** _string_ The name of your Lambda function.
+
 ### Log
 
 ```
