@@ -249,7 +249,7 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 		// https://github.com/whosonfirst/go-webhookd/issues/14
 		// this is broken as in len(errors) will always be zero even if
 		// there are errors (20190214/thisisaaronland)
-		
+
 		errors := make([]string, 0)
 
 		go func() {

@@ -44,29 +44,35 @@ func (p *GitHubRepoTransformation) Transform(body []byte) ([]byte, *webhookd.Web
 	repo := event.Repo
 	repo_name := *repo.Name
 
+	has_updates := false
+
 	for _, c := range event.Commits {
 
 		if !p.ExcludeAdditions {
-			for range c.Added {
-				buf.WriteString(repo_name)
-				break
+
+			if len(c.Added) > 0 {
+				has_updates = true
 			}
 		}
 
 		if !p.ExcludeModifications {
-			for range c.Modified {
-				buf.WriteString(repo_name)
-				break
+
+			if len(c.Modified) > 0 {
+				has_updates = true
 			}
 		}
 
 		if !p.ExcludeDeletions {
-			for range c.Removed {
-				buf.WriteString(repo_name)
-				break
+
+			if len(c.Removed) > 0 {
+				has_updates = true
 			}
 		}
 	}
 
+	if has_updates {
+		buf.WriteString(repo_name)
+	}
+	
 	return buf.Bytes(), nil
 }
