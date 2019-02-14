@@ -28,12 +28,12 @@ type WebhookReceiverConfig struct {
 }
 
 type WebhookDispatcherConfig struct {
-	Name    string `json:"name"`
-	Host    string `json:"host,omitempty"`
-	Port    int    `json:"port,omitempty"`
-	Channel string `json:"channel,omitempty"`
-	Config  string `json:"config,omitempty"`
-	DSN string `json:"dsn,omitempty"`
+	Name     string `json:"name"`
+	Host     string `json:"host,omitempty"`
+	Port     int    `json:"port,omitempty"`
+	Channel  string `json:"channel,omitempty"`
+	Config   string `json:"config,omitempty"`
+	DSN      string `json:"dsn,omitempty"`
 	Function string `json:"function,omitempty"`
 }
 

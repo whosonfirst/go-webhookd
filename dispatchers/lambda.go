@@ -34,7 +34,7 @@ func NewLambdaDispatcher(lambda_dsn string, lambda_function string) (*LambdaDisp
 
 func (d *LambdaDispatcher) Dispatch(body []byte) *webhookd.WebhookError {
 
-	payload, err := json.Marshal(body)
+	payload, err := json.Marshal(string(body))
 
 	if err != nil {
 		return &webhookd.WebhookError{Code: 999, Message: err.Error()}

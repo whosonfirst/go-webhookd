@@ -11,7 +11,7 @@ func NewDispatcherFromConfig(cfg *config.WebhookDispatcherConfig) (webhookd.Webh
 
 	switch cfg.Name {
 	case "Lambda":
-		return NewLambdaDispatcher(cfg.DSN, cfg.Function)		
+		return NewLambdaDispatcher(cfg.DSN, cfg.Function)
 	case "Log":
 		return NewLogDispatcher()
 	case "Null":
