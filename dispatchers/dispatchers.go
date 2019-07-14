@@ -3,6 +3,7 @@ package dispatchers
 import (
 	"errors"
 	"fmt"
+
 	"github.com/whosonfirst/go-webhookd"
 	"github.com/whosonfirst/go-webhookd/config"
 )
@@ -20,6 +21,8 @@ func NewDispatcherFromConfig(cfg *config.WebhookDispatcherConfig) (webhookd.Webh
 		return NewPubSubDispatcher(cfg.Host, cfg.Port, cfg.Channel)
 	case "Slack":
 		return NewSlackDispatcher(cfg.Config)
+	case "Forwarder":
+		return NewForwarderDispatcher(cfg.DestinationURL)
 	default:
 		msg := fmt.Sprintf("Undefined dispatcher: '%s'", cfg.Name)
 		return nil, errors.New(msg)

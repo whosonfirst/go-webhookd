@@ -57,7 +57,11 @@
 		"slack": {
 			"name": "Slack",
 			"config": "/path/to/.slackcat.conf"
-		}
+		},
+    "forwarder": {
+      "name": "Forwarder",
+      "destination_url": "https://bin.webhookrelay.com/v1/webhooks/b2ee0c02-815b-466d-8a69-43e073fe209c"
+    }
 	},
 	"webhooks": [
 		{
