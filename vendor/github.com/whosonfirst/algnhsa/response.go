@@ -16,11 +16,7 @@ func newAPIGatewayResponse(w *httptest.ResponseRecorder, binaryContentTypes map[
 	event.StatusCode = w.Code
 
 	// Set headers.
-	respHeaders := map[string]string{}
-	for k, v := range w.HeaderMap {
-		respHeaders[k] = v[0]
-	}
-	event.Headers = respHeaders
+	event.MultiValueHeaders = w.Result().Header
 
 	// Set body.
 	contentType := w.Header().Get("Content-Type")

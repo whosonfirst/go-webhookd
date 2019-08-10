@@ -10,6 +10,8 @@ import (
 func NewDispatcherFromConfig(cfg *config.WebhookDispatcherConfig) (webhookd.WebhookDispatcher, error) {
 
 	switch cfg.Name {
+	case "Lambda":
+		return NewLambdaDispatcher(cfg.DSN, cfg.Function)
 	case "Log":
 		return NewLogDispatcher()
 	case "Null":

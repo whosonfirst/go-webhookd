@@ -1,8 +1,5 @@
 package receivers
 
-// This has not been fully tested with an actual GitHub message yet
-// (20161016/thisisaaronland)
-
 // https://developer.github.com/webhooks/
 // https://developer.github.com/webhooks/#payloads
 // https://developer.github.com/v3/activity/events/types/#pushevent
@@ -67,6 +64,14 @@ func (wh GitHubReceiver) Receive(req *http.Request) ([]byte, *webhookd.WebhookEr
 		err := &webhookd.WebhookError{Code: code, Message: message}
 		return nil, err
 	}
+
+	if event_type == "ping" {
+		err := &webhookd.WebhookError{Code: -1, Message: "ping message is a no-op"}
+		return nil, err
+	}
+
+	// remember that you want to configure GitHub to send webhooks as 'application/json'
+	// or all this code will get confused (20190212/thisisaaronland)
 
 	body, err := ioutil.ReadAll(req.Body)
 

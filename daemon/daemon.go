@@ -196,6 +196,14 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 
 		body, err := rcvr.Receive(req)
 
+		// we use -1 to signal that this is an unhandled event but
+		// not an error, for example when github sends a ping message
+		// (20190212/thisisaaronland)
+
+		if err != nil && err.Code == -1 {
+			return
+		}
+
 		if err != nil {
 			http.Error(rsp, err.Error(), err.Code)
 			return
@@ -247,6 +255,10 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 
 			}(d, body)
 		}
+
+		// https://github.com/whosonfirst/go-webhookd/issues/14
+		// this is broken as in len(errors) will always be zero even if
+		// there are errors (20190214/thisisaaronland)
 
 		errors := make([]string, 0)
 

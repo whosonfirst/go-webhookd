@@ -1,7 +1,7 @@
 package transformations
 
 import (
-	"github.com/thisisaaronland/go-chicken"
+	"github.com/aaronland/go-chicken"
 	"github.com/whosonfirst/go-webhookd"
 )
 
