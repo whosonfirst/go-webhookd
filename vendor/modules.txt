@@ -1,0 +1,65 @@
+# github.com/aaronland/go-chicken v0.1.1
+github.com/aaronland/go-chicken
+github.com/aaronland/go-chicken/emoji
+github.com/aaronland/go-chicken/strings
+# github.com/aaronland/go-string v0.1.1
+github.com/aaronland/go-string/dsn
+# github.com/aaronland/go-ucd v0.0.0-20190520134908-684059ca9156
+github.com/aaronland/go-ucd
+# github.com/aws/aws-sdk-go v1.22.3
+github.com/aws/aws-sdk-go/aws
+github.com/aws/aws-sdk-go/service/lambda
+github.com/aws/aws-sdk-go/aws/awserr
+github.com/aws/aws-sdk-go/aws/credentials
+github.com/aws/aws-sdk-go/aws/endpoints
+github.com/aws/aws-sdk-go/internal/sdkio
+github.com/aws/aws-sdk-go/aws/awsutil
+github.com/aws/aws-sdk-go/aws/client
+github.com/aws/aws-sdk-go/aws/client/metadata
+github.com/aws/aws-sdk-go/aws/request
+github.com/aws/aws-sdk-go/aws/signer/v4
+github.com/aws/aws-sdk-go/private/protocol
+github.com/aws/aws-sdk-go/private/protocol/restjson
+github.com/aws/aws-sdk-go/aws/session
+github.com/aws/aws-sdk-go/internal/ini
+github.com/aws/aws-sdk-go/internal/shareddefaults
+github.com/aws/aws-sdk-go/internal/sdkrand
+github.com/aws/aws-sdk-go/private/protocol/rest
+github.com/aws/aws-sdk-go/private/protocol/json/jsonutil
+github.com/aws/aws-sdk-go/private/protocol/jsonrpc
+github.com/aws/aws-sdk-go/aws/corehandlers
+github.com/aws/aws-sdk-go/aws/credentials/processcreds
+github.com/aws/aws-sdk-go/aws/credentials/stscreds
+github.com/aws/aws-sdk-go/aws/csm
+github.com/aws/aws-sdk-go/aws/defaults
+github.com/aws/aws-sdk-go/service/sts
+github.com/aws/aws-sdk-go/service/sts/stsiface
+github.com/aws/aws-sdk-go/aws/credentials/ec2rolecreds
+github.com/aws/aws-sdk-go/aws/credentials/endpointcreds
+github.com/aws/aws-sdk-go/aws/ec2metadata
+github.com/aws/aws-sdk-go/private/protocol/query
+github.com/aws/aws-sdk-go/internal/sdkuri
+github.com/aws/aws-sdk-go/private/protocol/query/queryutil
+github.com/aws/aws-sdk-go/private/protocol/xml/xmlutil
+# github.com/cooperhewitt/go-ucd v0.0.0-20170323200852-c4101e1ef9a6
+github.com/cooperhewitt/go-ucd/unicodedata
+github.com/cooperhewitt/go-ucd/unihan
+# github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
+github.com/golang/glog
+# github.com/google/go-github v17.0.0+incompatible
+github.com/google/go-github/github
+# github.com/google/go-querystring v1.0.0
+github.com/google/go-querystring/query
+# github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
+github.com/jmespath/go-jmespath
+# github.com/whosonfirst/go-whosonfirst-aws v0.1.3
+github.com/whosonfirst/go-whosonfirst-aws/session
+github.com/whosonfirst/go-whosonfirst-aws/config
+# github.com/whosonfirst/go-writer-slackcat v0.0.0-20151205020711-ad3c7f1d3b0a
+github.com/whosonfirst/go-writer-slackcat
+# github.com/whosonfirst/slackcat v0.0.0-20170719225154-b769f32185b5
+github.com/whosonfirst/slackcat
+# gopkg.in/bufio.v1 v1.0.0-20140618132640-567b2bfa514e
+gopkg.in/bufio.v1
+# gopkg.in/redis.v1 v1.0.0-20140702131110-4ea3e7531bf7
+gopkg.in/redis.v1

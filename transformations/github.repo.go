@@ -73,6 +73,6 @@ func (p *GitHubRepoTransformation) Transform(body []byte) ([]byte, *webhookd.Web
 	if has_updates {
 		buf.WriteString(repo_name)
 	}
-	
+
 	return buf.Bytes(), nil
 }
