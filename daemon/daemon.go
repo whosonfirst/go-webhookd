@@ -28,14 +28,12 @@ func NewWebhookDaemonFromConfig(cfg *config.WebhookConfig) (*WebhookDaemon, erro
 	d, err := NewWebhookDaemon(cfg.Daemon.Protocol, cfg.Daemon.Host, cfg.Daemon.Port)
 
 	if err != nil {
-		log.Println("WTF 1", err)
 		return nil, err
 	}
 
 	err = d.AddWebhooksFromConfig(cfg)
 
 	if err != nil {
-		log.Println("WTF 2", err)
 		return nil, err
 	}
 
