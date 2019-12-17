@@ -2,8 +2,6 @@
 
 Go libraries and utilities for working with Unicode character data.
 
-_This package was forked from the [cooperhewitt/ucd](https://github.com/cooperhewitt/go-ucd) package but builds everything under its own `aaronland` namespace._
-
 ## Example
 
 	package main
@@ -11,7 +9,7 @@ _This package was forked from the [cooperhewitt/ucd](https://github.com/cooperhe
 	import(
 		"fmt"
 		"flag"
-		"github.com/aaronland/go-ucd"
+		ucd "github.com/cooperhewitt/go-ucd"
 	)
 
 	func main(){
@@ -28,7 +26,8 @@ _This package was forked from the [cooperhewitt/ucd](https://github.com/cooperhe
 The following tools are included in the `cmd` directory. Note however that you will need to [compile them](https://golang.org/cmd/go/#hdr-Compile_and_run_Go_program) yourself. You can do this (and all the steps in-between using the handy [Makefile](Makefile) and the `build` target included in this repository. Like this:
 
 ```
-$> make tools
+$> export GOPATH=`pwd`
+$> make build
 ```
 
 This will build the `ucd` and `ucd-server` applications and place them in the `bin` directory.
@@ -70,6 +69,13 @@ To install as an init.d script, copy the example provided, replace the values of
 
         $> sudo cp init.d/ucd-server.sh.example /etc/init.d/ucd-server.sh
         $> sudo service ucd-server start
+
+If using [cooperhewitt-vagrant](https://github.com/cooperhewitt/cooperhewitt-vagrant), and assuming you cloned this repository and compiled from `/vagrant/go-ucd`, you can use these values:
+
+        UCD_USER=www-data
+        UCD_DAEMON=/vagrant/go-ucd/bin/ucd-server
+        UCD_PORT=3456
+
 
 #### as JSON
 
@@ -125,12 +131,14 @@ To install as an init.d script, copy the example provided, replace the values of
 `go-ucd` supports Unicode 12.0 as of March 05, 2019.
 
 This package exports data defined in the `UnicodeData.txt` and the `Unihan.zip`. Both are available from
-http://unicode.org/Public/UCD/latest/ucd/.
+http://unicode.org/Public/UCD/latest/ucd/. You can see the dates that each was
+last compiled in to the source code for `ucd` at the top of each source file in
+[the data directory](https://github.com/cooperhewitt/go-ucd/tree/master/src/org.cooperhewitt/ucd/data).
 
 If the Unicode consortium releases newer data files and you want or need to
 updated your version of `go-ucd` before we do you do so manually by using the
 `ucd-build-unicodedata` and `ucd-build-unihan` tools included in the [bin
-directory](https://github.com/aaronland/go-ucd/tree/master/bin). For example:
+directory](https://github.com/cooperhewitt/go-ucd/tree/master/bin). For example:
 
 ```
 go run ./cmd/ucd-build-unicodedata.go > ./unicodedata/unicodedata.go

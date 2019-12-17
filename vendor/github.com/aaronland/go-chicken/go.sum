@@ -1,5 +1,7 @@
 github.com/aaronland/go-ucd v0.0.0-20190520134908-684059ca9156 h1:SsNFRFNm6Gn8DgDZIcImpIXtjeH1Ak2s1SLoVby0dwg=
 github.com/aaronland/go-ucd v0.0.0-20190520134908-684059ca9156/go.mod h1:DoKBDoY4iuDSNErkKy6n1SRdUEOLwTm2gy7X3GtUQaI=
+github.com/aaronland/go-ucd v12.0.1+incompatible h1:uR/VbmA6SMQ8Ua6HArLEPjKyPFS/uC6n8f+xzJn+VeY=
+github.com/aaronland/go-ucd v12.0.1+incompatible/go.mod h1:CadKBZkk96fATzdzz2g0RAdsZXwjDRzH3dwtOHVE4nI=
 github.com/cooperhewitt/go-ucd v0.0.0-20170323200852-c4101e1ef9a6 h1:P3t+wrVJz+Cey5VNf/8SYv56kniN8+feDX8dUgSRsA0=
 github.com/cooperhewitt/go-ucd v0.0.0-20170323200852-c4101e1ef9a6/go.mod h1:76WUZ+6G1smA8yhoi9mNx95mpMvIPIpeEDAZrEFRK30=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
