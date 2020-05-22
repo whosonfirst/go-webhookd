@@ -1,6 +1,7 @@
 package webhook
 
 import (
+	"context"
 	"github.com/whosonfirst/go-webhookd/v2"
 )
 
@@ -12,7 +13,7 @@ type Webhook struct {
 	dispatchers     []webhookd.WebhookDispatcher
 }
 
-func NewWebhook(endpoint string, rc webhookd.WebhookReceiver, tr []webhookd.WebhookTransformation, ds []webhookd.WebhookDispatcher) (Webhook, error) {
+func NewWebhook(ctx context.Context, endpoint string, rc webhookd.WebhookReceiver, tr []webhookd.WebhookTransformation, ds []webhookd.WebhookDispatcher) (Webhook, error) {
 
 	wh := Webhook{
 		endpoint:        endpoint,

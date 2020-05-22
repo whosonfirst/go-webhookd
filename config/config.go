@@ -16,37 +16,13 @@ type WebhookConfig struct {
 	Webhooks        []WebhookWebhooksConfig                `json:"webhooks"`
 }
 
-type WebhookDaemonConfig struct {
-	Protocol   string `json:"protocol,omitempty"`
-	Host       string `json:"host,omitempty"`
-	Port       int    `json:"port,omitempty"`
-	AllowDebug bool   `json:"allow_debug"`
-}
+type WebhookDaemonConfig string
 
-type WebhookReceiverConfig struct {
-	Name   string `json:"name"`
-	Secret string `json:"secret,omitempty"`
-	Ref    string `json:ref,omitempty"`
-}
+type WebhookReceiverConfig string
 
-type WebhookDispatcherConfig struct {
-	Name     string `json:"name"`
-	Host     string `json:"host,omitempty"`
-	Port     int    `json:"port,omitempty"`
-	Channel  string `json:"channel,omitempty"`
-	Config   string `json:"config,omitempty"`
-	DSN      string `json:"dsn,omitempty"`
-	Function string `json:"function,omitempty"`
-}
+type WebhookDispatcherConfig string
 
-type WebhookTransformationConfig struct {
-	Name                 string `json:"name"`
-	Language             string `json:"language,omitempty"`
-	Clucking             bool   `json:"clucking,omitempty"`
-	ExcludeAdditions     bool   `json:"exclude_additions,omitempty"`
-	ExcludeModifications bool   `json:"exclude_modifications,omitempty"`
-	ExcludeDeletions     bool   `json:"exclude_deletions,omitempty"`
-}
+type WebhookTransformationConfig string
 
 type WebhookWebhooksConfig struct {
 	Endpoint        string   `json:"endpoint"`

@@ -13,6 +13,8 @@ import (
 	"github.com/whosonfirst/go-webhookd/v2/webhook"
 	"log"
 	"net/http"
+	"net/url"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -26,9 +28,7 @@ type WebhookDaemon struct {
 
 func NewWebhookDaemonFromConfig(ctx context.Context, cfg *config.WebhookConfig) (*WebhookDaemon, error) {
 
-	server_uri := fmt.Sprintf("%s://%s:%", cfg.Daemon.Protocol, cfg.Daemon.Host, cfg.Daemon.Port)
-
-	d, err := NewWebhookDaemon(ctx, server_uri)
+	d, err := NewWebhookDaemon(ctx, cfg.Daemon)
 
 	if err != nil {
 		return nil, err
@@ -39,15 +39,29 @@ func NewWebhookDaemonFromConfig(ctx context.Context, cfg *config.WebhookConfig) 
 	if err != nil {
 		return nil, err
 	}
-
-	d.AllowDebug = cfg.Daemon.AllowDebug
-
+	
 	return d, nil
 }
 
-func NewWebhookDaemon(ctx context.Context, server_uri string) (*WebhookDaemon, error) {
+func NewWebhookDaemon(ctx context.Context, uri string) (*WebhookDaemon, error) {
 
-	srv, err := server.NewServer(ctx, server_uri)
+	u, err := url.Parse(uri)
+
+	if err != nil {
+		return nil, err
+	}
+
+	q := u.Query()
+
+	str_debug := q.Get("allow_debug")
+
+	allow_debug, err := strconv.ParseBool(str_debug)
+
+	if err != nil {
+		return nil, err
+	}
+	
+	srv, err := server.NewServer(ctx, uri)
 
 	if err != nil {
 		return nil, err
@@ -58,7 +72,7 @@ func NewWebhookDaemon(ctx context.Context, server_uri string) (*WebhookDaemon, e
 	d := WebhookDaemon{
 		server:     srv,
 		webhooks:   webhooks,
-		AllowDebug: false,
+		AllowDebug: allow_debug,
 	}
 
 	return &d, nil
@@ -87,13 +101,13 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(ctx context.Context, cfg *config.W
 			return errors.New(msg)
 		}
 
-		receiver_config, err := cfg.GetReceiverConfigByName(hook.Receiver)
+		receiver_uri, err := cfg.GetReceiverConfigByName(hook.Receiver)
 
 		if err != nil {
 			return err
 		}
 
-		receiver, err := receivers.NewReceiverFromConfig(ctx, receiver_config)
+		receiver, err := receivers.NewReceiver(ctx, receiver_uri)
 
 		if err != nil {
 			return err
@@ -109,7 +123,7 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(ctx context.Context, cfg *config.W
 				return err
 			}
 
-			step, err := transformations.NewTransformationFromConfig(ctx, transformation_config)
+			step, err := transformations.NewTransformation(ctx, transformation_config)
 
 			if err != nil {
 				return err
@@ -122,13 +136,13 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(ctx context.Context, cfg *config.W
 
 		for _, name := range hook.Dispatchers {
 
-			dispatcher_config, err := cfg.GetDispatcherConfigByName(name)
+			dispatcher_uri, err := cfg.GetDispatcherConfigByName(name)
 
 			if err != nil {
 				return err
 			}
 
-			dispatcher, err := dispatchers.NewDispatcherFromConfig(ctx, dispatcher_config)
+			dispatcher, err := dispatchers.NewDispatcher(ctx, dispatcher_uri)
 
 			if err != nil {
 				return err
@@ -137,13 +151,13 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(ctx context.Context, cfg *config.W
 			sendto = append(sendto, dispatcher)
 		}
 
-		wh, err := webhook.NewWebhook(hook.Endpoint, receiver, steps, sendto)
+		wh, err := webhook.NewWebhook(ctx, hook.Endpoint, receiver, steps, sendto)
 
 		if err != nil {
 			return err
 		}
 
-		err = d.AddWebhook(wh)
+		err = d.AddWebhook(ctx, wh)
 
 		if err != nil {
 			return err
@@ -154,7 +168,7 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(ctx context.Context, cfg *config.W
 	return nil
 }
 
-func (d *WebhookDaemon) AddWebhook(wh webhook.Webhook) error {
+func (d *WebhookDaemon) AddWebhook(ctx context.Context, wh webhook.Webhook) error {
 
 	endpoint := wh.Endpoint()
 	_, ok := d.webhooks[endpoint]
