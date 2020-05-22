@@ -284,11 +284,11 @@ The `webhooks` section is a list of dictionaries. These are the actual webhook e
 
 ### GitHub
 
+The `GitHub` receiver handles Webhooks sent from [GitHub](https://developer.github.com/webhooks/). It validates that the message sent is actually from GitHub (by way of the `X-Hub-Signature` header) but performs no other processing. It is defined as a URI string in the form of:
+
 ```
 github://?secret={SECRET}&ref={REF}
 ```
-
-This receiver handles Webhooks sent from [GitHub](https://developer.github.com/webhooks/). It validates that the message sent is actually from GitHub (by way of the `X-Hub-Signature` header) but performs no other processing.
 
 #### Properties
 
@@ -297,31 +297,33 @@ This receiver handles Webhooks sent from [GitHub](https://developer.github.com/w
 
 ### Insecure
 
+As the name suggests the `Insecure` receiver is completely insecure. It will happily accept anything you send to it and relay it on to the dispatcher defined for that webhook. It is defined as a URI string in the form of:
+
 ```
 insecure://
 ```
-
-As the name suggests this receiver is completely insecure. It will happily accept anything you send to it and relay it on to the dispatcher defined for that webhook.
 
 This receiver exists primarily for debugging purposes and **you should not deploy it in production**.
 
 ### Slack
 
+The `Slack` receiver handles Webhooks sent from [Slack](https://api.slack.com/outgoing-webhooks). It does not process the message at all. It is defined as a URI string in the form of:
+
 ```
 slack://
 ```
 
-This receiver handles Webhooks sent from [Slack](https://api.slack.com/outgoing-webhooks). It does not process the message at all. _This receiver has not been fully tested yet so proceed with caution._
+_This receiver has not been fully tested yet so proceed with caution._
 
 ## Transformations
 
 ### Chicken
 
+The `Chicken` transformation will convert every word in your message to 🐔 using the [go-chicken](https://github.com/thisisaaronland/go-chicken) package. If this seems silly that's because it is. It's also more fun that yet-another boring _"make all the words upper-cased"_ example. It is defined as a URI string in the form of:
+
 ```
 chicken://{LANGUAGE}?clucking={CLUCKING}
 ```
-
-The `Chicken` transformation will convert every word in your message to 🐔 using the [go-chicken](https://github.com/thisisaaronland/go-chicken) package. If this seems silly that's because it is. It's also more fun that yet-another boring _"make all the words upper-cased"_ example.
 
 #### Properties
 
@@ -329,10 +331,6 @@ The `Chicken` transformation will convert every word in your message to 🐔 usi
 * **{CLUCKING}** _bool_ A boolean flag indicating whether or not to [cluck](https://github.com/thisisaaronland/go-chicken#clucking) when generating results.
 
 ### GitHubCommits
-
-```
-githubcommits://?exclude_additions={EXCLUDE_ADDITIONS}&exclude_modification={EXCLUDE_MODIFICATIONS}&exclude_deletions={EXCLUDE_DELETIONS}
-```
 
 The `GitHubCommits` transformation will extract all the commits (added, modified, removed) from a `push` event and return a CSV encoded list of rows consisting of: commit hash, repository name, path. For example:
 
@@ -342,6 +340,12 @@ e3a18d4de60a5e50ca78ca1733238735ddfaef4c,sfomuseum-data-flights-2020-05,data/171
 e3a18d4de60a5e50ca78ca1733238735ddfaef4c,sfomuseum-data-flights-2020-05,data/171/316/483/5/1713164835.geojson
 ````
 
+It is defined as a URI string in the form of:
+
+```
+githubcommits://?exclude_additions={EXCLUDE_ADDITIONS}&exclude_modification={EXCLUDE_MODIFICATIONS}&exclude_deletions={EXCLUDE_DELETIONS}
+```
+
 #### Properties
 
 * **{EXCLUDE_ADDITIONS}** _bool_ A flag to indicate that new additions in a commit should be ignored. Optional; default false.
@@ -350,11 +354,11 @@ e3a18d4de60a5e50ca78ca1733238735ddfaef4c,sfomuseum-data-flights-2020-05,data/171
 
 ### GitHubRepo
 
+The `GitHubRepo` transformation will extract the reporsitory name for all the commits matching (added, modified, removed) criteria. It is defined as a URI string in the form of:
+
 ```
 githubrepo://?exclude_additions={EXCLUDE_ADDITIONS}&exclude_modification={EXCLUDE_MODIFICATIONS}&exclude_deletions={EXCLUDE_DELETIONS}
 ```
-
-The `GitHubRepo` transformation will extract the reporsitory name for all the commits matching (added, modified, removed) criteria.
 
 #### Properties
 
@@ -364,29 +368,29 @@ The `GitHubRepo` transformation will extract the reporsitory name for all the co
 
 ### Null
 
+The `Null` transformation will not do _anything_. It's not clear why you would ever use this outside of debugging but that's your business. It is defined as a URI string in the form of:
+
 ```
 null://
 ```
 
-The `Null` transformation will not do _anything_. It's not clear why you would ever use this outside of debugging but that's your business.
-
 ### SlackText
+
+The `SlackText` transformation will extract and return [the `text` property](https://api.slack.com/outgoing-webhooks) from a Webhook sent by Slack. It is defined as URI string in the form of:
 
 ```
 slacktext://
 ```
 
-The `SlackText` transformation will extract and return [the `text` property](https://api.slack.com/outgoing-webhooks) from a Webhook sent by Slack.
-
 ## Dispatchers
 
 ### Lambda
 
+The `Lambda` dispatcher will send messages to an Amazon Web Services (ASW) [Lambda function](#). It is defined as a URI string in the form of:
+
 ```
 lambda://{FUNCTION}?dsn={DSN}
 ```
-
-The `Lambda` dispatcher will send messages to an AWS Lambda function.
 
 #### Properties
 
@@ -395,27 +399,27 @@ The `Lambda` dispatcher will send messages to an AWS Lambda function.
 
 ### Log
 
+The `Log` dispatcher will send messages to Go's logging facility. As of this writing that means everything is logged to STDOUT but eventually it will be more sophisticated. It is defined as a URI string in the form of:
+
 ```
 log://
 ```
 
-The `Log` dispatcher will send messages to Go's logging facility. As of this writing that means everything is logged to STDOUT but eventually it will be more sophisticated.
-
 ### Null
+
+The `Null` dispatcher will send messages in to the vortex, never to be seen again. This can be useful for debugging. It is defined as a URI string in the form of:
 
 ```
 null://
 ```
 
-The `Null` dispatcher will send messages in to the vortex, never to be seen again. This can be useful for debugging.
-
 ### PubSub
+
+The `PubSub` dispatcher will send messages to a Redis PubSub channel. It is defined as a URI string in the form of:
 
 ```
 pubsub://{REDIS_HOST}:{REDIS_PORT}/{REDIS_CHANNEL}
 ```
-
-The `PubSub` dispatcher will send messages to a Redis PubSub channel.
 
 #### Properties
 
@@ -425,11 +429,11 @@ The `PubSub` dispatcher will send messages to a Redis PubSub channel.
 
 ### Slack
 
+The `Slack` dispatcher will send messages to a Slack channel using the [slackcat](https://github.com/whosonfirst/slackcat#configuring) package. It is defined as a URI string in the form of:
+
 ```
 slack://{PATH_TO_SLACKCAT_CONF}
 ```
-
-The `Slack` dispatcher will send messages to a Slack channel using the [slackcat](https://github.com/whosonfirst/slackcat#configuring) package.
 
 #### Properties
 
