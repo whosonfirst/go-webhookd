@@ -10,7 +10,7 @@ import (
 	"net/http"
 )
 
-func init(){
+func init() {
 
 	ctx := context.Background()
 	err := RegisterReceiver(ctx, "slack", NewSlackReceiver)

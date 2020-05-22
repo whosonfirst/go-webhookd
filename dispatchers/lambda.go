@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/lambda"
 	"github.com/whosonfirst/go-webhookd/v2"
+	"net/url"
 )
 
 type LambdaDispatcher struct {
@@ -15,7 +16,18 @@ type LambdaDispatcher struct {
 	LambdaService  *lambda.Lambda
 }
 
-func NewLambdaDispatcher(ctx context.Context, lambda_dsn string, lambda_function string) (*LambdaDispatcher, error) {
+func NewLambdaDispatcher(ctx context.Context, uri string) (webhookd.WebhookDispatcher, error) {
+
+	u, err := url.Parse(uri)
+
+	if err != nil {
+		return nil, err
+	}
+
+	q := u.Query()
+
+	lambda_dsn := q.Get("dsn")
+	lambda_function := q.Get("function")
 
 	lambda_sess, err := session.NewSessionWithDSN(lambda_dsn)
 

@@ -9,7 +9,7 @@ type NullDispatcher struct {
 	webhookd.WebhookDispatcher
 }
 
-func NewNullDispatcher(ctx context.Context) (*NullDispatcher, error) {
+func NewNullDispatcher(ctx context.Context, uri string) (webhookd.WebhookDispatcher, error) {
 
 	n := NullDispatcher{}
 	return &n, nil

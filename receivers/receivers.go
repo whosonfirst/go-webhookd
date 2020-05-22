@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/aaronland/go-roster"
 	"github.com/whosonfirst/go-webhookd/v2"
 	"github.com/whosonfirst/go-webhookd/v2/config"
-	"github.com/aaronland/go-roster"
-	"net/url"	
+	"net/url"
 )
 
 var receivers roster.Roster
@@ -21,9 +21,9 @@ func NewReceiverFromConfig(ctx context.Context, cfg *config.WebhookReceiverConfi
 		uri := fmt.Sprintf("github://?secret=%&ref=%s", cfg.Secret, cfg.Ref)
 		return NewReceiver(ctx, uri)
 	case "Insecure":
-		return NewReceiver(ctx, "insecure://")		
+		return NewReceiver(ctx, "insecure://")
 	case "Slack":
-		return NewReceiver(ctx, "slack://")				
+		return NewReceiver(ctx, "slack://")
 	default:
 		msg := fmt.Sprintf("Undefined receiver: '%s'", cfg.Name)
 		return nil, errors.New(msg)
@@ -82,7 +82,6 @@ func ensureReceiverRoster() error {
 
 	return nil
 }
-
 
 func Receivers() []string {
 	ctx := context.Background()

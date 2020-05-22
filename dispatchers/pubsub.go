@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/whosonfirst/go-webhookd/v2"
 	"gopkg.in/redis.v1"
+	"net/url"
 )
 
 type PubSubDispatcher struct {
@@ -13,7 +14,17 @@ type PubSubDispatcher struct {
 	channel string
 }
 
-func NewPubSubDispatcher(ctx context.Context, host string, port int, channel string) (*PubSubDispatcher, error) {
+func NewPubSubDispatcher(ctx context.Context, uri string) (webhookd.WebhookDispatcher, error) {
+
+	u, err := url.Parse(uri)
+
+	if err != nil {
+		return nil, err
+	}
+
+	host := u.Host
+	port := u.Port
+	channel := u.Path
 
 	endpoint := fmt.Sprintf("%s:%d", host, port)
 
@@ -23,7 +34,7 @@ func NewPubSubDispatcher(ctx context.Context, host string, port int, channel str
 
 	// defer client.Close()
 
-	_, err := client.Ping().Result()
+	_, err = client.Ping().Result()
 
 	if err != nil {
 		return nil, err

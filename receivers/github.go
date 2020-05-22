@@ -18,7 +18,7 @@ import (
 	"net/url"
 )
 
-func init(){
+func init() {
 
 	ctx := context.Background()
 	err := RegisterReceiver(ctx, "github", NewGitHubReceiver)
@@ -46,7 +46,7 @@ func NewGitHubReceiver(ctx context.Context, uri string) (webhookd.WebhookReceive
 
 	secret := q.Get("secret")
 	ref := q.Get("ref")
-	
+
 	wh := GitHubReceiver{
 		secret: secret,
 		ref:    ref,

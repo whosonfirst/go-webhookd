@@ -12,7 +12,7 @@ type LogDispatcher struct {
 	webhookd.WebhookDispatcher
 }
 
-func NewLogDispatcher(ctx context.Context) (*LogDispatcher, error) {
+func NewLogDispatcher(ctx context.Context, uri string) (webhookd.WebhookDispatcher, error) {
 
 	n := LogDispatcher{}
 	return &n, nil
