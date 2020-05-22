@@ -33,7 +33,7 @@ func NewPubSubDispatcher(ctx context.Context, uri string) (webhookd.WebhookDispa
 
 	endpoint := u.Host
 	channel := u.Path
-	
+
 	client := redis.NewTCPClient(&redis.Options{
 		Addr: endpoint,
 	})

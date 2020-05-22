@@ -125,10 +125,10 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(ctx context.Context, cfg *config.W
 
 		for _, name := range hook.Transformations {
 
-			if strings.HasPrefix(name, "#"){
+			if strings.HasPrefix(name, "#") {
 				continue
 			}
-			
+
 			transformation_uri, err := cfg.GetTransformationConfigByName(name)
 
 			if err != nil {
@@ -149,10 +149,10 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(ctx context.Context, cfg *config.W
 
 		for _, name := range hook.Dispatchers {
 
-			if strings.HasPrefix(name, "#"){
+			if strings.HasPrefix(name, "#") {
 				continue
 			}
-			
+
 			dispatcher_uri, err := cfg.GetDispatcherConfigByName(name)
 
 			if err != nil {

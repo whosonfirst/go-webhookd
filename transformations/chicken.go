@@ -36,10 +36,17 @@ func NewChickenTransformation(ctx context.Context, uri string) (webhookd.Webhook
 	lang := q.Get("language")
 	str_clucking := q.Get("clucking")
 
-	clucking, err := strconv.ParseBool(str_clucking)
+	clucking := false
 
-	if err != nil {
-		return nil, err
+	if str_clucking != "" {
+
+		v, err := strconv.ParseBool(str_clucking)
+
+		if err != nil {
+			return nil, err
+		}
+
+		clucking = v
 	}
 
 	ch, err := chicken.GetChickenForLanguageTag(lang, clucking)
