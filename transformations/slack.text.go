@@ -16,7 +16,7 @@ type SlackTextTransformation struct {
 	key string
 }
 
-func NewSlackTextTransformation(ctx context.Context) (*SlackTextTransformation, error) {
+func NewSlackTextTransformation(ctx context.Context, uri string) (webhookd.WebhookTransformation, error) {
 
 	p := SlackTextTransformation{
 		key: "text",

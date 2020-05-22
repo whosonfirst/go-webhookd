@@ -7,6 +7,8 @@ import (
 	gogithub "github.com/google/go-github/github"
 	"github.com/whosonfirst/go-webhookd/v2"
 	_ "log"
+	"net/url"
+	"strconv"
 )
 
 // see also: https://github.com/whosonfirst/go-whosonfirst-updated/issues/8
@@ -18,7 +20,37 @@ type GitHubRepoTransformation struct {
 	ExcludeDeletions     bool
 }
 
-func NewGitHubRepoTransformation(ctx context.Context, exclude_additions bool, exclude_modifications bool, exclude_deletions bool) (*GitHubRepoTransformation, error) {
+func NewGitHubRepoTransformation(ctx context.Context, uri string) (webhookd.WebhookTransformation, error) {
+
+	u, err := url.Parse(uri)
+
+	if err != nil {
+		return nil, err
+	}
+
+	q := u.Query()
+
+	str_additions := q.Get("exclude_additions")
+	str_modifications := q.Get("exclude_modifications")
+	str_deletions := q.Get("exclude_deletions")
+
+	exclude_additions, err := strconv.ParseBool(str_additions)
+
+	if err != nil {
+		return nil, err
+	}
+
+	exclude_modifications, err := strconv.ParseBool(str_modifications)
+
+	if err != nil {
+		return nil, err
+	}
+
+	exclude_deletions, err := strconv.ParseBool(str_deletions)
+
+	if err != nil {
+		return nil, err
+	}
 
 	p := GitHubRepoTransformation{
 		ExcludeAdditions:     exclude_additions,

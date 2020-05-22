@@ -9,7 +9,7 @@ type NullTransformation struct {
 	webhookd.WebhookTransformation
 }
 
-func NewNullTransformation(ctx context.Context) (*NullTransformation, error) {
+func NewNullTransformation(ctx context.Context, uri string) (webhookd.WebhookTransformation, error) {
 
 	p := NullTransformation{}
 	return &p, nil

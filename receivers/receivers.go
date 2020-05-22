@@ -2,33 +2,14 @@ package receivers
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"github.com/aaronland/go-roster"
 	"github.com/whosonfirst/go-webhookd/v2"
-	"github.com/whosonfirst/go-webhookd/v2/config"
 	"net/url"
 )
 
 var receivers roster.Roster
 
 type ReceiverInitializationFunc func(ctx context.Context, uri string) (webhookd.WebhookReceiver, error)
-
-func NewReceiverFromConfig(ctx context.Context, cfg *config.WebhookReceiverConfig) (webhookd.WebhookReceiver, error) {
-
-	switch cfg.Name {
-	case "GitHub":
-		uri := fmt.Sprintf("github://?secret=%&ref=%s", cfg.Secret, cfg.Ref)
-		return NewReceiver(ctx, uri)
-	case "Insecure":
-		return NewReceiver(ctx, "insecure://")
-	case "Slack":
-		return NewReceiver(ctx, "slack://")
-	default:
-		msg := fmt.Sprintf("Undefined receiver: '%s'", cfg.Name)
-		return nil, errors.New(msg)
-	}
-}
 
 func NewReceiver(ctx context.Context, uri string) (webhookd.WebhookReceiver, error) {
 

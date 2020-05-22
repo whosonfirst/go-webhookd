@@ -4,6 +4,8 @@ import (
 	"context"
 	"github.com/aaronland/go-chicken"
 	"github.com/whosonfirst/go-webhookd/v2"
+	"net/url"
+	"strconv"
 )
 
 type ChickenTransformation struct {
@@ -11,7 +13,24 @@ type ChickenTransformation struct {
 	chicken *chicken.Chicken
 }
 
-func NewChickenTransformation(ctx context.Context, lang string, clucking bool) (*ChickenTransformation, error) {
+func NewChickenTransformation(ctx context.Context, uri string) (webhookd.WebhookTransformation, error) {
+
+	u, err := url.Parse(uri)
+
+	if err != nil {
+		return nil, err
+	}
+
+	q := u.Query()
+
+	lang := q.Get("language")
+	str_clucking := q.Get("clucking")
+
+	clucking, err := strconv.ParseBool(str_clucking)
+
+	if err != nil {
+		return nil, err
+	}
 
 	ch, err := chicken.GetChickenForLanguageTag(lang, clucking)
 
