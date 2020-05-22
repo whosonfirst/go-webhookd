@@ -217,6 +217,8 @@ Config files for `webhookd` are JSON files consisting of five top-level sections
 
 The `daemon` section is a dictionary defining configuration details for the `webhookd` daemon itself.
 
+Valid daemon URI strings can be anything supported by the [aaronland/go-http-server](https://github.com/aaronland/go-http-server#server-schemes) package.
+
 ### receivers
 
 ```
@@ -290,8 +292,8 @@ This receiver handles Webhooks sent from [GitHub](https://developer.github.com/w
 
 #### Properties
 
-* **secret** _string_ The secret used to generate [the HMAC hex digest](https://developer.github.com/webhooks/#delivery-headers) of the message payload.
-* **ref** _string_ An optional Git `ref` to filter by. If present and a WebHook is sent with a different ref then the daemon will return a `666` error response.
+* **{SECRET}** _string_ The secret used to generate [the HMAC hex digest](https://developer.github.com/webhooks/#delivery-headers) of the message payload.
+* **{REF}** _string_ An optional Git `ref` to filter by. If present and a WebHook is sent with a different ref then the daemon will return a `666` error response.
 
 ### Insecure
 
@@ -323,13 +325,13 @@ The `Chicken` transformation will convert every word in your message to 🐔 usi
 
 #### Properties
 
-* **language** _string_ A three-letter language code specifying which language `go-chicken` should use.
-* **clucking** _bool_ A boolean flag indicating whether or not to [cluck](https://github.com/thisisaaronland/go-chicken#clucking) when generating results.
+* **{LANGUAGE}** _string_ A three-letter language code specifying which language `go-chicken` should use.
+* **{CLUCKING}** _bool_ A boolean flag indicating whether or not to [cluck](https://github.com/thisisaaronland/go-chicken#clucking) when generating results.
 
 ### GitHubCommits
 
 ```
-githubcommits://?exclude_additions={BOOLEAN}&exclude_modification={BOOLEAN}&exclude_deletions={BOOLEAN}
+githubcommits://?exclude_additions={EXCLUDE_ADDITIONS}&exclude_modification={EXCLUDE_MODIFICATIONS}&exclude_deletions={EXCLUDE_DELETIONS}
 ```
 
 The `GitHubCommits` transformation will extract all the commits (added, modified, removed) from a `push` event and return a CSV encoded list of rows consisting of: commit hash, repository name, path. For example:
@@ -342,23 +344,23 @@ e3a18d4de60a5e50ca78ca1733238735ddfaef4c,sfomuseum-data-flights-2020-05,data/171
 
 #### Properties
 
-* **exclude_additions** _bool_ A flag to indicate that new additions in a commit should be ignored. Optional; default false.
-* **exclude_modification** _bool_ A flag to indicate that modifications in a commit should be ignored. Optional; default false.
-* **exclude_deletions** _bool_ A flag to indicate that deletions in a commit should be ignored. Optional; default false.
+* **{EXCLUDE_ADDITIONS}** _bool_ A flag to indicate that new additions in a commit should be ignored. Optional; default false.
+* **{EXCLUDE_MODIFICATIONS}** _bool_ A flag to indicate that modifications in a commit should be ignored. Optional; default false.
+* **{EXCLUDE_DELETIONS}** _bool_ A flag to indicate that deletions in a commit should be ignored. Optional; default false.
 
 ### GitHubRepo
 
 ```
-githubrepo://?exclude_additions={BOOLEAN}&exclude_modification={BOOLEAN}&exclude_deletions={BOOLEAN}
+githubrepo://?exclude_additions={EXCLUDE_ADDITIONS}&exclude_modification={EXCLUDE_MODIFICATIONS}&exclude_deletions={EXCLUDE_DELETIONS}
 ```
 
 The `GitHubRepo` transformation will extract the reporsitory name for all the commits matching (added, modified, removed) criteria.
 
 #### Properties
 
-* **exclude_additions** _bool_ A flag to indicate that new additions in a commit should be ignored. Optional; default false.
-* **exclude_modification** _bool_ A flag to indicate that modifications in a commit should be ignored. Optional; default false.
-* **exclude_deletions** _bool_ A flag to indicate that deletions in a commit should be ignored. Optional; default false.
+* **{EXCLUDE_ADDITIONS}** _bool_ A flag to indicate that new additions in a commit should be ignored. Optional; default false.
+* **{EXCLUDE_MODIFICATIONS}** _bool_ A flag to indicate that modifications in a commit should be ignored. Optional; default false.
+* **{EXCLUDE_DELETIONS}** _bool_ A flag to indicate that deletions in a commit should be ignored. Optional; default false.
 
 ### Null
 
@@ -381,15 +383,15 @@ The `SlackText` transformation will extract and return [the `text` property](htt
 ### Lambda
 
 ```
-lambda://{FUNCTION}?dsn={GO_AWS_SESSION_STRING}
+lambda://{FUNCTION}?dsn={DSN}
 ```
 
 The `Lambda` dispatcher will send messages to an AWS Lambda function.
 
 #### Properties
 
-* **dsn** _string_ A valid `aaronland/go-aws-session` DSN string.
-* **function** _string_ The name of your Lambda function.
+* **{DSN}** _string_ A valid `aaronland/go-aws-session` DSN string.
+* **{FUNCTION}** _string_ The name of your Lambda function.
 
 ### Log
 
@@ -417,9 +419,9 @@ The `PubSub` dispatcher will send messages to a Redis PubSub channel.
 
 #### Properties
 
-* **host** _string_ The address of the Redis host you want to connect to.
-* **port** _int_ The port number of the Redis host you want to connect to.
-* **channel** _string_ The name of the Redis PubSub channel you want to send messages to.
+* **{REDIS_HOST}** _string_ The address of the Redis host you want to connect to.
+* **{REDIS_PORT}** _int_ The port number of the Redis host you want to connect to.
+* **{REDIS_CHANNEL}** _string_ The name of the Redis PubSub channel you want to send messages to.
 
 ### Slack
 
@@ -431,7 +433,7 @@ The `Slack` dispatcher will send messages to a Slack channel using the [slackcat
 
 #### Properties
 
-* **config** _string_ The path to a valid [slackcat](https://github.com/whosonfirst/slackcat#configuring) config file. _Eventually you will be able to specify a plain-vanilla Slack Webhook URL but not today._
+* **{PATH_TO_SLACKCAT_CONF}** _string_ The path to a valid [slackcat](https://github.com/whosonfirst/slackcat#configuring) config file. _Eventually you will be able to specify a plain-vanilla Slack Webhook URL but not today._
 
 ## To do
 
@@ -445,4 +447,5 @@ The `Slack` dispatcher will send messages to a Slack channel using the [slackcat
 
 ## Related
 
+* https://github.com/aaronland/go-http-server
 * https://github.com/whosonfirst/go-pubssed
