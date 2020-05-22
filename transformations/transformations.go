@@ -1,25 +1,26 @@
 package transformations
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"github.com/whosonfirst/go-webhookd"
 	"github.com/whosonfirst/go-webhookd/config"
 )
 
-func NewTransformationFromConfig(cfg *config.WebhookTransformationConfig) (webhookd.WebhookTransformation, error) {
+func NewTransformationFromConfig(ctx context.Context, cfg *config.WebhookTransformationConfig) (webhookd.WebhookTransformation, error) {
 
 	switch cfg.Name {
 	case "Chicken":
-		return NewChickenTransformation(cfg.Language, cfg.Clucking)
+		return NewChickenTransformation(ctx, cfg.Language, cfg.Clucking)
 	case "GitHubCommits":
-		return NewGitHubCommitsTransformation(cfg.ExcludeAdditions, cfg.ExcludeModifications, cfg.ExcludeDeletions)
+		return NewGitHubCommitsTransformation(ctx, cfg.ExcludeAdditions, cfg.ExcludeModifications, cfg.ExcludeDeletions)
 	case "GitHubRepo":
-		return NewGitHubRepoTransformation(cfg.ExcludeAdditions, cfg.ExcludeModifications, cfg.ExcludeDeletions)
+		return NewGitHubRepoTransformation(ctx, cfg.ExcludeAdditions, cfg.ExcludeModifications, cfg.ExcludeDeletions)
 	case "Null":
-		return NewNullTransformation()
+		return NewNullTransformation(ctx)
 	case "SlackText":
-		return NewSlackTextTransformation()
+		return NewSlackTextTransformation(ctx)
 	default:
 		msg := fmt.Sprintf("Undefined transformation: '%s'", cfg.Name)
 		return nil, errors.New(msg)

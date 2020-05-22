@@ -1,6 +1,7 @@
 package receivers
 
 import (
+	"context"
 	"github.com/whosonfirst/go-webhookd"
 	"io/ioutil"
 	"net/http"
@@ -10,13 +11,20 @@ type InsecureReceiver struct {
 	webhookd.WebhookReceiver
 }
 
-func NewInsecureReceiver() (InsecureReceiver, error) {
+func NewInsecureReceiver(ctx context.Context) (InsecureReceiver, error) {
 
 	wh := InsecureReceiver{}
 	return wh, nil
 }
 
-func (wh InsecureReceiver) Receive(req *http.Request) ([]byte, *webhookd.WebhookError) {
+func (wh InsecureReceiver) Receive(ctx context.Context, req *http.Request) ([]byte, *webhookd.WebhookError) {
+
+	select {
+	case <-ctx.Done():
+		return nil, nil
+	default:
+		// pass
+	}
 
 	if req.Method != "POST" {
 

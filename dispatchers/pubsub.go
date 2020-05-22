@@ -1,6 +1,7 @@
 package dispatchers
 
 import (
+	"context"
 	"fmt"
 	"github.com/whosonfirst/go-webhookd"
 	"gopkg.in/redis.v1"
@@ -12,7 +13,7 @@ type PubSubDispatcher struct {
 	channel string
 }
 
-func NewPubSubDispatcher(host string, port int, channel string) (*PubSubDispatcher, error) {
+func NewPubSubDispatcher(ctx context.Context, host string, port int, channel string) (*PubSubDispatcher, error) {
 
 	endpoint := fmt.Sprintf("%s:%d", host, port)
 
@@ -36,7 +37,14 @@ func NewPubSubDispatcher(host string, port int, channel string) (*PubSubDispatch
 	return &dispatcher, nil
 }
 
-func (dispatcher *PubSubDispatcher) Dispatch(body []byte) *webhookd.WebhookError {
+func (dispatcher *PubSubDispatcher) Dispatch(ctx context.Context, body []byte) *webhookd.WebhookError {
+
+	select {
+	case <-ctx.Done():
+		return nil
+	default:
+		// pass
+	}
 
 	rsp := dispatcher.client.Publish(dispatcher.channel, string(body))
 

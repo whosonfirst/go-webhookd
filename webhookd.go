@@ -1,6 +1,7 @@
 package webhookd
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 )
@@ -15,15 +16,15 @@ func (e WebhookError) Error() string {
 }
 
 type WebhookReceiver interface {
-	Receive(*http.Request) ([]byte, *WebhookError)
+	Receive(context.Context, *http.Request) ([]byte, *WebhookError)
 }
 
 type WebhookDispatcher interface {
-	Dispatch([]byte) *WebhookError
+	Dispatch(context.Context, []byte) *WebhookError
 }
 
 type WebhookTransformation interface {
-	Transform([]byte) ([]byte, *WebhookError)
+	Transform(context.Context, []byte) ([]byte, *WebhookError)
 }
 
 type WebhookHandler interface {

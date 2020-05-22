@@ -1,3 +1,5 @@
+github.com/aaronland/go-aws-session v0.0.4 h1:GddU3E4pXAm3JWVjcdgyYhdGaWSRtiZl6Iwwt7+OLcU=
+github.com/aaronland/go-aws-session v0.0.4/go.mod h1:1OD+6F7D052nJMkz2tLx5FvMVpreAVU0ye9ur5O+nno=
 github.com/aaronland/go-chicken v0.1.1 h1:FL/69oDhXvLwjecE1sM/EliQVlTOzxHZ2UiiJAX3HUo=
 github.com/aaronland/go-chicken v0.1.1/go.mod h1:/Ahjkb/tj7bsTBbYioHvcUPcW9HzcTcVQtzxbcqoUM0=
 github.com/aaronland/go-chicken v0.2.1 h1:I61mIO6liaJIvHjvZK/SkrnUIeWbFFiujHKUuUY+ANU=
@@ -17,6 +19,7 @@ github.com/aws/aws-lambda-go v1.10.0/go.mod h1:zUsUQhAUjYzR8AuduJPCfhBuKWUaDbQiP
 github.com/aws/aws-sdk-go v1.20.21/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
 github.com/aws/aws-sdk-go v1.22.3 h1:6hh+6uqguPNPLtnb6rYLJnonwixttKMbvZYWVUdms98=
 github.com/aws/aws-sdk-go v1.22.3/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
+github.com/aws/aws-sdk-go v1.25.34/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
 github.com/aws/aws-sdk-go v1.31.3 h1:vJDjoM+VlM/ZEmGyaIhUXaYAtB9lra7Qhr58SSHHjPE=
 github.com/aws/aws-sdk-go v1.31.3/go.mod h1:5zCpMtNQVjRREroY7sYe8lOMRSxkhG6MZveU8YkpAk0=
 github.com/cooperhewitt/go-ucd v0.0.0-20170323200852-c4101e1ef9a6 h1:P3t+wrVJz+Cey5VNf/8SYv56kniN8+feDX8dUgSRsA0=

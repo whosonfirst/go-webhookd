@@ -3,7 +3,6 @@ package session
 import (
 	"github.com/aaronland/go-string/dsn"
 	aws_session "github.com/aws/aws-sdk-go/aws/session"
-	"github.com/whosonfirst/go-whosonfirst-aws/config"
 )
 
 func NewSessionWithDSN(dsn_str string) (*aws_session.Session, error) {
@@ -19,7 +18,7 @@ func NewSessionWithDSN(dsn_str string) (*aws_session.Session, error) {
 
 func NewSessionWithCredentials(str_creds string, region string) (*aws_session.Session, error) {
 
-	cfg, err := config.NewConfigWithCredentials(str_creds, region)
+	cfg, err := NewConfigWithCredentials(str_creds, region)
 
 	if err != nil {
 		return nil, err

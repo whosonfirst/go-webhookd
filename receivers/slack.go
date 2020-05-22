@@ -4,6 +4,7 @@ package receivers
 // (20161016/thisisaaronland)
 
 import (
+	"context"
 	"github.com/whosonfirst/go-webhookd"
 	"io/ioutil"
 	"net/http"
@@ -13,13 +14,20 @@ type SlackReceiver struct {
 	webhookd.WebhookReceiver
 }
 
-func NewSlackReceiver() (SlackReceiver, error) {
+func NewSlackReceiver(ctx context.Context) (SlackReceiver, error) {
 
 	slack := SlackReceiver{}
 	return slack, nil
 }
 
-func (sl SlackReceiver) Receive(req *http.Request) ([]byte, *webhookd.WebhookError) {
+func (sl SlackReceiver) Receive(ctx context.Context, req *http.Request) ([]byte, *webhookd.WebhookError) {
+
+	select {
+	case <-ctx.Done():
+		return nil, nil
+	default:
+		// pass
+	}
 
 	if req.Method != "POST" {
 

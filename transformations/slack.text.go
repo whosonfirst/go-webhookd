@@ -5,6 +5,7 @@ package transformations
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"github.com/whosonfirst/go-webhookd"
 	_ "log"
 	"strings"
@@ -15,7 +16,7 @@ type SlackTextTransformation struct {
 	key string
 }
 
-func NewSlackTextTransformation() (*SlackTextTransformation, error) {
+func NewSlackTextTransformation(ctx context.Context) (*SlackTextTransformation, error) {
 
 	p := SlackTextTransformation{
 		key: "text",
@@ -24,7 +25,7 @@ func NewSlackTextTransformation() (*SlackTextTransformation, error) {
 	return &p, nil
 }
 
-func (p *SlackTextTransformation) Transform(body []byte) ([]byte, *webhookd.WebhookError) {
+func (p *SlackTextTransformation) Transform(ctx context.Context, body []byte) ([]byte, *webhookd.WebhookError) {
 
 	buf := bytes.NewBuffer(body)
 	scanner := bufio.NewScanner(buf)

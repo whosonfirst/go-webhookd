@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/aaronland/go-http-server"
 	"github.com/whosonfirst/go-webhookd"
 	"github.com/whosonfirst/go-webhookd/config"
 	"github.com/whosonfirst/go-webhookd/dispatchers"
 	"github.com/whosonfirst/go-webhookd/receivers"
-	"github.com/aaronland/go-http-server"
 	"github.com/whosonfirst/go-webhookd/transformations"
 	"github.com/whosonfirst/go-webhookd/webhook"
 	"log"
@@ -27,14 +27,14 @@ type WebhookDaemon struct {
 func NewWebhookDaemonFromConfig(ctx context.Context, cfg *config.WebhookConfig) (*WebhookDaemon, error) {
 
 	server_uri := fmt.Sprintf("%s://%s:%", cfg.Daemon.Protocol, cfg.Daemon.Host, cfg.Daemon.Port)
-	
+
 	d, err := NewWebhookDaemon(ctx, server_uri)
 
 	if err != nil {
 		return nil, err
 	}
 
-	err = d.AddWebhooksFromConfig(cfg)
+	err = d.AddWebhooksFromConfig(ctx, cfg)
 
 	if err != nil {
 		return nil, err
@@ -64,7 +64,7 @@ func NewWebhookDaemon(ctx context.Context, server_uri string) (*WebhookDaemon, e
 	return &d, nil
 }
 
-func (d *WebhookDaemon) AddWebhooksFromConfig(cfg *config.WebhookConfig) error {
+func (d *WebhookDaemon) AddWebhooksFromConfig(ctx context.Context, cfg *config.WebhookConfig) error {
 
 	if len(cfg.Webhooks) == 0 {
 		return errors.New("No webhooks defined")
@@ -93,7 +93,7 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(cfg *config.WebhookConfig) error {
 			return err
 		}
 
-		receiver, err := receivers.NewReceiverFromConfig(receiver_config)
+		receiver, err := receivers.NewReceiverFromConfig(ctx, receiver_config)
 
 		if err != nil {
 			return err
@@ -109,7 +109,7 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(cfg *config.WebhookConfig) error {
 				return err
 			}
 
-			step, err := transformations.NewTransformationFromConfig(transformation_config)
+			step, err := transformations.NewTransformationFromConfig(ctx, transformation_config)
 
 			if err != nil {
 				return err
@@ -128,7 +128,7 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(cfg *config.WebhookConfig) error {
 				return err
 			}
 
-			dispatcher, err := dispatchers.NewDispatcherFromConfig(dispatcher_config)
+			dispatcher, err := dispatchers.NewDispatcherFromConfig(ctx, dispatcher_config)
 
 			if err != nil {
 				return err
@@ -171,6 +171,11 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 
 	handler := func(rsp http.ResponseWriter, req *http.Request) {
 
+		ctx := req.Context()
+
+		ctx, cancel := context.WithCancel(ctx)
+		defer cancel()
+
 		endpoint := req.URL.Path
 
 		wh, ok := d.webhooks[endpoint]
@@ -193,7 +198,7 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 
 		rcvr := wh.Receiver()
 
-		body, err := rcvr.Receive(req)
+		body, err := rcvr.Receive(ctx, req)
 
 		// we use -1 to signal that this is an unhandled event but
 		// not an error, for example when github sends a ping message
@@ -216,7 +221,7 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 
 		for _, step := range wh.Transformations() {
 
-			body, err = step.Transform(body)
+			body, err = step.Transform(ctx, body)
 
 			if err != nil {
 				http.Error(rsp, err.Error(), err.Code)
@@ -246,7 +251,7 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 
 				defer wg.Done()
 
-				err = d.Dispatch(body)
+				err = d.Dispatch(ctx, body)
 
 				if err != nil {
 					ch <- err

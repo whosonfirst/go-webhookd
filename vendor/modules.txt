@@ -1,3 +1,5 @@
+# github.com/aaronland/go-aws-session v0.0.4
+github.com/aaronland/go-aws-session
 # github.com/aaronland/go-chicken v0.2.1
 github.com/aaronland/go-chicken
 github.com/aaronland/go-chicken/emoji
@@ -68,9 +70,6 @@ github.com/google/go-querystring/query
 github.com/jmespath/go-jmespath
 # github.com/whosonfirst/algnhsa v0.1.0
 github.com/whosonfirst/algnhsa
-# github.com/whosonfirst/go-whosonfirst-aws v0.1.4
-github.com/whosonfirst/go-whosonfirst-aws/config
-github.com/whosonfirst/go-whosonfirst-aws/session
 # github.com/whosonfirst/go-writer-slackcat v0.0.0-20151205020711-ad3c7f1d3b0a
 github.com/whosonfirst/go-writer-slackcat
 # github.com/whosonfirst/slackcat v0.0.0-20170719225154-b769f32185b5

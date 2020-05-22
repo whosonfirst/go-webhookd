@@ -6,6 +6,7 @@ package receivers
 // https://developer.github.com/v3/repos/hooks/#ping-a-hook
 
 import (
+	"context"
 	"crypto/hmac"
 	"encoding/json"
 	gogithub "github.com/google/go-github/github"
@@ -22,7 +23,7 @@ type GitHubReceiver struct {
 	ref    string
 }
 
-func NewGitHubReceiver(secret string, ref string) (GitHubReceiver, error) {
+func NewGitHubReceiver(ctx context.Context, secret string, ref string) (GitHubReceiver, error) {
 
 	wh := GitHubReceiver{
 		secret: secret,
@@ -32,7 +33,14 @@ func NewGitHubReceiver(secret string, ref string) (GitHubReceiver, error) {
 	return wh, nil
 }
 
-func (wh GitHubReceiver) Receive(req *http.Request) ([]byte, *webhookd.WebhookError) {
+func (wh GitHubReceiver) Receive(ctx context.Context, req *http.Request) ([]byte, *webhookd.WebhookError) {
+
+	select {
+	case <-ctx.Done():
+		return nil, nil
+	default:
+		// pass
+	}
 
 	if req.Method != "POST" {
 

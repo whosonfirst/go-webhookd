@@ -1,31 +1,12 @@
-package config
+package session
 
 import (
-	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"os/user"
 	"path/filepath"
 	"strings"
 )
-
-func ValidCredentials() []string {
-
-	valid := []string{
-		"env:",
-		"iam:",
-		"{PROFILE}",
-		"{PATH}:{PROFILE}",
-	}
-
-	return valid
-}
-
-func ValidCredentialsString() string {
-
-	valid := ValidCredentials()
-	return fmt.Sprintf("Valid credential flags are: %s", strings.Join(valid, ", "))
-}
 
 func NewConfigWithCredentials(str_creds string, region string) (*aws.Config, error) {
 

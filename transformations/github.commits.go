@@ -2,6 +2,7 @@ package transformations
 
 import (
 	"bytes"
+	"context"
 	"encoding/csv"
 	"encoding/json"
 	_ "fmt"
@@ -19,7 +20,7 @@ type GitHubCommitsTransformation struct {
 	ExcludeDeletions     bool
 }
 
-func NewGitHubCommitsTransformation(exclude_additions bool, exclude_modifications bool, exclude_deletions bool) (*GitHubCommitsTransformation, error) {
+func NewGitHubCommitsTransformation(ctx context.Context, exclude_additions bool, exclude_modifications bool, exclude_deletions bool) (*GitHubCommitsTransformation, error) {
 
 	p := GitHubCommitsTransformation{
 		ExcludeAdditions:     exclude_additions,
@@ -30,7 +31,14 @@ func NewGitHubCommitsTransformation(exclude_additions bool, exclude_modification
 	return &p, nil
 }
 
-func (p *GitHubCommitsTransformation) Transform(body []byte) ([]byte, *webhookd.WebhookError) {
+func (p *GitHubCommitsTransformation) Transform(ctx context.Context, body []byte) ([]byte, *webhookd.WebhookError) {
+
+	select {
+	case <-ctx.Done():
+		return nil, nil
+	default:
+		// pass
+	}
 
 	var event gogithub.PushEvent
 

@@ -1,25 +1,26 @@
 package dispatchers
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"github.com/whosonfirst/go-webhookd"
 	"github.com/whosonfirst/go-webhookd/config"
 )
 
-func NewDispatcherFromConfig(cfg *config.WebhookDispatcherConfig) (webhookd.WebhookDispatcher, error) {
+func NewDispatcherFromConfig(ctx context.Context, cfg *config.WebhookDispatcherConfig) (webhookd.WebhookDispatcher, error) {
 
 	switch cfg.Name {
 	case "Lambda":
-		return NewLambdaDispatcher(cfg.DSN, cfg.Function)
+		return NewLambdaDispatcher(ctx, cfg.DSN, cfg.Function)
 	case "Log":
-		return NewLogDispatcher()
+		return NewLogDispatcher(ctx)
 	case "Null":
-		return NewNullDispatcher()
+		return NewNullDispatcher(ctx)
 	case "PubSub":
-		return NewPubSubDispatcher(cfg.Host, cfg.Port, cfg.Channel)
+		return NewPubSubDispatcher(ctx, cfg.Host, cfg.Port, cfg.Channel)
 	case "Slack":
-		return NewSlackDispatcher(cfg.Config)
+		return NewSlackDispatcher(ctx, cfg.Config)
 	default:
 		msg := fmt.Sprintf("Undefined dispatcher: '%s'", cfg.Name)
 		return nil, errors.New(msg)

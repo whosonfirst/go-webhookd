@@ -2,6 +2,7 @@ package transformations
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	gogithub "github.com/google/go-github/github"
 	"github.com/whosonfirst/go-webhookd"
@@ -17,7 +18,7 @@ type GitHubRepoTransformation struct {
 	ExcludeDeletions     bool
 }
 
-func NewGitHubRepoTransformation(exclude_additions bool, exclude_modifications bool, exclude_deletions bool) (*GitHubRepoTransformation, error) {
+func NewGitHubRepoTransformation(ctx context.Context, exclude_additions bool, exclude_modifications bool, exclude_deletions bool) (*GitHubRepoTransformation, error) {
 
 	p := GitHubRepoTransformation{
 		ExcludeAdditions:     exclude_additions,
@@ -28,7 +29,14 @@ func NewGitHubRepoTransformation(exclude_additions bool, exclude_modifications b
 	return &p, nil
 }
 
-func (p *GitHubRepoTransformation) Transform(body []byte) ([]byte, *webhookd.WebhookError) {
+func (p *GitHubRepoTransformation) Transform(ctx context.Context, body []byte) ([]byte, *webhookd.WebhookError) {
+
+	select {
+	case <-ctx.Done():
+		return nil, nil
+	default:
+		// pass
+	}
 
 	var event gogithub.PushEvent
 

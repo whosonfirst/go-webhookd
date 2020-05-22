@@ -1,11 +1,12 @@
 package dispatchers
 
 import (
+	"context"
 	"encoding/json"
+	"github.com/aaronland/go-aws-session"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/lambda"
 	"github.com/whosonfirst/go-webhookd"
-	"github.com/whosonfirst/go-whosonfirst-aws/session"
 )
 
 type LambdaDispatcher struct {
@@ -14,7 +15,7 @@ type LambdaDispatcher struct {
 	LambdaService  *lambda.Lambda
 }
 
-func NewLambdaDispatcher(lambda_dsn string, lambda_function string) (*LambdaDispatcher, error) {
+func NewLambdaDispatcher(ctx context.Context, lambda_dsn string, lambda_function string) (*LambdaDispatcher, error) {
 
 	lambda_sess, err := session.NewSessionWithDSN(lambda_dsn)
 
@@ -32,7 +33,14 @@ func NewLambdaDispatcher(lambda_dsn string, lambda_function string) (*LambdaDisp
 	return &d, nil
 }
 
-func (d *LambdaDispatcher) Dispatch(body []byte) *webhookd.WebhookError {
+func (d *LambdaDispatcher) Dispatch(ctx context.Context, body []byte) *webhookd.WebhookError {
+
+	select {
+	case <-ctx.Done():
+		return nil
+	default:
+		// pass
+	}
 
 	payload, err := json.Marshal(string(body))
 

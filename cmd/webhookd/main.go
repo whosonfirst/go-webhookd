@@ -16,7 +16,7 @@ func main() {
 	flag.Parse()
 
 	ctx := context.Background()
-	
+
 	if *cfg == "" {
 		log.Fatal("Missing config file")
 	}

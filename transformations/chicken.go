@@ -1,6 +1,7 @@
 package transformations
 
 import (
+	"context"
 	"github.com/aaronland/go-chicken"
 	"github.com/whosonfirst/go-webhookd"
 )
@@ -10,7 +11,7 @@ type ChickenTransformation struct {
 	chicken *chicken.Chicken
 }
 
-func NewChickenTransformation(lang string, clucking bool) (*ChickenTransformation, error) {
+func NewChickenTransformation(ctx context.Context, lang string, clucking bool) (*ChickenTransformation, error) {
 
 	ch, err := chicken.GetChickenForLanguageTag(lang, clucking)
 
@@ -25,7 +26,14 @@ func NewChickenTransformation(lang string, clucking bool) (*ChickenTransformatio
 	return &tr, nil
 }
 
-func (tr *ChickenTransformation) Transform(body []byte) ([]byte, *webhookd.WebhookError) {
+func (tr *ChickenTransformation) Transform(ctx context.Context, body []byte) ([]byte, *webhookd.WebhookError) {
+
+	select {
+	case <-ctx.Done():
+		return nil, nil
+	default:
+		// pass
+	}
 
 	txt := tr.chicken.TextToChicken(string(body))
 	return []byte(txt), nil

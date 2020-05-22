@@ -1,6 +1,7 @@
 package dispatchers
 
 import (
+	"context"
 	"github.com/whosonfirst/go-webhookd"
 )
 
@@ -8,13 +9,13 @@ type NullDispatcher struct {
 	webhookd.WebhookDispatcher
 }
 
-func NewNullDispatcher() (*NullDispatcher, error) {
+func NewNullDispatcher(ctx context.Context) (*NullDispatcher, error) {
 
 	n := NullDispatcher{}
 	return &n, nil
 }
 
-func (n *NullDispatcher) Dispatch(body []byte) *webhookd.WebhookError {
+func (n *NullDispatcher) Dispatch(ctx context.Context, body []byte) *webhookd.WebhookError {
 
 	return nil
 }
