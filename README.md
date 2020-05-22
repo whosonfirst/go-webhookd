@@ -1,6 +1,6 @@
 # go-webhookd
 
-![](images/webhookd-arch.png)
+![](docs/images/webhookd-arch.png)
 
 What is the simplest webhook-wrangling server-daemon-thing.
 
@@ -45,12 +45,7 @@ Here are the relevant settings in the config file:
 
 ```
 {
-	"daemon": {
-		"protocol": "http",
-		"host": "localhost",
-		"port": 8080,
-		"allow_debug": false
-	},
+	"daemon": "http://localhost:8080",
 	...
 	"webhooks": [
 		{
@@ -66,7 +61,7 @@ Here are the relevant settings in the config file:
 First we start `webhookd`:
 
 ```
-./bin/webhookd -config ./config.json
+./bin/webhookd -config-uri ./config.json
 2018/07/21 08:43:37 webhookd listening for requests on http://localhost:8080
 ```
 
@@ -106,10 +101,6 @@ bok bok bok cluck cluck bok bok bok-bok bok bok. bok bok
 
 #### Caveats
 
-##### TLS
-
-TLS is not supported yet so **you should not run `webhookd` on the public internets** without first putting a TLS-enabled proxy in front of it.
-
 ##### Dynamic endpoints
 
 At some point there might be dynamic (or runtime) webhook endpoints but today there are not.
@@ -117,7 +108,7 @@ At some point there might be dynamic (or runtime) webhook endpoints but today th
 In the meantime you can gracefully restart `webhookd` by sending its PID a `USR2` signal which will cause the config file (and all the endpoints it defines) to be re-read. It's not elegant but it works. For example:
 
 ```
-$> ./bin/webhookd -config config.json
+$> ./bin/webhookd -config-uri config.json
 2016/10/16 00:19:47 Serving 127.0.0.1:8080 with pid 2723
 
 $> kill -USR2 2723
@@ -151,6 +142,7 @@ _You can also just grab the HTTP handler func with `wh_daemon.HandlerFunc()` if 
 
 ```
 import (
+	"context"
 	"github.com/whosonfirst/go-webhookd/v2"		
 	"github.com/whosonfirst/go-webhookd/v2/daemon"	
 	"github.com/whosonfirst/go-webhookd/v2/dispatchers"
@@ -159,19 +151,20 @@ import (
 	"github.com/whosonfirst/go-webhookd/v2/webhook"	
 )
 
-wh_receiver, _ := receivers.NewInsecureReceiver()
+ctx := context.Background()
 
-null, _ := transfromations.NewNullTransformation()
+wh_receiver, _ := receivers.NewReceiver(ctx, "insecure://")
+null, _ := transfromations.NewTransformation(ctx, "null://")
+pubsub, _ := dispatchers.NewDispatcher(ctx, "pubsub://localhost:6379/websocketd")
+
 wh_transformations := []webhookd.WebhookTransformation{ null }
-
-pubsub, _ := dispatchers.NewPubSubDispatcher("localhost", 6379, "websocketd")
 wh_dispatchers, _ := []webhookd.WebhookDispatcher{ pubsub }
 
 wh, _ := webhook.NewWebhook("/foo", wh_receiver, wh_transformations, wh_dispatchers)
 
-wh_daemon, _ := daemon.NewWebhookDaemon("http", "localhost", 8080)
-wh_daemon.AddWebhook(wh)
-wh_daemon.Start()
+wh_daemon, _ := daemon.NewWebhookDaemon(ctx, "http://localhost:8080")
+wh_daemon.AddWebhook(ctx, wh)
+wh_daemon.Start(ctx)
 ```
 
 See the way we're using an `Insecure` receiver and a `PubSub` dispatcher with a `Null` transformation? All are these are discussed in detail below.
@@ -202,15 +195,12 @@ In this case, it went to Redis [PubSub](http://redis.io/topics/pubsub) land! Whe
 
 ## Config files
 
-Config files for `webhookd` are JSON files consisting of five top-level sections. An [example config file](config.json.example) is included with this repository. The five top-level sections are:
+Config files for `webhookd` are JSON files consisting of five top-level sections. An [example config file](docs/config/config.json.example) is included with this repository. The five top-level sections are:
 
 ### daemon
 
 ```
-	"daemon": {
-		"host": "localhost",
-		"port": 8080
-	}
+	"daemon": "http://localhost:8080"
 ```
 
 The `daemon` section is a dictionary defining configuration details for the `webhookd` daemon itself.
@@ -219,13 +209,8 @@ The `daemon` section is a dictionary defining configuration details for the `web
 
 ```
 	"receivers": {
-		"insecure": {
-			"name": "Insecure"
-		},
-		"github": {
-			"name": "GitHub",
-			"secret": "s33kret"
-		}
+		"insecure": "insecure://",
+		"github": "github://?secret=s33kret"
 	}
 ```
 
@@ -235,11 +220,7 @@ The `receivers` section is a dictionary of "named" receiver configuations. This 
 
 ```
 	"transformations": {
-		"chicken": {
-			"name": "Chicken",
-			"language": "zxx",
-			"clucking": false
-		}
+		"chicken": "chicken://zxx?clucking=false"
 	}
 ```
 
@@ -249,12 +230,7 @@ The `transformations` section is a dictionary of "named" tranformation configuat
 
 ```
 	"dispatchers": {
-		"pubsub": {
-			"name": "PubSub",
-			"host": "localhost",
-			"port": 6379,
-			"channel": "webhookd"
-		}
+		"pubsub": "pubsub://localhost:6379/webhookd"
 	}
 ```
 
@@ -295,35 +271,25 @@ The `webhooks` section is a list of dictionaries. These are the actual webhook e
 ### GitHub
 
 ```
-	{
-		"name": "GitHub",
-		"secret": "s33kret"
-	}
+github://?secret={SECRET}&ref={REF}
 ```
 
 This receiver handles Webhooks sent from [GitHub](https://developer.github.com/webhooks/). It validates that the message sent is actually from GitHub (by way of the `X-Hub-Signature` header) but performs no other processing.
 
 #### Properties
 
-* **name**  _string_ This is always `GitHub`.
 * **secret** _string_ The secret used to generate [the HMAC hex digest](https://developer.github.com/webhooks/#delivery-headers) of the message payload.
 * **ref** _string_ An optional Git `ref` to filter by. If present and a WebHook is sent with a different ref then the daemon will return a `666` error response.
 
 ### Insecure
 
 ```
-	{
-		"name": "Insecure"
-	}
+insecure://
 ```
 
 As the name suggests this receiver is completely insecure. It will happily accept anything you send to it and relay it on to the dispatcher defined for that webhook.
 
 This receiver exists primarily for debugging purposes and **you should not deploy it in production**.
-
-#### Properties
-
-* **name** _string_ This is always `Insecure`.
 
 ### Slack
 
@@ -514,7 +480,6 @@ The `Slack` dispatcher will send messages to a Slack channel using the [slackcat
 ## To do
 
 * [Add a general purpose "shared-secret/signed-message" receiver](https://github.com/whosonfirst/go-webhookd/issues/5)
-* [Add support for TLS](https://github.com/whosonfirst/go-webhookd/issues/4)
 * [Restrict access to receivers by host/IP](https://github.com/whosonfirst/go-webhookd/issues/6)
 * Better logging
 
