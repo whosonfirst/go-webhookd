@@ -28,7 +28,8 @@ Once all the kinks have been worked out of `whosonfirst/go-webhookd/v2` it will 
 
 ## Upgrading from `whosonfirst/go-webhookd` "v1"
 
-_Please write me_
+* The `-config` flag has been replaced by a `-config-uri` flag which is a fully-qualified [Go Cloud URL](https://gocloud.dev/concepts/urls/).
+* The config file itself has been simplified. Daemon, receiver, dispatcher and tranformation settings are now defined as URI strings rather than dictionaries. `whosonfirst/go-webhookd` "v1" config files will need to be updated manually.
 
 ## Usage
 
