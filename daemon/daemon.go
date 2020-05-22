@@ -39,7 +39,7 @@ func NewWebhookDaemonFromConfig(ctx context.Context, cfg *config.WebhookConfig) 
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return d, nil
 }
 
@@ -60,7 +60,7 @@ func NewWebhookDaemon(ctx context.Context, uri string) (*WebhookDaemon, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	srv, err := server.NewServer(ctx, uri)
 
 	if err != nil {

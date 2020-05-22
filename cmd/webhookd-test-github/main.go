@@ -5,12 +5,13 @@ package main
 import (
 	"bytes"
 	"flag"
-	"fmt"
 	"github.com/whosonfirst/go-webhookd/v2/config"
 	"github.com/whosonfirst/go-webhookd/v2/github"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
+	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -32,17 +33,27 @@ func main() {
 		log.Fatal("Missing receiver name")
 	}
 
-	wh_config, err := config.NewConfigFromFile(*cfg)
+	wh_cfg, err := config.NewConfigFromFile(*cfg)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	receiver_config, err := wh_config.GetReceiverConfigByName(*receiver_name)
+	receiver_uri, err := wh_cfg.GetReceiverConfigByName(*receiver_name)
 
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	u, err := url.Parse(receiver_uri)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	q := u.Query()
+
+	secret := q.Get("secret")
 
 	var body string
 
@@ -58,15 +69,14 @@ func main() {
 		body = strings.Join(flag.Args(), " ")
 	}
 
-	secret := receiver_config.Secret
-
 	sig, _ := github.GenerateSignature(body, secret)
 
 	client := &http.Client{}
 
-	uri := fmt.Sprintf("http://%s:%d%s", wh_config.Daemon.Host, wh_config.Daemon.Port, *endpoint)
+	d_uri, _ := url.Parse(wh_cfg.Daemon)
+	d_uri.Path = filepath.Join(d_uri.Path, *endpoint)
 
-	req, err := http.NewRequest("POST", uri, bytes.NewBufferString(body))
+	req, err := http.NewRequest("POST", d_uri.String(), bytes.NewBufferString(body))
 
 	if err != nil {
 		log.Fatal(err)

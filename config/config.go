@@ -9,20 +9,12 @@ import (
 )
 
 type WebhookConfig struct {
-	Daemon          WebhookDaemonConfig                    `json:"daemon"`
-	Receivers       map[string]WebhookReceiverConfig       `json:"receivers"`
-	Dispatchers     map[string]WebhookDispatcherConfig     `json:"dispatchers"`
-	Transformations map[string]WebhookTransformationConfig `json:"transformations"`
-	Webhooks        []WebhookWebhooksConfig                `json:"webhooks"`
+	Daemon          string                  `json:"daemon"`
+	Receivers       map[string]string       `json:"receivers"`
+	Dispatchers     map[string]string       `json:"dispatchers"`
+	Transformations map[string]string       `json:"transformations"`
+	Webhooks        []WebhookWebhooksConfig `json:"webhooks"`
 }
-
-type WebhookDaemonConfig string
-
-type WebhookReceiverConfig string
-
-type WebhookDispatcherConfig string
-
-type WebhookTransformationConfig string
 
 type WebhookWebhooksConfig struct {
 	Endpoint        string   `json:"endpoint"`
@@ -55,35 +47,35 @@ func NewConfigFromFile(path string) (*WebhookConfig, error) {
 	return &c, nil
 }
 
-func (c *WebhookConfig) GetReceiverConfigByName(name string) (*WebhookReceiverConfig, error) {
+func (c *WebhookConfig) GetReceiverConfigByName(name string) (string, error) {
 
 	config, ok := c.Receivers[name]
 
 	if !ok {
-		return nil, errors.New("Invalid receiver name")
+		return "", errors.New("Invalid receiver name")
 	}
 
-	return &config, nil
+	return config, nil
 }
 
-func (c *WebhookConfig) GetDispatcherConfigByName(name string) (*WebhookDispatcherConfig, error) {
+func (c *WebhookConfig) GetDispatcherConfigByName(name string) (string, error) {
 
 	config, ok := c.Dispatchers[name]
 
 	if !ok {
-		return nil, errors.New("Invalid dispatcher name")
+		return "", errors.New("Invalid dispatcher name")
 	}
 
-	return &config, nil
+	return config, nil
 }
 
-func (c *WebhookConfig) GetTransformationConfigByName(name string) (*WebhookTransformationConfig, error) {
+func (c *WebhookConfig) GetTransformationConfigByName(name string) (string, error) {
 
 	config, ok := c.Transformations[name]
 
 	if !ok {
-		return nil, errors.New("Invalid transformations name")
+		return "", errors.New("Invalid transformations name")
 	}
 
-	return &config, nil
+	return config, nil
 }
