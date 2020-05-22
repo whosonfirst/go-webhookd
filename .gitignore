@@ -1,5 +1,2 @@
 *~
-pkg
-src
-!vendor/src
-*.json
+config.json
