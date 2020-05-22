@@ -10,6 +10,16 @@ import (
 	"net/url"
 )
 
+func init() {
+
+	ctx := context.Background()
+	err := RegisterDispatcher(ctx, "lambda", NewLambdaDispatcher)
+
+	if err != nil {
+		panic(err)
+	}
+}
+
 type LambdaDispatcher struct {
 	webhookd.WebhookDispatcher
 	LambdaFunction string

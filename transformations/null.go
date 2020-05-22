@@ -5,6 +5,16 @@ import (
 	"github.com/whosonfirst/go-webhookd/v2"
 )
 
+func init() {
+
+	ctx := context.Background()
+	err := RegisterTransformation(ctx, "null", NewNullTransformation)
+
+	if err != nil {
+		panic(err)
+	}
+}
+
 type NullTransformation struct {
 	webhookd.WebhookTransformation
 }

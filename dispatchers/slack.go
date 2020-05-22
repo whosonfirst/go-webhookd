@@ -7,6 +7,16 @@ import (
 	"net/url"
 )
 
+func init() {
+
+	ctx := context.Background()
+	err := RegisterDispatcher(ctx, "slack", NewSlackDispatcher)
+
+	if err != nil {
+		panic(err)
+	}
+}
+
 type SlackDispatcher struct {
 	webhookd.WebhookDispatcher
 	writer *slackcat.Writer

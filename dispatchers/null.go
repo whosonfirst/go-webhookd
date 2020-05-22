@@ -5,6 +5,16 @@ import (
 	"github.com/whosonfirst/go-webhookd/v2"
 )
 
+func init() {
+
+	ctx := context.Background()
+	err := RegisterDispatcher(ctx, "null", NewNullDispatcher)
+
+	if err != nil {
+		panic(err)
+	}
+}
+
 type NullDispatcher struct {
 	webhookd.WebhookDispatcher
 }

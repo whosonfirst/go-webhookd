@@ -11,6 +11,16 @@ import (
 	"strings"
 )
 
+func init() {
+
+	ctx := context.Background()
+	err := RegisterTransformation(ctx, "slacktext", NewSlackTextTransformation)
+
+	if err != nil {
+		panic(err)
+	}
+}
+
 type SlackTextTransformation struct {
 	webhookd.WebhookTransformation
 	key string

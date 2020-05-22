@@ -8,6 +8,16 @@ import (
 	"strconv"
 )
 
+func init() {
+
+	ctx := context.Background()
+	err := RegisterTransformation(ctx, "chicken", NewChickenTransformation)
+
+	if err != nil {
+		panic(err)
+	}
+}
+
 type ChickenTransformation struct {
 	webhookd.WebhookTransformation
 	chicken *chicken.Chicken

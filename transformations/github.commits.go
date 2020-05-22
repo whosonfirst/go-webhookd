@@ -13,6 +13,16 @@ import (
 	"strconv"
 )
 
+func init() {
+
+	ctx := context.Background()
+	err := RegisterTransformation(ctx, "githubcommits", NewGitHubCommitsTransformation)
+
+	if err != nil {
+		panic(err)
+	}
+}
+
 // see also: https://github.com/whosonfirst/go-whosonfirst-updated/issues/8
 
 type GitHubCommitsTransformation struct {

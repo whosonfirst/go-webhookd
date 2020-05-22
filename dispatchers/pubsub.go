@@ -2,11 +2,20 @@ package dispatchers
 
 import (
 	"context"
-	"fmt"
 	"github.com/whosonfirst/go-webhookd/v2"
 	"gopkg.in/redis.v1"
 	"net/url"
 )
+
+func init() {
+
+	ctx := context.Background()
+	err := RegisterDispatcher(ctx, "pubsub", NewPubSubDispatcher)
+
+	if err != nil {
+		panic(err)
+	}
+}
 
 type PubSubDispatcher struct {
 	webhookd.WebhookDispatcher
@@ -22,12 +31,9 @@ func NewPubSubDispatcher(ctx context.Context, uri string) (webhookd.WebhookDispa
 		return nil, err
 	}
 
-	host := u.Host
-	port := u.Port
+	endpoint := u.Host
 	channel := u.Path
-
-	endpoint := fmt.Sprintf("%s:%d", host, port)
-
+	
 	client := redis.NewTCPClient(&redis.Options{
 		Addr: endpoint,
 	})

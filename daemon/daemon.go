@@ -117,6 +117,7 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(ctx context.Context, cfg *config.W
 		receiver, err := receivers.NewReceiver(ctx, receiver_uri)
 
 		if err != nil {
+			log.Println("RECEIVER", receiver_uri)
 			return err
 		}
 
@@ -124,15 +125,20 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(ctx context.Context, cfg *config.W
 
 		for _, name := range hook.Transformations {
 
-			transformation_config, err := cfg.GetTransformationConfigByName(name)
+			if strings.HasPrefix(name, "#"){
+				continue
+			}
+			
+			transformation_uri, err := cfg.GetTransformationConfigByName(name)
 
 			if err != nil {
 				return err
 			}
 
-			step, err := transformations.NewTransformation(ctx, transformation_config)
+			step, err := transformations.NewTransformation(ctx, transformation_uri)
 
 			if err != nil {
+				log.Println("TRANSFORM", name, transformation_uri)
 				return err
 			}
 
@@ -143,6 +149,10 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(ctx context.Context, cfg *config.W
 
 		for _, name := range hook.Dispatchers {
 
+			if strings.HasPrefix(name, "#"){
+				continue
+			}
+			
 			dispatcher_uri, err := cfg.GetDispatcherConfigByName(name)
 
 			if err != nil {
@@ -152,6 +162,7 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(ctx context.Context, cfg *config.W
 			dispatcher, err := dispatchers.NewDispatcher(ctx, dispatcher_uri)
 
 			if err != nil {
+				log.Println("DISPATCHER", name, dispatcher_uri)
 				return err
 			}
 

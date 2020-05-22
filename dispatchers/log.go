@@ -8,6 +8,16 @@ import (
 	"log"
 )
 
+func init() {
+
+	ctx := context.Background()
+	err := RegisterDispatcher(ctx, "log", NewLogDispatcher)
+
+	if err != nil {
+		panic(err)
+	}
+}
+
 type LogDispatcher struct {
 	webhookd.WebhookDispatcher
 }
