@@ -34,10 +34,11 @@ func NewLambdaDispatcher(ctx context.Context, uri string) (webhookd.WebhookDispa
 		return nil, err
 	}
 
+	lambda_function := u.Host
+
 	q := u.Query()
 
 	lambda_dsn := q.Get("dsn")
-	lambda_function := q.Get("function")
 
 	lambda_sess, err := session.NewSessionWithDSN(lambda_dsn)
 

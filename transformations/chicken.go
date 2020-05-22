@@ -33,7 +33,7 @@ func NewChickenTransformation(ctx context.Context, uri string) (webhookd.Webhook
 
 	q := u.Query()
 
-	lang := q.Get("language")
+	lang := u.Host
 	str_clucking := q.Get("clucking")
 
 	clucking := false

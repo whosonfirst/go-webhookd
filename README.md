@@ -20,6 +20,16 @@ make tools
 
 All of this package's dependencies are bundled with the code in the `vendor` directory.
 
+## Important
+
+`whosonfirst/go-webhookd/v2` does not introduce any new functionality relative to `whosonfirst/go-webhookd` "v1" but does make substantial changes to the package's interfaces and config file definitions.
+
+Once all the kinks have been worked out of `whosonfirst/go-webhookd/v2` it will quickly be superseded by `whosonfirst/go-webhookd/v3` which will move most of the platform or vendor specific functionalities in to their own packages.
+
+## Upgrading from `whosonfirst/go-webhookd` "v1"
+
+_Please write me_
+
 ## Usage
 
 ### webhookd
@@ -27,8 +37,8 @@ All of this package's dependencies are bundled with the code in the `vendor` dir
 ```
 ./bin/webhookd -h
 Usage of ./bin/webhookd:
-  -config string
-    	Path to a valid webhookd config file
+  -config-uri string
+    	A valid Go Cloud blob URI where your webhookd config file lives
 ```
 
 `webhookd` is an HTTP daemon for handling webhook requests. Individual webhook endpoints (and how they are processed) are defined in a [config file](#config-files) that is read at start-up time.
@@ -50,7 +60,7 @@ Here are the relevant settings in the config file:
 	"webhooks": [
 		{
 			"endpoint": "/insecure-test",
-	 		"receiver": "insecure",
+	 		"receiver": "insecure://",
 			"transformations": [ "clucking" ],
 			"dispatchers": [ "null" ]
 		}
@@ -61,7 +71,7 @@ Here are the relevant settings in the config file:
 First we start `webhookd`:
 
 ```
-./bin/webhookd -config-uri ./config.json
+./bin/webhookd -config-uri file:///usr/local/webhookd/config.json
 2018/07/21 08:43:37 webhookd listening for requests on http://localhost:8080
 ```
 
@@ -108,7 +118,7 @@ At some point there might be dynamic (or runtime) webhook endpoints but today th
 In the meantime you can gracefully restart `webhookd` by sending its PID a `USR2` signal which will cause the config file (and all the endpoints it defines) to be re-read. It's not elegant but it works. For example:
 
 ```
-$> ./bin/webhookd -config-uri config.json
+$> ./bin/webhookd -config-uri file:///usr/local/webhookd/config.json
 2016/10/16 00:19:47 Serving 127.0.0.1:8080 with pid 2723
 
 $> kill -USR2 2723
@@ -126,13 +136,15 @@ _All error handling in the examples below have been removed for the sake of brev
 
 ```
 import (
+	"context"
 	"github.com/whosonfirst/go-webhookd/v2/config"
 	"github.com/whosonfirst/go-webhookd/v2/daemon"
 )
 
-wh_config, _ := config.NewConfigFromFile("config.json")
+ctx := context.Background()
+cfg, _ := config.NewConfigFromURI(ctx, "file:///usr/local/webhookd/config.json")
 
-wh_daemon, _ := daemon.NewWebhookDaemonFromConfig(wh_config)
+wh_daemon, _ := daemon.NewWebhookDaemonFromConfig(ctx, cfg)
 wh_daemon.Start()
 ```
 
@@ -294,53 +306,42 @@ This receiver exists primarily for debugging purposes and **you should not deplo
 ### Slack
 
 ```
-	{
-		"name": "Slack"
-	}
+slack://
 ```
 
 This receiver handles Webhooks sent from [Slack](https://api.slack.com/outgoing-webhooks). It does not process the message at all. _This receiver has not been fully tested yet so proceed with caution._
-
-#### Properties
-
-* **name** _string_ This is always `Slack`.
 
 ## Transformations
 
 ### Chicken
 
 ```
-	{
-		"name": "Chicken",
-		"language": "zxx",
-		"clucking": false
-	}
+chicken://{LANGUAGE}?clucking={CLUCKING}
 ```
 
 The `Chicken` transformation will convert every word in your message to 🐔 using the [go-chicken](https://github.com/thisisaaronland/go-chicken) package. If this seems silly that's because it is. It's also more fun that yet-another boring _"make all the words upper-cased"_ example.
 
 #### Properties
 
-* **name** _string_ This is always `Chicken`.
 * **language** _string_ A three-letter language code specifying which language `go-chicken` should use.
 * **clucking** _bool_ A boolean flag indicating whether or not to [cluck](https://github.com/thisisaaronland/go-chicken#clucking) when generating results.
 
 ### GitHubCommits
 
 ```
-	{
-		"name": "GitHubCommits",
-		"exclude_additions":false,
-		"exclude_modification":false,
-		"exclude_deletions":true,
-	}
+githubcommits://?exclude_additions={BOOLEAN}&exclude_modification={BOOLEAN}&exclude_deletions={BOOLEAN}
 ```
 
-The `GitHubCommits` transformation will extract all the commits (added, modified, removed) from a `push` event and return a JSON encoded list of paths.
+The `GitHubCommits` transformation will extract all the commits (added, modified, removed) from a `push` event and return a CSV encoded list of rows consisting of: commit hash, repository name, path. For example:
+
+```
+e3a18d4de60a5e50ca78ca1733238735ddfaef4c,sfomuseum-data-flights-2020-05,data/171/316/450/9/1713164509.geojson
+e3a18d4de60a5e50ca78ca1733238735ddfaef4c,sfomuseum-data-flights-2020-05,data/171/316/451/9/1713164519.geojson
+e3a18d4de60a5e50ca78ca1733238735ddfaef4c,sfomuseum-data-flights-2020-05,data/171/316/483/5/1713164835.geojson
+````
 
 #### Properties
 
-* **name** _string_ This is always `GitHubCommits`.
 * **exclude_additions** _bool_ A flag to indicate that new additions in a commit should be ignored. Optional; default false.
 * **exclude_modification** _bool_ A flag to indicate that modifications in a commit should be ignored. Optional; default false.
 * **exclude_deletions** _bool_ A flag to indicate that deletions in a commit should be ignored. Optional; default false.
@@ -348,19 +349,13 @@ The `GitHubCommits` transformation will extract all the commits (added, modified
 ### GitHubRepo
 
 ```
-	{
-		"name": "GitHubRepo",
-		"exclude_additions":false,
-		"exclude_modification":false,
-		"exclude_deletions":true,
-	}
+githubrepo://?exclude_additions={BOOLEAN}&exclude_modification={BOOLEAN}&exclude_deletions={BOOLEAN}
 ```
 
 The `GitHubRepo` transformation will extract the reporsitory name for all the commits matching (added, modified, removed) criteria.
 
 #### Properties
 
-* **name** _string_ This is always `GitHubRepo`.
 * **exclude_additions** _bool_ A flag to indicate that new additions in a commit should be ignored. Optional; default false.
 * **exclude_modification** _bool_ A flag to indicate that modifications in a commit should be ignored. Optional; default false.
 * **exclude_deletions** _bool_ A flag to indicate that deletions in a commit should be ignored. Optional; default false.
@@ -368,95 +363,60 @@ The `GitHubRepo` transformation will extract the reporsitory name for all the co
 ### Null
 
 ```
-	{
-		"name": "Null"
-	}
+null://
 ```
 
 The `Null` transformation will not do _anything_. It's not clear why you would ever use this outside of debugging but that's your business.
 
-#### Properties
-
-* **name** _string_ This is always `Null`.
-
 ### SlackText
 
 ```
-	{
-		"name": "SlackText"
-	}
+slacktext://
 ```
 
 The `SlackText` transformation will extract and return [the `text` property](https://api.slack.com/outgoing-webhooks) from a Webhook sent by Slack.
-
-#### Properties
-
-* **name** _string_ This is always `SlackText`.
 
 ## Dispatchers
 
 ### Lambda
 
 ```
-	{
-		"name": "Lambda",
-		"dsn": "region=us-east-1",
-		"function": "WebhookdLambdaFunction"
-	}
+lambda://{FUNCTION}?dsn={GO_AWS_SESSION_STRING}
 ```
 
 The `Lambda` dispatcher will send messages to an AWS Lambda function.
 
 #### Properties
 
-* **name** _string_ This is always `Lambda`.
-* **dsn** _string_ A valid `go-whosonfirst-aws` Lambda DSN string.
-* **name** _string_ The name of your Lambda function.
+* **dsn** _string_ A valid `aaronland/go-aws-session` DSN string.
+* **function** _string_ The name of your Lambda function.
 
 ### Log
 
 ```
-	{
-		"name": "Log"
-	}
+log://
 ```
 
 The `Log` dispatcher will send messages to Go's logging facility. As of this writing that means everything is logged to STDOUT but eventually it will be more sophisticated.
 
-#### Properties
-
-* **name** _string_ This is always `Null`.
-
 ### Null
 
 ```
-	{
-		"name": "Null"
-	}
+null://
 ```
 
 The `Null` dispatcher will send messages in to the vortex, never to be seen again. This can be useful for debugging.
 
-#### Properties
-
-* **name** _string_ This is always `Null`.
-
 ### PubSub
 
 ```
-	{
-		"name": "PubSub",
-		"host": "localhost",
-		"port": 6379,
-		"channel": "webhookd"
-	}
+pubsub://{REDIS_HOST}:{REDIS_PORT}/{REDIS_CHANNEL}
 ```
 
 The `PubSub` dispatcher will send messages to a Redis PubSub channel.
 
 #### Properties
 
-* **name** _string_ This is always `PubSub`.
 * **host** _string_ The address of the Redis host you want to connect to.
 * **port** _int_ The port number of the Redis host you want to connect to.
 * **channel** _string_ The name of the Redis PubSub channel you want to send messages to.
@@ -464,17 +424,13 @@ The `PubSub` dispatcher will send messages to a Redis PubSub channel.
 ### Slack
 
 ```
-	{
-		"name": "Slack",
-		"config": "/path/to/.slackcat.conf"			
-	}
+slack://{PATH_TO_SLACKCAT_CONF}
 ```
 
 The `Slack` dispatcher will send messages to a Slack channel using the [slackcat](https://github.com/whosonfirst/slackcat#configuring) package.
 
 #### Properties
 
-* **name** _string_ This is always `Slack`.
 * **config** _string_ The path to a valid [slackcat](https://github.com/whosonfirst/slackcat#configuring) config file. _Eventually you will be able to specify a plain-vanilla Slack Webhook URL but not today._
 
 ## To do
