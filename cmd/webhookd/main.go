@@ -11,23 +11,19 @@ import (
 
 func main() {
 
-	var cfg = flag.String("config", "", "Path to a valid webhookd config file")
+	config_uri := flag.String("config-uri", "", "A valid Go Cloud blob URI where your webhookd config file lives")
 
 	flag.Parse()
 
 	ctx := context.Background()
 
-	if *cfg == "" {
-		log.Fatal("Missing config file")
-	}
-
-	wh_config, err := config.NewConfigFromFile(*cfg)
+	cfg, err := config.NewConfigFromURI(ctx, *config_uri)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to load config %s, %v", *config_uri, err)
 	}
 
-	wh_daemon, err := daemon.NewWebhookDaemonFromConfig(ctx, wh_config)
+	wh_daemon, err := daemon.NewWebhookDaemonFromConfig(ctx, cfg)
 
 	if err != nil {
 		log.Fatal(err)

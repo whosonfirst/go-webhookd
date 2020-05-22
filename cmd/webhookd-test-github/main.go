@@ -4,6 +4,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"flag"
 	"github.com/whosonfirst/go-webhookd/v2/config"
 	"github.com/whosonfirst/go-webhookd/v2/github"
@@ -18,28 +19,27 @@ import (
 
 func main() {
 
-	var cfg = flag.String("config", "", "Path to a valid webhookd config file")
+	config_uri := flag.String("config-uri", "", "A valid Go Cloud blob URI where your webhookd config file lives")
+	
 	var receiver_name = flag.String("receiver", "", "A valid webhookd config receiver name to test")
 	var endpoint = flag.String("endpoint", "", "A valid webhookd (relative) endpoint")
 	var file = flag.String("file", "", "The path to a file to test the endpoint with. If empty the webhookd-test-github tool will concatenate arguments passed on the command line.")
 
 	flag.Parse()
 
-	if *cfg == "" {
-		log.Fatal("Missing config file")
-	}
-
+	ctx := context.Background()
+	
 	if *receiver_name == "" {
 		log.Fatal("Missing receiver name")
 	}
 
-	wh_cfg, err := config.NewConfigFromFile(*cfg)
+	cfg, err := config.NewConfigFromURI(ctx, *config_uri)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to load config %s, %v", *config_uri, err)
 	}
 
-	receiver_uri, err := wh_cfg.GetReceiverConfigByName(*receiver_name)
+	receiver_uri, err := cfg.GetReceiverConfigByName(*receiver_name)
 
 	if err != nil {
 		log.Fatal(err)
@@ -73,7 +73,7 @@ func main() {
 
 	client := &http.Client{}
 
-	d_uri, _ := url.Parse(wh_cfg.Daemon)
+	d_uri, _ := url.Parse(cfg.Daemon)
 	d_uri.Path = filepath.Join(d_uri.Path, *endpoint)
 
 	req, err := http.NewRequest("POST", d_uri.String(), bytes.NewBufferString(body))

@@ -13,6 +13,7 @@ require (
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/whosonfirst/go-writer-slackcat v0.0.0-20151205020711-ad3c7f1d3b0a
 	github.com/whosonfirst/slackcat v0.0.0-20170719225154-b769f32185b5 // indirect
+	gocloud.dev v0.19.0
 	gopkg.in/bufio.v1 v1.0.0-20140618132640-567b2bfa514e // indirect
 	gopkg.in/redis.v1 v1.0.0-20140702131110-4ea3e7531bf7
 )

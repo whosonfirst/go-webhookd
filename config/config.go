@@ -1,10 +1,13 @@
 package config
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
-	"io/ioutil"
-	_ "log"
+	"gocloud.dev/blob"
+	_ "gocloud.dev/blob/fileblob"
+	_ "gocloud.dev/blob/memblob"
+	"io"
 	"path/filepath"
 )
 
@@ -23,28 +26,40 @@ type WebhookWebhooksConfig struct {
 	Dispatchers     []string `json:"dispatchers"`
 }
 
-func NewConfigFromFile(path string) (*WebhookConfig, error) {
+func NewConfigFromURI(ctx context.Context, uri string) (*WebhookConfig, error) {
 
-	abs_path, err := filepath.Abs(path)
+	config_root := filepath.Dir(uri)
+	config_name := filepath.Base(uri)
 
-	if err != nil {
-		return nil, err
-	}
-
-	body, err := ioutil.ReadFile(abs_path)
+	bucket, err := blob.OpenBucket(ctx, config_root)
 
 	if err != nil {
 		return nil, err
 	}
 
-	c := WebhookConfig{}
-	err = json.Unmarshal(body, &c)
+	cfg_fh, err := bucket.NewReader(ctx, config_name, nil)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &c, nil
+	defer cfg_fh.Close()
+
+	return NewConfigFromReader(ctx, cfg_fh)
+}
+
+func NewConfigFromReader(ctx context.Context, fh io.Reader) (*WebhookConfig, error) {
+
+	var cfg *WebhookConfig
+
+	dec := json.NewDecoder(fh)
+	err := dec.Decode(cfg)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return cfg, nil
 }
 
 func (c *WebhookConfig) GetReceiverConfigByName(name string) (string, error) {
