@@ -44,6 +44,15 @@ Usage of ./bin/webhookd:
 
 `webhookd` is an HTTP daemon for handling webhook requests. Individual webhook endpoints (and how they are processed) are defined in a [config file](#config-files) that is read at start-up time.
 
+#### Config URIs
+
+The following [Go Cloud URL schemes](https://gocloud.dev/concepts/urls/) are supported for defining config URIs:
+
+* [fileblob://](https://godoc.org/gocloud.dev/blob/fileblob)
+* [mem://](https://godoc.org/gocloud.dev/blob/memblob)
+* [s3://](https://godoc.org/gocloud.dev/blob/s3blob)
+* [s3blob://](https://github.com/aaronland/go-cloud-s3blob)
+
 #### Example
 
 This is a deliberately juvenile example, just to keep things simple. 

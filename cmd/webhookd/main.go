@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"flag"
+	"github.com/sfomuseum/go-flags/flagset"
 	"github.com/whosonfirst/go-webhookd/v2/config"
 	"github.com/whosonfirst/go-webhookd/v2/daemon"
 	"log"
@@ -11,9 +11,17 @@ import (
 
 func main() {
 
-	config_uri := flag.String("config-uri", "", "A valid Go Cloud blob URI where your webhookd config file lives")
+	fs := flagset.NewFlagSet("webhooks")
 
-	flag.Parse()
+	config_uri := fs.String("config-uri", "", "A valid Go Cloud blob URI where your webhookd config file lives")
+
+	flagset.Parse(fs)
+
+	err := flagset.SetFlagsFromEnvVars(fs, "WEBHOOKD")
+
+	if err != nil {
+		log.Fatalf("Failed to set flags from env vars, %v", err)
+	}
 
 	ctx := context.Background()
 

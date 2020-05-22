@@ -91,6 +91,8 @@ github.com/google/wire
 github.com/googleapis/gax-go
 # github.com/jmespath/go-jmespath v0.3.0
 github.com/jmespath/go-jmespath
+# github.com/sfomuseum/go-flags v0.3.1
+github.com/sfomuseum/go-flags/flagset
 # github.com/whosonfirst/algnhsa v0.1.0
 github.com/whosonfirst/algnhsa
 # github.com/whosonfirst/go-writer-slackcat v0.0.0-20151205020711-ad3c7f1d3b0a
