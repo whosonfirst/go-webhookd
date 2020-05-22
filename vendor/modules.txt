@@ -2,6 +2,10 @@
 github.com/aaronland/go-chicken
 github.com/aaronland/go-chicken/emoji
 github.com/aaronland/go-chicken/strings
+# github.com/aaronland/go-http-server v0.0.3
+github.com/aaronland/go-http-server
+# github.com/aaronland/go-roster v0.0.1
+github.com/aaronland/go-roster
 # github.com/aaronland/go-string v0.1.1
 github.com/aaronland/go-string/dsn
 # github.com/aaronland/go-ucd v0.0.0-20190520134908-684059ca9156

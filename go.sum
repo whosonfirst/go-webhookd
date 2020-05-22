@@ -2,6 +2,10 @@ github.com/aaronland/go-chicken v0.1.1 h1:FL/69oDhXvLwjecE1sM/EliQVlTOzxHZ2UiiJA
 github.com/aaronland/go-chicken v0.1.1/go.mod h1:/Ahjkb/tj7bsTBbYioHvcUPcW9HzcTcVQtzxbcqoUM0=
 github.com/aaronland/go-chicken v0.2.1 h1:I61mIO6liaJIvHjvZK/SkrnUIeWbFFiujHKUuUY+ANU=
 github.com/aaronland/go-chicken v0.2.1/go.mod h1:pvXQ3o8IYrpbfuKU1SNRm/gsNl8w5EK/Cy4L6KAvCwU=
+github.com/aaronland/go-http-server v0.0.3 h1:VyiOxUqgJccamLQNOx7p0D3qE9K5RUe3TKe8vy3gZa4=
+github.com/aaronland/go-http-server v0.0.3/go.mod h1:i7CG6Q9iRKZX4qonIYr73GtJpVHV8T31eZ4Ug44zOTU=
+github.com/aaronland/go-roster v0.0.1 h1:r1l4n1HfWvEtOXZvhfXX0Won9Xf6QJsigdUdzOtuy/M=
+github.com/aaronland/go-roster v0.0.1/go.mod h1:AcovpxlG1XxJxX2Fjqlm63fEIBhCjEIBV4lP87FZDmI=
 github.com/aaronland/go-string v0.1.1 h1:btdr18owWCBN14ojKx3p+PBCKfm9qIggYEguPLUb2wE=
 github.com/aaronland/go-string v0.1.1/go.mod h1:2aMIWdTqk63jZsaLLy+p9dsB1MDRqx4sHYoLtkwyYUo=
 github.com/aaronland/go-ucd v0.0.0-20190520134908-684059ca9156 h1:SsNFRFNm6Gn8DgDZIcImpIXtjeH1Ak2s1SLoVby0dwg=

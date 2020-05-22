@@ -1,13 +1,14 @@
 package daemon
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"github.com/whosonfirst/go-webhookd"
 	"github.com/whosonfirst/go-webhookd/config"
 	"github.com/whosonfirst/go-webhookd/dispatchers"
 	"github.com/whosonfirst/go-webhookd/receivers"
-	"github.com/whosonfirst/go-webhookd/server"
+	"github.com/aaronland/go-http-server"
 	"github.com/whosonfirst/go-webhookd/transformations"
 	"github.com/whosonfirst/go-webhookd/webhook"
 	"log"
@@ -46,7 +47,9 @@ func NewWebhookDaemon(protocol string, host string, port int) (*WebhookDaemon, e
 
 	addr := fmt.Sprintf("%s://%s:%d", protocol, host, port)
 
-	srv, err := server.NewServerFromString(addr)
+	ctx := context.Background()
+	
+	srv, err := server.NewServer(ctx, addr)
 
 	if err != nil {
 		return nil, err
@@ -319,7 +322,8 @@ func (d *WebhookDaemon) Start() error {
 
 	log.Printf("webhookd listening for requests on %s\n", svr.Address())
 
-	err = svr.ListenAndServe(mux)
+	ctx := context.Background()
+	err = svr.ListenAndServe(ctx, mux)
 
 	if err != nil {
 		return err
