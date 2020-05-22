@@ -135,8 +135,8 @@ _All error handling in the examples below have been removed for the sake of brev
 
 ```
 import (
-	"github.com/whosonfirst/go-webhookd/config"
-	"github.com/whosonfirst/go-webhookd/daemon"
+	"github.com/whosonfirst/go-webhookd/v2/config"
+	"github.com/whosonfirst/go-webhookd/v2/daemon"
 )
 
 wh_config, _ := config.NewConfigFromFile("config.json")
@@ -151,12 +151,12 @@ _You can also just grab the HTTP handler func with `wh_daemon.HandlerFunc()` if 
 
 ```
 import (
-	"github.com/whosonfirst/go-webhookd"		
-	"github.com/whosonfirst/go-webhookd/daemon"	
-	"github.com/whosonfirst/go-webhookd/dispatchers"
-	"github.com/whosonfirst/go-webhookd/receivers"
-	"github.com/whosonfirst/go-webhookd/transformations"
-	"github.com/whosonfirst/go-webhookd/webhook"	
+	"github.com/whosonfirst/go-webhookd/v2"		
+	"github.com/whosonfirst/go-webhookd/v2/daemon"	
+	"github.com/whosonfirst/go-webhookd/v2/dispatchers"
+	"github.com/whosonfirst/go-webhookd/v2/receivers"
+	"github.com/whosonfirst/go-webhookd/v2/transformations"
+	"github.com/whosonfirst/go-webhookd/v2/webhook"	
 )
 
 wh_receiver, _ := receivers.NewInsecureReceiver()

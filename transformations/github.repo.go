@@ -34,22 +34,41 @@ func NewGitHubRepoTransformation(ctx context.Context, uri string) (webhookd.Webh
 	str_modifications := q.Get("exclude_modifications")
 	str_deletions := q.Get("exclude_deletions")
 
-	exclude_additions, err := strconv.ParseBool(str_additions)
+	exclude_additions := false
+	exclude_modifications := false
+	exclude_deletions := false
 
-	if err != nil {
-		return nil, err
+	if str_additions != "" {
+
+		v, err := strconv.ParseBool(str_additions)
+
+		if err != nil {
+			return nil, err
+		}
+
+		exclude_additions = v
 	}
 
-	exclude_modifications, err := strconv.ParseBool(str_modifications)
+	if str_modifications == "" {
 
-	if err != nil {
-		return nil, err
+		v, err := strconv.ParseBool(str_modifications)
+
+		if err != nil {
+			return nil, err
+		}
+
+		exclude_modifications = v
 	}
 
-	exclude_deletions, err := strconv.ParseBool(str_deletions)
+	if str_deletions == "" {
 
-	if err != nil {
-		return nil, err
+		v, err := strconv.ParseBool(str_deletions)
+
+		if err != nil {
+			return nil, err
+		}
+
+		exclude_deletions = v
 	}
 
 	p := GitHubRepoTransformation{

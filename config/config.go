@@ -53,7 +53,7 @@ func NewConfigFromReader(ctx context.Context, fh io.Reader) (*WebhookConfig, err
 	var cfg *WebhookConfig
 
 	dec := json.NewDecoder(fh)
-	err := dec.Decode(cfg)
+	err := dec.Decode(&cfg)
 
 	if err != nil {
 		return nil, err

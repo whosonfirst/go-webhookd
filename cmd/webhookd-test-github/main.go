@@ -20,7 +20,7 @@ import (
 func main() {
 
 	config_uri := flag.String("config-uri", "", "A valid Go Cloud blob URI where your webhookd config file lives")
-	
+
 	var receiver_name = flag.String("receiver", "", "A valid webhookd config receiver name to test")
 	var endpoint = flag.String("endpoint", "", "A valid webhookd (relative) endpoint")
 	var file = flag.String("file", "", "The path to a file to test the endpoint with. If empty the webhookd-test-github tool will concatenate arguments passed on the command line.")
@@ -28,7 +28,7 @@ func main() {
 	flag.Parse()
 
 	ctx := context.Background()
-	
+
 	if *receiver_name == "" {
 		log.Fatal("Missing receiver name")
 	}

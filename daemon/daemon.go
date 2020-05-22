@@ -55,10 +55,17 @@ func NewWebhookDaemon(ctx context.Context, uri string) (*WebhookDaemon, error) {
 
 	str_debug := q.Get("allow_debug")
 
-	allow_debug, err := strconv.ParseBool(str_debug)
+	allow_debug := false
 
-	if err != nil {
-		return nil, err
+	if str_debug != "" {
+
+		v, err := strconv.ParseBool(str_debug)
+
+		if err != nil {
+			return nil, err
+		}
+
+		allow_debug = v
 	}
 
 	srv, err := server.NewServer(ctx, uri)
