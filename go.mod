@@ -5,7 +5,7 @@ go 1.12
 require (
 	github.com/aaronland/go-aws-session v0.0.4
 	github.com/aaronland/go-chicken v0.2.1
-	github.com/aaronland/go-cloud-s3blob v0.1.0
+	github.com/aaronland/go-cloud-s3blob v0.1.0 // indirect
 	github.com/aaronland/go-http-server v0.0.3
 	github.com/aaronland/go-roster v0.0.1
 	github.com/aws/aws-sdk-go v1.31.4

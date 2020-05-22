@@ -4,12 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	_ "github.com/aaronland/go-cloud-s3blob"
-	"gocloud.dev/blob"
-	_ "gocloud.dev/blob/fileblob"
-	_ "gocloud.dev/blob/memblob"
+	"gocloud.dev/runtimevar"
+	_ "gocloud.dev/runtimevar/constantvar"
+	_ "gocloud.dev/runtimevar/filevar"
 	"io"
-	"path/filepath"
+	"strings"
 )
 
 type WebhookConfig struct {
@@ -29,22 +28,20 @@ type WebhookWebhooksConfig struct {
 
 func NewConfigFromURI(ctx context.Context, uri string) (*WebhookConfig, error) {
 
-	config_root := filepath.Dir(uri)
-	config_name := filepath.Base(uri)
-
-	bucket, err := blob.OpenBucket(ctx, config_root)
+	v, err := runtimevar.OpenVariable(ctx, uri)
 
 	if err != nil {
 		return nil, err
 	}
 
-	cfg_fh, err := bucket.NewReader(ctx, config_name, nil)
+	latest, err := v.Latest(ctx)
 
 	if err != nil {
 		return nil, err
 	}
 
-	defer cfg_fh.Close()
+	str_cfg := latest.Value.(string)
+	cfg_fh := strings.NewReader(str_cfg)
 
 	return NewConfigFromReader(ctx, cfg_fh)
 }
