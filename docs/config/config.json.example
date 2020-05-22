@@ -1,65 +1,22 @@
 {
-	"daemon": {
-		"protocol": "http",
-		"host": "localhost",
-		"port": 8080,
-		"allow_debug": false
-	},
+	"daemon": "http://localhost:8080",
 	"receivers": {
-		"insecure": {
-			"name": "Insecure"
-		},
-		"github": {
-			"name": "GitHub",
-			"secret": "s33kret",
-			"ref": "refs/heads/master"
-		},
-		"slack": {
-			"name": "Slack"
-		}		
+		"insecure": "insecure://",
+		"github": "github://?secret=s33kret&ref=refs/heads/master",
+		"slack": "slack://"
 	},	
 	"transformations": {
-		"null": {
-			"name": "Null"
-		},
-		"chicken": {
-			"name": "Chicken",
-			"language": "zxx",
-			"clucking": false
-		},
-		"clucking": {
-			"name": "Chicken",
-			"language": "eng",
-			"clucking": true
-		},
-		"slack": {
-			"name": "SlackText"
-		},
-		"commits": {
-			"name": "GitHubCommits",
-			"exclude_additions": true,
-			"exclude_modifications": true,
-			"exclude_deletions": true
-		}				
-		
+		"null": "null://",
+		"chicken": "chicken://?languages=zxx&clucking=false",
+		"clucking": "chicken://?languages=eng&clucking=true",
+		"slack": "slack://",
+		"commits": "githubcommits://?exclude_additions=false&exclude_modifications=true&exclude_deletions=true"
 	},
 	"dispatchers": {
-		"null": {
-			"name": "Null"
-		},
-		"log": {
-			"name": "Log"
-		},				
-		"pubsub": {
-			"name": "PubSub",
-			"host": "localhost",
-			"port": 6379,
-			"channel": "webhookd"
-		},
-		"slack": {
-			"name": "Slack",
-			"config": "/path/to/.slackcat.conf"
-		}
+		"null": "null://",
+		"log": "log://",
+		"pubsub": "pubsub:6379//localhost/webhookd",
+		"slack": "slack:///path/to/.slackcat.conf"
 	},
 	"webhooks": [
 		{
