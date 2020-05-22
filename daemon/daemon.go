@@ -24,9 +24,11 @@ type WebhookDaemon struct {
 	AllowDebug bool
 }
 
-func NewWebhookDaemonFromConfig(cfg *config.WebhookConfig) (*WebhookDaemon, error) {
+func NewWebhookDaemonFromConfig(ctx context.Context, cfg *config.WebhookConfig) (*WebhookDaemon, error) {
 
-	d, err := NewWebhookDaemon(cfg.Daemon.Protocol, cfg.Daemon.Host, cfg.Daemon.Port)
+	server_uri := fmt.Sprintf("%s://%s:%", cfg.Daemon.Protocol, cfg.Daemon.Host, cfg.Daemon.Port)
+	
+	d, err := NewWebhookDaemon(ctx, server_uri)
 
 	if err != nil {
 		return nil, err
@@ -43,13 +45,9 @@ func NewWebhookDaemonFromConfig(cfg *config.WebhookConfig) (*WebhookDaemon, erro
 	return d, nil
 }
 
-func NewWebhookDaemon(protocol string, host string, port int) (*WebhookDaemon, error) {
+func NewWebhookDaemon(ctx context.Context, server_uri string) (*WebhookDaemon, error) {
 
-	addr := fmt.Sprintf("%s://%s:%d", protocol, host, port)
-
-	ctx := context.Background()
-	
-	srv, err := server.NewServer(ctx, addr)
+	srv, err := server.NewServer(ctx, server_uri)
 
 	if err != nil {
 		return nil, err
@@ -307,7 +305,7 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 	return http.HandlerFunc(handler), nil
 }
 
-func (d *WebhookDaemon) Start() error {
+func (d *WebhookDaemon) Start(ctx context.Context) error {
 
 	handler, err := d.HandlerFunc()
 
@@ -322,7 +320,6 @@ func (d *WebhookDaemon) Start() error {
 
 	log.Printf("webhookd listening for requests on %s\n", svr.Address())
 
-	ctx := context.Background()
 	err = svr.ListenAndServe(ctx, mux)
 
 	if err != nil {
