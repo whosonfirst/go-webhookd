@@ -5,12 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/aaronland/go-http-server"
-	"github.com/whosonfirst/go-webhookd"
-	"github.com/whosonfirst/go-webhookd/config"
-	"github.com/whosonfirst/go-webhookd/dispatchers"
-	"github.com/whosonfirst/go-webhookd/receivers"
-	"github.com/whosonfirst/go-webhookd/transformations"
-	"github.com/whosonfirst/go-webhookd/webhook"
+	"github.com/whosonfirst/go-webhookd/v2"
+	"github.com/whosonfirst/go-webhookd/v2/config"
+	"github.com/whosonfirst/go-webhookd/v2/dispatchers"
+	"github.com/whosonfirst/go-webhookd/v2/receivers"
+	"github.com/whosonfirst/go-webhookd/v2/transformations"
+	"github.com/whosonfirst/go-webhookd/v2/webhook"
 	"log"
 	"net/http"
 	"strings"
@@ -229,14 +229,14 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 			}
 
 			// check to see if there is anything left the transformation
-			// https://github.com/whosonfirst/go-webhookd/issues/7
+			// https://github.com/whosonfirst/go-webhookd/v2/issues/7
 		}
 
 		tb = time.Since(ta)
 		ttt = tb
 
 		// check to see if there is anything to dispatch
-		// https://github.com/whosonfirst/go-webhookd/issues/7
+		// https://github.com/whosonfirst/go-webhookd/v2/issues/7
 
 		ta = time.Now()
 

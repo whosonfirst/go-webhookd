@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	_ "fmt"
 	gogithub "github.com/google/go-github/github"
-	"github.com/whosonfirst/go-webhookd"
+	"github.com/whosonfirst/go-webhookd/v2"
 	_ "log"
 )
 

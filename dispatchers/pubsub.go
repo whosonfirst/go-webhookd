@@ -3,7 +3,7 @@ package dispatchers
 import (
 	"context"
 	"fmt"
-	"github.com/whosonfirst/go-webhookd"
+	"github.com/whosonfirst/go-webhookd/v2"
 	"gopkg.in/redis.v1"
 )
 

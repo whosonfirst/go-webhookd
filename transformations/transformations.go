@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/whosonfirst/go-webhookd"
-	"github.com/whosonfirst/go-webhookd/config"
+	"github.com/whosonfirst/go-webhookd/v2"
+	"github.com/whosonfirst/go-webhookd/v2/config"
 )
 
 func NewTransformationFromConfig(ctx context.Context, cfg *config.WebhookTransformationConfig) (webhookd.WebhookTransformation, error) {

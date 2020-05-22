@@ -5,7 +5,7 @@ package receivers
 
 import (
 	"context"
-	"github.com/whosonfirst/go-webhookd"
+	"github.com/whosonfirst/go-webhookd/v2"
 	"io/ioutil"
 	"net/http"
 )

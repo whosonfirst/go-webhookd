@@ -3,7 +3,7 @@ package transformations
 import (
 	"context"
 	"github.com/aaronland/go-chicken"
-	"github.com/whosonfirst/go-webhookd"
+	"github.com/whosonfirst/go-webhookd/v2"
 )
 
 type ChickenTransformation struct {

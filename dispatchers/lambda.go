@@ -6,7 +6,7 @@ import (
 	"github.com/aaronland/go-aws-session"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/lambda"
-	"github.com/whosonfirst/go-webhookd"
+	"github.com/whosonfirst/go-webhookd/v2"
 )
 
 type LambdaDispatcher struct {

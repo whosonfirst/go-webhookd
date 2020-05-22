@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/whosonfirst/go-webhookd/config"
-	"github.com/whosonfirst/go-webhookd/daemon"
+	"github.com/whosonfirst/go-webhookd/v2/config"
+	"github.com/whosonfirst/go-webhookd/v2/daemon"
 	"log"
 	"os"
 )
