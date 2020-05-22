@@ -7,11 +7,21 @@ import (
 	"net/http"
 )
 
+func init(){
+
+	ctx := context.Background()
+	err := RegisterReceiver(ctx, "insecure", NewInsecureReceiver)
+
+	if err != nil {
+		panic(err)
+	}
+}
+
 type InsecureReceiver struct {
 	webhookd.WebhookReceiver
 }
 
-func NewInsecureReceiver(ctx context.Context) (InsecureReceiver, error) {
+func NewInsecureReceiver(ctx context.Context, uri string) (webhookd.WebhookReceiver, error) {
 
 	wh := InsecureReceiver{}
 	return wh, nil

@@ -10,11 +10,21 @@ import (
 	"net/http"
 )
 
+func init(){
+
+	ctx := context.Background()
+	err := RegisterReceiver(ctx, "slack", NewSlackReceiver)
+
+	if err != nil {
+		panic(err)
+	}
+}
+
 type SlackReceiver struct {
 	webhookd.WebhookReceiver
 }
 
-func NewSlackReceiver(ctx context.Context) (SlackReceiver, error) {
+func NewSlackReceiver(ctx context.Context, uri string) (webhookd.WebhookReceiver, error) {
 
 	slack := SlackReceiver{}
 	return slack, nil

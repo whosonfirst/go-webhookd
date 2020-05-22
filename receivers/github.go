@@ -15,7 +15,18 @@ import (
 	"io/ioutil"
 	_ "log"
 	"net/http"
+	"net/url"
 )
+
+func init(){
+
+	ctx := context.Background()
+	err := RegisterReceiver(ctx, "github", NewGitHubReceiver)
+
+	if err != nil {
+		panic(err)
+	}
+}
 
 type GitHubReceiver struct {
 	webhookd.WebhookReceiver
@@ -23,8 +34,19 @@ type GitHubReceiver struct {
 	ref    string
 }
 
-func NewGitHubReceiver(ctx context.Context, secret string, ref string) (GitHubReceiver, error) {
+func NewGitHubReceiver(ctx context.Context, uri string) (webhookd.WebhookReceiver, error) {
 
+	u, err := url.Parse(uri)
+
+	if err != nil {
+		return nil, err
+	}
+
+	q := u.Query()
+
+	secret := q.Get("secret")
+	ref := q.Get("ref")
+	
 	wh := GitHubReceiver{
 		secret: secret,
 		ref:    ref,
