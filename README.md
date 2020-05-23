@@ -447,6 +447,40 @@ slack://{PATH_TO_SLACKCAT_CONF}
 
 * **{PATH_TO_SLACKCAT_CONF}** _string_ The path to a valid [slackcat](https://github.com/whosonfirst/slackcat#configuring) config file. _Eventually you will be able to specify a plain-vanilla Slack Webhook URL but not today._
 
+## Testing
+
+In advance of proper tests. In a terminal start `webhookd` like this:
+
+```
+go run -mod vendor cmd/webhookd/main.go \
+	-config-uri 'file:///usr/local/go-webhookd/docs/config/config.json.example?decoder=string'
+
+2020/05/22 17:18:49 webhookd listening for requests on http://localhost:8080
+```
+
+In another terminal, run the `webhookd-test` command like this:
+
+```
+go run cmd/webhookd-test-github/main.go \
+	-config-uri 'file:///usr/local/whosonfirst/go-webhookd/config.json.example?decoder=string' \
+	-endpoint insecure-test \
+	-receiver insecure \
+	-file docs/events/flights.json
+
+2020/05/22 17:18:53 200 OK
+```
+
+In the first terminal you should see the following:
+
+```
+e3a18d4de60a5e50ca78ca1733238735ddfaef4c,sfomuseum-data-flights-2020-05,data/171/316/221/7/1713162217.geojson
+e3a18d4de60a5e50ca78ca1733238735ddfaef4c,sfomuseum-data-flights-2020-05,data/171/316/221/9/1713162219.geojson
+e3a18d4de60a5e50ca78ca1733238735ddfaef4c,sfomuseum-data-flights-2020-05,data/171/316/222/1/1713162221.geojson
+e3a18d4de60a5e50ca78ca1733238735ddfaef4c,sfomuseum-data-flights-2020-05,data/171/316/222/3/1713162223.geojson
+e3a18d4de60a5e50ca78ca1733238735ddfaef4c,sfomuseum-data-flights-2020-05,data/171/316/222/5/1713162225.geojson
+... and so on
+```
+
 ## To do
 
 * [Add a general purpose "shared-secret/signed-message" receiver](https://github.com/whosonfirst/go-webhookd/issues/5)
