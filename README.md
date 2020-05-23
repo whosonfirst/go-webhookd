@@ -28,7 +28,7 @@ Once all the kinks have been worked out of `whosonfirst/go-webhookd/v2` it will 
 
 ## Upgrading from `whosonfirst/go-webhookd` "v1"
 
-* The `-config` flag has been replaced by a `-config-uri` flag which is a fully-qualified [Go Cloud URL](https://gocloud.dev/concepts/urls/).
+* The `-config` flag has been replaced by a `-config-uri` flag which is a fully-qualified [Go Cloud runtimevar URI](https://gocloud.dev/concepts/urls/).
 * The config file itself has been simplified. Daemon, receiver, dispatcher and tranformation settings are now defined as URI strings rather than dictionaries. `whosonfirst/go-webhookd` "v1" config files will need to be updated manually.
 
 ## Usage
@@ -39,19 +39,17 @@ Once all the kinks have been worked out of `whosonfirst/go-webhookd/v2` it will 
 ./bin/webhookd -h
 Usage of ./bin/webhookd:
   -config-uri string
-    	A valid Go Cloud blob URI where your webhookd config file lives
+    	A valid Go Cloud runtimevar URI representing your webhookd config file
 ```
 
 `webhookd` is an HTTP daemon for handling webhook requests. Individual webhook endpoints (and how they are processed) are defined in a [config file](#config-files) that is read at start-up time.
 
 #### Config URIs
 
-The following [Go Cloud URL schemes](https://gocloud.dev/concepts/urls/) are supported for defining config URIs:
+The following [Go Cloud runtimevar URL schemes](https://gocloud.dev/concepts/urls/) are supported, by default, for defining config URIs:
 
-* [fileblob://](https://godoc.org/gocloud.dev/blob/fileblob)
-* [mem://](https://godoc.org/gocloud.dev/blob/memblob)
-* [s3://](https://godoc.org/gocloud.dev/blob/s3blob)
-* [s3blob://](https://github.com/aaronland/go-cloud-s3blob)
+* [constvar](https://godoc.org/gocloud.dev/runtimevar/constantvar)
+* [file://](https://godoc.org/gocloud.dev/runtimevar/filevar)
 
 #### Example
 
@@ -463,3 +461,4 @@ slack://{PATH_TO_SLACKCAT_CONF}
 
 * https://github.com/aaronland/go-http-server
 * https://github.com/whosonfirst/go-pubssed
+* https://gocloud.dev/howto/runtimevar

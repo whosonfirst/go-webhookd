@@ -13,7 +13,7 @@ func main() {
 
 	fs := flagset.NewFlagSet("webhooks")
 
-	config_uri := fs.String("config-uri", "", "A valid Go Cloud blob URI where your webhookd config file lives")
+	config_uri := fs.String("config-uri", "", "A valid Go Cloud runtimevar URI representing your webhookd config.")
 
 	flagset.Parse(fs)
 
