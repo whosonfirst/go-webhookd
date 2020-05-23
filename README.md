@@ -79,7 +79,7 @@ Here are the relevant settings in the config file:
 First we start `webhookd`:
 
 ```
-./bin/webhookd -config-uri file:///usr/local/webhookd/config.json
+./bin/webhookd -config-uri 'file:///usr/local/webhookd/config.json?decoder=string'
 2018/07/21 08:43:37 webhookd listening for requests on http://localhost:8080
 ```
 
@@ -126,7 +126,7 @@ At some point there might be dynamic (or runtime) webhook endpoints but today th
 In the meantime you can gracefully restart `webhookd` by sending its PID a `USR2` signal which will cause the config file (and all the endpoints it defines) to be re-read. It's not elegant but it works. For example:
 
 ```
-$> ./bin/webhookd -config-uri file:///usr/local/webhookd/config.json
+$> ./bin/webhookd -config-uri 'file:///usr/local/webhookd/config.json?decoder=string'
 2016/10/16 00:19:47 Serving 127.0.0.1:8080 with pid 2723
 
 $> kill -USR2 2723
@@ -150,7 +150,7 @@ import (
 )
 
 ctx := context.Background()
-cfg, _ := config.NewConfigFromURI(ctx, "file:///usr/local/webhookd/config.json")
+cfg, _ := config.NewConfigFromURI(ctx, "file:///usr/local/webhookd/config.json?decoder=string")
 
 wh_daemon, _ := daemon.NewWebhookDaemonFromConfig(ctx, cfg)
 wh_daemon.Start()
