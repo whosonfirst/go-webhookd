@@ -327,7 +327,7 @@ _This receiver has not been fully tested yet so proceed with caution._
 
 ### Chicken
 
-The `Chicken` transformation will convert every word in your message to 🐔 using the [go-chicken](https://github.com/thisisaaronland/go-chicken) package. If this seems silly that's because it is. It's also more fun that yet-another boring _"make all the words upper-cased"_ example. It is defined as a URI string in the form of:
+The `Chicken` transformation will convert every word in your message to 🐔 using the [go-chicken](https://github.com/thisisaaronland/go-chicken) package. It is defined as a URI string in the form of:
 
 ```
 chicken://{LANGUAGE}?clucking={CLUCKING}
@@ -337,6 +337,8 @@ chicken://{LANGUAGE}?clucking={CLUCKING}
 
 * **{LANGUAGE}** _string_ A three-letter language code specifying which language `go-chicken` should use.
 * **{CLUCKING}** _bool_ A boolean flag indicating whether or not to [cluck](https://github.com/thisisaaronland/go-chicken#clucking) when generating results.
+
+If this seems silly that's because it is. It's also more fun that yet-another boring _"make all the words upper-cased"_ example.
 
 ### GitHubCommits
 
