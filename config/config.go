@@ -8,6 +8,7 @@ import (
 	_ "gocloud.dev/runtimevar/constantvar"
 	_ "gocloud.dev/runtimevar/filevar"
 	"io"
+	_ "log"
 	"strings"
 )
 

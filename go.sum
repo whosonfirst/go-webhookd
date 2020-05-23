@@ -26,6 +26,7 @@ github.com/aaronland/go-aws-session v0.0.4 h1:GddU3E4pXAm3JWVjcdgyYhdGaWSRtiZl6I
 github.com/aaronland/go-aws-session v0.0.4/go.mod h1:1OD+6F7D052nJMkz2tLx5FvMVpreAVU0ye9ur5O+nno=
 github.com/aaronland/go-chicken v0.1.1 h1:FL/69oDhXvLwjecE1sM/EliQVlTOzxHZ2UiiJAX3HUo=
 github.com/aaronland/go-chicken v0.1.1/go.mod h1:/Ahjkb/tj7bsTBbYioHvcUPcW9HzcTcVQtzxbcqoUM0=
+github.com/aaronland/go-chicken v0.2.0/go.mod h1:D8v6ZZeYAST/hZRRIXoSugK2J/0XxbMsssgipMZRd+Y=
 github.com/aaronland/go-chicken v0.2.1 h1:I61mIO6liaJIvHjvZK/SkrnUIeWbFFiujHKUuUY+ANU=
 github.com/aaronland/go-chicken v0.2.1/go.mod h1:pvXQ3o8IYrpbfuKU1SNRm/gsNl8w5EK/Cy4L6KAvCwU=
 github.com/aaronland/go-cloud-s3blob v0.1.0 h1:4/tXihMCrszVmswvuvKSfHY+VvfWkp9I3eNlDVM47bA=
@@ -34,10 +35,14 @@ github.com/aaronland/go-http-server v0.0.3 h1:VyiOxUqgJccamLQNOx7p0D3qE9K5RUe3TK
 github.com/aaronland/go-http-server v0.0.3/go.mod h1:i7CG6Q9iRKZX4qonIYr73GtJpVHV8T31eZ4Ug44zOTU=
 github.com/aaronland/go-roster v0.0.1 h1:r1l4n1HfWvEtOXZvhfXX0Won9Xf6QJsigdUdzOtuy/M=
 github.com/aaronland/go-roster v0.0.1/go.mod h1:AcovpxlG1XxJxX2Fjqlm63fEIBhCjEIBV4lP87FZDmI=
+github.com/aaronland/go-roster v0.0.2 h1:2Fu7v4VQLRLRL/Zgr6R9S5JxsW75Ab/K88QtMVX532s=
+github.com/aaronland/go-roster v0.0.2/go.mod h1:AcovpxlG1XxJxX2Fjqlm63fEIBhCjEIBV4lP87FZDmI=
 github.com/aaronland/go-string v0.1.1 h1:btdr18owWCBN14ojKx3p+PBCKfm9qIggYEguPLUb2wE=
 github.com/aaronland/go-string v0.1.1/go.mod h1:2aMIWdTqk63jZsaLLy+p9dsB1MDRqx4sHYoLtkwyYUo=
 github.com/aaronland/go-ucd v0.0.0-20190520134908-684059ca9156 h1:SsNFRFNm6Gn8DgDZIcImpIXtjeH1Ak2s1SLoVby0dwg=
 github.com/aaronland/go-ucd v0.0.0-20190520134908-684059ca9156/go.mod h1:DoKBDoY4iuDSNErkKy6n1SRdUEOLwTm2gy7X3GtUQaI=
+github.com/aaronland/go-ucd v12.0.1+incompatible h1:uR/VbmA6SMQ8Ua6HArLEPjKyPFS/uC6n8f+xzJn+VeY=
+github.com/aaronland/go-ucd v12.0.1+incompatible/go.mod h1:CadKBZkk96fATzdzz2g0RAdsZXwjDRzH3dwtOHVE4nI=
 github.com/akrylysov/algnhsa v0.0.0-20190319020909-05b3d192e9a7/go.mod h1:HhzjNA0EjUWcwHTUMwqrpeAdIF3gRmpH0HpWx1hYJSc=
 github.com/aws/aws-lambda-go v1.9.0/go.mod h1:zUsUQhAUjYzR8AuduJPCfhBuKWUaDbQiPOG+ouzmE1A=
 github.com/aws/aws-lambda-go v1.10.0 h1:uafgdfYGQD0UeT7d2uKdyWW8j/ZYRifRPIdmeqLzLCk=
@@ -49,6 +54,7 @@ github.com/aws/aws-sdk-go v1.20.21/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpi
 github.com/aws/aws-sdk-go v1.22.3 h1:6hh+6uqguPNPLtnb6rYLJnonwixttKMbvZYWVUdms98=
 github.com/aws/aws-sdk-go v1.22.3/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
 github.com/aws/aws-sdk-go v1.25.34/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
+github.com/aws/aws-sdk-go v1.26.3/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
 github.com/aws/aws-sdk-go v1.31.3 h1:vJDjoM+VlM/ZEmGyaIhUXaYAtB9lra7Qhr58SSHHjPE=
 github.com/aws/aws-sdk-go v1.31.3/go.mod h1:5zCpMtNQVjRREroY7sYe8lOMRSxkhG6MZveU8YkpAk0=
 github.com/aws/aws-sdk-go v1.31.4 h1:YZ0uEYIWeanGuAomElHmRWMAbXVqrQixxgf2vtIjO6M=
@@ -155,6 +161,7 @@ github.com/whosonfirst/algnhsa v0.1.0 h1:8wVksKaz1qor2Y6+fiLEPEPxsEEvUQgSdtSTQLM
 github.com/whosonfirst/algnhsa v0.1.0/go.mod h1:swLBXxaVTv3s6dJLhekdQCuCTshUew+xHjptRC21RG0=
 github.com/whosonfirst/go-sanitize v0.1.0/go.mod h1:p/emgbafMM0p5iVAz2XWwecYPl06Tw4Jos9rhTKIrt8=
 github.com/whosonfirst/go-webhookd v0.1.3 h1:UDK55B6uIqsVW/EHIE69P2ibt7eea9OjPxfX4wscyrI=
+github.com/whosonfirst/go-webhookd v0.1.3/go.mod h1:gxKk8h3fAXwBo1jy2zWmG+tIVOOs28tb77WkL08IXo0=
 github.com/whosonfirst/go-whosonfirst-aws v0.1.3 h1:qnC7HcQyYrW8JRfcUZjsdNMZjDbf3rhnW77kFDQdCgY=
 github.com/whosonfirst/go-whosonfirst-aws v0.1.3/go.mod h1:ev1Lhw+fDMbnAb0srHyJeAJW9n12gV4La3ZkX6opvbw=
 github.com/whosonfirst/go-whosonfirst-aws v0.1.4 h1:sAUYnV7+r80LPqjoqfBZkXLAnMsxCbhMyiUJURRUolU=
