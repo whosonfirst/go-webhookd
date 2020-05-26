@@ -2,6 +2,7 @@ package dispatchers
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"github.com/aaronland/go-aws-session"
 	"github.com/aws/aws-sdk-go/aws"
@@ -65,7 +66,12 @@ func (d *LambdaDispatcher) Dispatch(ctx context.Context, body []byte) *webhookd.
 		// pass
 	}
 
-	payload, err := json.Marshal(string(body))
+	// I don't understand why I need to base64 encode this...
+	// (20200526/thisisaaronland)
+
+	enc_body := base64.StdEncoding.EncodeToString(body)
+
+	payload, err := json.Marshal(enc_body)
 
 	if err != nil {
 		return &webhookd.WebhookError{Code: 999, Message: err.Error()}

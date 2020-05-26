@@ -17,7 +17,7 @@ func main() {
 
 	flagset.Parse(fs)
 
-	err := flagset.SetFlagsFromEnvVars(fs, "WEBHOOKD")
+	err := flagset.SetFlagsFromEnvVarsWithFeedback(fs, "WEBHOOKD", true)
 
 	if err != nil {
 		log.Fatalf("Failed to set flags from env vars, %v", err)

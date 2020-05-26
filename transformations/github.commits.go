@@ -61,7 +61,7 @@ func NewGitHubCommitsTransformation(ctx context.Context, uri string) (webhookd.W
 		exclude_additions = v
 	}
 
-	if str_modifications == "" {
+	if str_modifications != "" {
 
 		v, err := strconv.ParseBool(str_modifications)
 
@@ -72,7 +72,7 @@ func NewGitHubCommitsTransformation(ctx context.Context, uri string) (webhookd.W
 		exclude_modifications = v
 	}
 
-	if str_deletions == "" {
+	if str_deletions != "" {
 
 		v, err := strconv.ParseBool(str_deletions)
 

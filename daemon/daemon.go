@@ -286,6 +286,7 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 				err = d.Dispatch(ctx, body)
 
 				if err != nil {
+					log.Printf("FAILED TO DISPATCH W/ %T, %v\n", d, err)
 					ch <- err
 				}
 
