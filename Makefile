@@ -14,6 +14,9 @@ debug:
 hook:
 	./bin/webhookd-generate-hook
 
+lambda-config:
+	go run cmd/webhookd-flatten-config/main.go -config $(CONFIG) -constvar | pbcopy
+
 lambda: lambda-webhookd
 
 lambda-webhookd:
