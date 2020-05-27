@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"github.com/aaronland/go-aws-session"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/lambda"
@@ -23,8 +24,9 @@ func init() {
 
 type LambdaDispatcher struct {
 	webhookd.WebhookDispatcher
-	LambdaFunction string
-	LambdaService  *lambda.Lambda
+	LambdaFunction  string
+	LambdaService   *lambda.Lambda
+	invocation_type string
 }
 
 func NewLambdaDispatcher(ctx context.Context, uri string) (webhookd.WebhookDispatcher, error) {
@@ -47,11 +49,23 @@ func NewLambdaDispatcher(ctx context.Context, uri string) (webhookd.WebhookDispa
 		return nil, err
 	}
 
+	invocation_type := q.Get("invocation_type")
+
+	switch invocation_type {
+	case "":
+		invocation_type = "RequestResponse"
+	case "RequestResponse", "Event", "DryRun":
+		// pass
+	default:
+		return nil, errors.New("Invalid invocation_type parameter")
+	}
+
 	lambda_svc := lambda.New(lambda_sess)
 
 	d := LambdaDispatcher{
-		LambdaFunction: lambda_function,
-		LambdaService:  lambda_svc,
+		LambdaFunction:  lambda_function,
+		LambdaService:   lambda_svc,
+		invocation_type: invocation_type,
 	}
 
 	return &d, nil
@@ -78,8 +92,9 @@ func (d *LambdaDispatcher) Dispatch(ctx context.Context, body []byte) *webhookd.
 	}
 
 	input := &lambda.InvokeInput{
-		FunctionName: aws.String(d.LambdaFunction),
-		Payload:      payload,
+		FunctionName:   aws.String(d.LambdaFunction),
+		Payload:        payload,
+		InvocationType: aws.String(d.invocation_type),
 	}
 
 	_, err = d.LambdaService.Invoke(input)
