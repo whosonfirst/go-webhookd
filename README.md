@@ -300,8 +300,10 @@ github://?secret={SECRET}&ref={REF}
 
 #### Properties
 
-* **{SECRET}** _string_ The secret used to generate [the HMAC hex digest](https://developer.github.com/webhooks/#delivery-headers) of the message payload.
-* **{REF}** _string_ An optional Git `ref` to filter by. If present and a WebHook is sent with a different ref then the daemon will return a `666` error response.
+| Name | Value | Description | Required |
+| --- | --- | --- | --- |
+| secret | string | The secret used to generate [the HMAC hex digest](https://developer.github.com/webhooks/#delivery-headers) of the message payload. | yes |
+| ref | string | An optional Git `ref` to filter by. If present and a WebHook is sent with a different ref then the daemon will return a `666` error response. | no |
 
 ### Insecure
 
@@ -335,8 +337,10 @@ chicken://{LANGUAGE}?clucking={CLUCKING}
 
 #### Properties
 
-* **{LANGUAGE}** _string_ A three-letter language code specifying which language `go-chicken` should use.
-* **{CLUCKING}** _bool_ A boolean flag indicating whether or not to [cluck](https://github.com/thisisaaronland/go-chicken#clucking) when generating results.
+| Name | Value | Description | Required |
+| --- | --- | --- | --- |
+| language | string | A three-letter language code specifying which language `go-chicken` should use. | yes |
+| clucking | boolean | A boolean flag indicating whether or not to [cluck](https://github.com/thisisaaronland/go-chicken#clucking) when generating results. | no |
 
 If this seems silly that's because it is. It's also more fun that yet-another boring _"make all the words upper-cased"_ example.
 
@@ -358,6 +362,9 @@ githubcommits://?exclude_additions={EXCLUDE_ADDITIONS}&exclude_modification={EXC
 
 #### Properties
 
+| Name | Value | Description | Required |
+| --- | --- | --- | --- |
+
 * **{EXCLUDE_ADDITIONS}** _bool_ A flag to indicate that new additions in a commit should be ignored. Optional; default false.
 * **{EXCLUDE_MODIFICATIONS}** _bool_ A flag to indicate that modifications in a commit should be ignored. Optional; default false.
 * **{EXCLUDE_DELETIONS}** _bool_ A flag to indicate that deletions in a commit should be ignored. Optional; default false.
@@ -371,6 +378,9 @@ githubrepo://?exclude_additions={EXCLUDE_ADDITIONS}&exclude_modification={EXCLUD
 ```
 
 #### Properties
+
+| Name | Value | Description | Required |
+| --- | --- | --- | --- |
 
 * **{EXCLUDE_ADDITIONS}** _bool_ A flag to indicate that new additions in a commit should be ignored. Optional; default false.
 * **{EXCLUDE_MODIFICATIONS}** _bool_ A flag to indicate that modifications in a commit should be ignored. Optional; default false.
@@ -399,14 +409,16 @@ slacktext://
 The `Lambda` dispatcher will send messages to an Amazon Web Services (ASW) [Lambda function](#). It is defined as a URI string in the form of:
 
 ```
-lambda://{FUNCTION}?dsn={DSN}
+lambda://{FUNCTION}?dsn={DSN}&invocation_type={INVOCATION_TYPE}
 ```
 
 #### Properties
 
-* **{DSN}** _string_ A valid `aaronland/go-aws-session` DSN string.
-* **{FUNCTION}** _string_ The name of your Lambda function.
-* **{INVOCATION_TYPE}** _string_ A valid AWS Lambda `Invocation Type` string. Optional.
+| Name | Value | Description | Required |
+| --- | --- | --- | --- |
+| dsn | string | A valid `aaronland/go-aws-session` DSN string. | yes |
+| function | string | The name of your Lambda function. | yes |
+| invocation_type | string | A valid AWS Lambda `Invocation Type` string. | no |
 
 ### Log
 
@@ -434,6 +446,9 @@ pubsub://{REDIS_HOST}:{REDIS_PORT}/{REDIS_CHANNEL}
 
 #### Properties
 
+| Name | Value | Description | Required |
+| --- | --- | --- | --- |
+
 * **{REDIS_HOST}** _string_ The address of the Redis host you want to connect to.
 * **{REDIS_PORT}** _int_ The port number of the Redis host you want to connect to.
 * **{REDIS_CHANNEL}** _string_ The name of the Redis PubSub channel you want to send messages to.
@@ -447,6 +462,9 @@ slack://{PATH_TO_SLACKCAT_CONF}
 ```
 
 #### Properties
+
+| Name | Value | Description | Required |
+| --- | --- | --- | --- |
 
 * **{PATH_TO_SLACKCAT_CONF}** _string_ The path to a valid [slackcat](https://github.com/whosonfirst/slackcat#configuring) config file. _Eventually you will be able to specify a plain-vanilla Slack Webhook URL but not today._
 
