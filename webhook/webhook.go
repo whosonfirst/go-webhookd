@@ -2,7 +2,7 @@ package webhook
 
 import (
 	"context"
-	"github.com/whosonfirst/go-webhookd/v2"
+	"github.com/whosonfirst/go-webhookd/v3"
 )
 
 type Webhook struct {

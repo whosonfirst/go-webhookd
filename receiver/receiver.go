@@ -1,9 +1,9 @@
-package receivers
+package receiver
 
 import (
 	"context"
 	"github.com/aaronland/go-roster"
-	"github.com/whosonfirst/go-webhookd/v2"
+	"github.com/whosonfirst/go-webhookd/v3"
 	"net/url"
 )
 

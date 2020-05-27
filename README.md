@@ -145,8 +145,8 @@ _All error handling in the examples below have been removed for the sake of brev
 ```
 import (
 	"context"
-	"github.com/whosonfirst/go-webhookd/v2/config"
-	"github.com/whosonfirst/go-webhookd/v2/daemon"
+	"github.com/whosonfirst/go-webhookd/v3/config"
+	"github.com/whosonfirst/go-webhookd/v3/daemon"
 )
 
 ctx := context.Background()
@@ -163,12 +163,12 @@ _You can also just grab the HTTP handler func with `wh_daemon.HandlerFunc()` if 
 ```
 import (
 	"context"
-	"github.com/whosonfirst/go-webhookd/v2"		
-	"github.com/whosonfirst/go-webhookd/v2/daemon"	
-	"github.com/whosonfirst/go-webhookd/v2/dispatchers"
-	"github.com/whosonfirst/go-webhookd/v2/receivers"
-	"github.com/whosonfirst/go-webhookd/v2/transformations"
-	"github.com/whosonfirst/go-webhookd/v2/webhook"	
+	"github.com/whosonfirst/go-webhookd/v3"		
+	"github.com/whosonfirst/go-webhookd/v3/daemon"	
+	"github.com/whosonfirst/go-webhookd/v3/dispatchers"
+	"github.com/whosonfirst/go-webhookd/v3/receivers"
+	"github.com/whosonfirst/go-webhookd/v3/transformations"
+	"github.com/whosonfirst/go-webhookd/v3/webhook"	
 )
 
 ctx := context.Background()

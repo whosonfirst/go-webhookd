@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/whosonfirst/go-webhookd/v2/config"
+	"github.com/whosonfirst/go-webhookd/v3/config"
 	"io/ioutil"
 	"log"
 	"net/url"

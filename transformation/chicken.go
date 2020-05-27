@@ -1,9 +1,9 @@
-package transformations
+package transformation
 
 import (
 	"context"
 	"github.com/aaronland/go-chicken"
-	"github.com/whosonfirst/go-webhookd/v2"
+	"github.com/whosonfirst/go-webhookd/v3"
 	"net/url"
 	"strconv"
 )

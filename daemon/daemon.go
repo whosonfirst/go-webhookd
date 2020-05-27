@@ -5,12 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/aaronland/go-http-server"
-	"github.com/whosonfirst/go-webhookd/v2"
-	"github.com/whosonfirst/go-webhookd/v2/config"
-	"github.com/whosonfirst/go-webhookd/v2/dispatchers"
-	"github.com/whosonfirst/go-webhookd/v2/receivers"
-	"github.com/whosonfirst/go-webhookd/v2/transformations"
-	"github.com/whosonfirst/go-webhookd/v2/webhook"
+	"github.com/whosonfirst/go-webhookd/v3"
+	"github.com/whosonfirst/go-webhookd/v3/config"
+	"github.com/whosonfirst/go-webhookd/v3/dispatcher"
+	"github.com/whosonfirst/go-webhookd/v3/receiver"
+	"github.com/whosonfirst/go-webhookd/v3/transformation"
+	"github.com/whosonfirst/go-webhookd/v3/webhook"
 	"log"
 	"net/http"
 	"net/url"
@@ -114,7 +114,7 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(ctx context.Context, cfg *config.W
 			return err
 		}
 
-		receiver, err := receivers.NewReceiver(ctx, receiver_uri)
+		receiver, err := receiver.NewReceiver(ctx, receiver_uri)
 
 		if err != nil {
 			log.Println("RECEIVER", receiver_uri)
@@ -135,7 +135,7 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(ctx context.Context, cfg *config.W
 				return err
 			}
 
-			step, err := transformations.NewTransformation(ctx, transformation_uri)
+			step, err := transformation.NewTransformation(ctx, transformation_uri)
 
 			if err != nil {
 				log.Println("TRANSFORM", name, transformation_uri)
@@ -159,7 +159,7 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(ctx context.Context, cfg *config.W
 				return err
 			}
 
-			dispatcher, err := dispatchers.NewDispatcher(ctx, dispatcher_uri)
+			dispatcher, err := dispatcher.NewDispatcher(ctx, dispatcher_uri)
 
 			if err != nil {
 				log.Println("DISPATCHER", name, dispatcher_uri)
@@ -261,14 +261,14 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 			}
 
 			// check to see if there is anything left the transformation
-			// https://github.com/whosonfirst/go-webhookd/v2/issues/7
+			// https://github.com/whosonfirst/go-webhookd/v3/issues/7
 		}
 
 		tb = time.Since(ta)
 		ttt = tb
 
 		// check to see if there is anything to dispatch
-		// https://github.com/whosonfirst/go-webhookd/v2/issues/7
+		// https://github.com/whosonfirst/go-webhookd/v3/issues/7
 
 		ta = time.Now()
 
