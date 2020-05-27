@@ -8,8 +8,6 @@ require (
 	github.com/aaronland/go-http-server v0.0.3
 	github.com/aaronland/go-roster v0.0.2
 	github.com/aws/aws-sdk-go v1.31.6
-	github.com/google/go-github v17.0.0+incompatible
-	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/sfomuseum/go-flags v0.3.1
 	gocloud.dev v0.19.0
 )

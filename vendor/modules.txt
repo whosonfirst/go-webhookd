@@ -70,10 +70,6 @@ github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
-# github.com/google/go-github v17.0.0+incompatible
-github.com/google/go-github/github
-# github.com/google/go-querystring v1.0.0
-github.com/google/go-querystring/query
 # github.com/googleapis/gax-go v2.0.2+incompatible
 github.com/googleapis/gax-go
 # github.com/jmespath/go-jmespath v0.3.0
