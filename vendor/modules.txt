@@ -84,10 +84,6 @@ github.com/jmespath/go-jmespath
 github.com/sfomuseum/go-flags/flagset
 # github.com/whosonfirst/algnhsa v0.1.0
 github.com/whosonfirst/algnhsa
-# github.com/whosonfirst/go-writer-slackcat v0.0.0-20151205020711-ad3c7f1d3b0a
-github.com/whosonfirst/go-writer-slackcat
-# github.com/whosonfirst/slackcat v0.0.0-20170719225154-b769f32185b5
-github.com/whosonfirst/slackcat
 # go.opencensus.io v0.22.2
 go.opencensus.io
 go.opencensus.io/internal
