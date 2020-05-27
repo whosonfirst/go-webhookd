@@ -62,8 +62,6 @@ github.com/cooperhewitt/go-ucd/unicodedata
 github.com/cooperhewitt/go-ucd/unihan
 # github.com/fsnotify/fsnotify v1.4.7
 github.com/fsnotify/fsnotify
-# github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
-github.com/golang/glog
 # github.com/golang/groupcache v0.0.0-20190702054246-869f871628b6
 github.com/golang/groupcache/lru
 # github.com/golang/protobuf v1.3.2
@@ -164,7 +162,3 @@ google.golang.org/grpc/resolver/passthrough
 google.golang.org/grpc/stats
 google.golang.org/grpc/status
 google.golang.org/grpc/tap
-# gopkg.in/bufio.v1 v1.0.0-20140618132640-567b2bfa514e
-gopkg.in/bufio.v1
-# gopkg.in/redis.v1 v1.0.0-20140702131110-4ea3e7531bf7
-gopkg.in/redis.v1

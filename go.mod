@@ -12,6 +12,4 @@ require (
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/sfomuseum/go-flags v0.3.1
 	gocloud.dev v0.19.0
-	gopkg.in/bufio.v1 v1.0.0-20140618132640-567b2bfa514e // indirect
-	gopkg.in/redis.v1 v1.0.0-20140702131110-4ea3e7531bf7
 )
