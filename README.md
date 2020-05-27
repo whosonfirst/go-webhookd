@@ -406,6 +406,7 @@ lambda://{FUNCTION}?dsn={DSN}
 
 * **{DSN}** _string_ A valid `aaronland/go-aws-session` DSN string.
 * **{FUNCTION}** _string_ The name of your Lambda function.
+* **{INVOCATION_TYPE}** _string_ A valid AWS Lambda `Invocation Type` string. Optional.
 
 ### Log
 
