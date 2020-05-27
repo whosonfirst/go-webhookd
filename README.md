@@ -364,10 +364,9 @@ githubcommits://?exclude_additions={EXCLUDE_ADDITIONS}&exclude_modification={EXC
 
 | Name | Value | Description | Required |
 | --- | --- | --- | --- |
-
-* **{EXCLUDE_ADDITIONS}** _bool_ A flag to indicate that new additions in a commit should be ignored. Optional; default false.
-* **{EXCLUDE_MODIFICATIONS}** _bool_ A flag to indicate that modifications in a commit should be ignored. Optional; default false.
-* **{EXCLUDE_DELETIONS}** _bool_ A flag to indicate that deletions in a commit should be ignored. Optional; default false.
+| exclude_additions| boolean | A flag to indicate that new additions in a commit should be ignored. | no |
+| exclude_modifications| boolean | A flag to indicate that modifications in a commit should be ignored. | no |
+| exclude_deletions | boolean | A flag to indicate that deletions in a commit should be ignored. | no |
 
 ### GitHubRepo
 
@@ -381,10 +380,9 @@ githubrepo://?exclude_additions={EXCLUDE_ADDITIONS}&exclude_modification={EXCLUD
 
 | Name | Value | Description | Required |
 | --- | --- | --- | --- |
-
-* **{EXCLUDE_ADDITIONS}** _bool_ A flag to indicate that new additions in a commit should be ignored. Optional; default false.
-* **{EXCLUDE_MODIFICATIONS}** _bool_ A flag to indicate that modifications in a commit should be ignored. Optional; default false.
-* **{EXCLUDE_DELETIONS}** _bool_ A flag to indicate that deletions in a commit should be ignored. Optional; default false.
+| exclude_additions| boolean | A flag to indicate that new additions in a commit should be ignored. | no |
+| exclude_modifications| boolean | A flag to indicate that modifications in a commit should be ignored. | no |
+| exclude_deletions | boolean | A flag to indicate that deletions in a commit should be ignored. | no |
 
 ### Null
 
@@ -448,25 +446,9 @@ pubsub://{REDIS_HOST}:{REDIS_PORT}/{REDIS_CHANNEL}
 
 | Name | Value | Description | Required |
 | --- | --- | --- | --- |
+| redis_host | string | The path to a valid [slackcat](https://github.com/whosonfirst/slackcat#configuring) config file. | yes |
 
-* **{REDIS_HOST}** _string_ The address of the Redis host you want to connect to.
-* **{REDIS_PORT}** _int_ The port number of the Redis host you want to connect to.
-* **{REDIS_CHANNEL}** _string_ The name of the Redis PubSub channel you want to send messages to.
-
-### Slack
-
-The `Slack` dispatcher will send messages to a Slack channel using the [slackcat](https://github.com/whosonfirst/slackcat#configuring) package. It is defined as a URI string in the form of:
-
-```
-slack://{PATH_TO_SLACKCAT_CONF}
-```
-
-#### Properties
-
-| Name | Value | Description | Required |
-| --- | --- | --- | --- |
-
-* **{PATH_TO_SLACKCAT_CONF}** _string_ The path to a valid [slackcat](https://github.com/whosonfirst/slackcat#configuring) config file. _Eventually you will be able to specify a plain-vanilla Slack Webhook URL but not today._
+_Eventually you will be able to specify a plain-vanilla Slack Webhook URL but not today._
 
 ## Testing
 
