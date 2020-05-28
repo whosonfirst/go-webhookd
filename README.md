@@ -290,21 +290,6 @@ The `webhooks` section is a list of dictionaries. These are the actual webhook e
 
 ## Receivers
 
-### GitHub
-
-The `GitHub` receiver handles Webhooks sent from [GitHub](https://developer.github.com/webhooks/). It validates that the message sent is actually from GitHub (by way of the `X-Hub-Signature` header) but performs no other processing. It is defined as a URI string in the form of:
-
-```
-github://?secret={SECRET}&ref={REF}
-```
-
-#### Properties
-
-| Name | Value | Description | Required |
-| --- | --- | --- | --- |
-| secret | string | The secret used to generate [the HMAC hex digest](https://developer.github.com/webhooks/#delivery-headers) of the message payload. | yes |
-| ref | string | An optional Git `ref` to filter by. If present and a WebHook is sent with a different ref then the daemon will return a `666` error response. | no |
-
 ### Insecure
 
 As the name suggests the `Insecure` receiver is completely insecure. It will happily accept anything you send to it and relay it on to the dispatcher defined for that webhook. It is defined as a URI string in the form of:
@@ -314,16 +299,6 @@ insecure://
 ```
 
 This receiver exists primarily for debugging purposes and **you should not deploy it in production**.
-
-### Slack
-
-The `Slack` receiver handles Webhooks sent from [Slack](https://api.slack.com/outgoing-webhooks). It does not process the message at all. It is defined as a URI string in the form of:
-
-```
-slack://
-```
-
-_This receiver has not been fully tested yet so proceed with caution._
 
 ## Transformations
 
@@ -344,46 +319,6 @@ chicken://{LANGUAGE}?clucking={CLUCKING}
 
 If this seems silly that's because it is. It's also more fun that yet-another boring _"make all the words upper-cased"_ example.
 
-### GitHubCommits
-
-The `GitHubCommits` transformation will extract all the commits (added, modified, removed) from a `push` event and return a CSV encoded list of rows consisting of: commit hash, repository name, path. For example:
-
-```
-e3a18d4de60a5e50ca78ca1733238735ddfaef4c,sfomuseum-data-flights-2020-05,data/171/316/450/9/1713164509.geojson
-e3a18d4de60a5e50ca78ca1733238735ddfaef4c,sfomuseum-data-flights-2020-05,data/171/316/451/9/1713164519.geojson
-e3a18d4de60a5e50ca78ca1733238735ddfaef4c,sfomuseum-data-flights-2020-05,data/171/316/483/5/1713164835.geojson
-````
-
-It is defined as a URI string in the form of:
-
-```
-githubcommits://?exclude_additions={EXCLUDE_ADDITIONS}&exclude_modification={EXCLUDE_MODIFICATIONS}&exclude_deletions={EXCLUDE_DELETIONS}
-```
-
-#### Properties
-
-| Name | Value | Description | Required |
-| --- | --- | --- | --- |
-| exclude_additions| boolean | A flag to indicate that new additions in a commit should be ignored. | no |
-| exclude_modifications| boolean | A flag to indicate that modifications in a commit should be ignored. | no |
-| exclude_deletions | boolean | A flag to indicate that deletions in a commit should be ignored. | no |
-
-### GitHubRepo
-
-The `GitHubRepo` transformation will extract the reporsitory name for all the commits matching (added, modified, removed) criteria. It is defined as a URI string in the form of:
-
-```
-githubrepo://?exclude_additions={EXCLUDE_ADDITIONS}&exclude_modification={EXCLUDE_MODIFICATIONS}&exclude_deletions={EXCLUDE_DELETIONS}
-```
-
-#### Properties
-
-| Name | Value | Description | Required |
-| --- | --- | --- | --- |
-| exclude_additions| boolean | A flag to indicate that new additions in a commit should be ignored. | no |
-| exclude_modifications| boolean | A flag to indicate that modifications in a commit should be ignored. | no |
-| exclude_deletions | boolean | A flag to indicate that deletions in a commit should be ignored. | no |
-
 ### Null
 
 The `Null` transformation will not do _anything_. It's not clear why you would ever use this outside of debugging but that's your business. It is defined as a URI string in the form of:
@@ -392,31 +327,7 @@ The `Null` transformation will not do _anything_. It's not clear why you would e
 null://
 ```
 
-### SlackText
-
-The `SlackText` transformation will extract and return [the `text` property](https://api.slack.com/outgoing-webhooks) from a Webhook sent by Slack. It is defined as URI string in the form of:
-
-```
-slacktext://
-```
-
 ## Dispatchers
-
-### Lambda
-
-The `Lambda` dispatcher will send messages to an Amazon Web Services (ASW) [Lambda function](#). It is defined as a URI string in the form of:
-
-```
-lambda://{FUNCTION}?dsn={DSN}&invocation_type={INVOCATION_TYPE}
-```
-
-#### Properties
-
-| Name | Value | Description | Required |
-| --- | --- | --- | --- |
-| dsn | string | A valid `aaronland/go-aws-session` DSN string. | yes |
-| function | string | The name of your Lambda function. | yes |
-| invocation_type | string | A valid AWS Lambda `Invocation Type` string. | no |
 
 ### Log
 
@@ -433,22 +344,6 @@ The `Null` dispatcher will send messages in to the vortex, never to be seen agai
 ```
 null://
 ```
-
-### PubSub
-
-The `PubSub` dispatcher will send messages to a Redis PubSub channel. It is defined as a URI string in the form of:
-
-```
-pubsub://{REDIS_HOST}:{REDIS_PORT}/{REDIS_CHANNEL}
-```
-
-#### Properties
-
-| Name | Value | Description | Required |
-| --- | --- | --- | --- |
-| redis_host | string | The path to a valid [slackcat](https://github.com/whosonfirst/slackcat#configuring) config file. | yes |
-
-_Eventually you will be able to specify a plain-vanilla Slack Webhook URL but not today._
 
 ## Testing
 
@@ -492,10 +387,12 @@ e3a18d4de60a5e50ca78ca1733238735ddfaef4c,sfomuseum-data-flights-2020-05,data/171
 
 ## See also
 
-* https://en.wikipedia.org/wiki/Webhook
+* https://github.com/whosonfirst/go-webhookd-aws
+* https://github.com/whosonfirst/go-webhookd-github
+* https://github.com/whosonfirst/go-webhookd-pubsub
+* https://github.com/whosonfirst/go-webhookd-slack
 
 ## Related
 
 * https://github.com/aaronland/go-http-server
-* https://github.com/whosonfirst/go-pubssed
 * https://gocloud.dev/howto/runtimevar
