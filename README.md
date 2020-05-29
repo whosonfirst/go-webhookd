@@ -22,14 +22,44 @@ All of this package's dependencies are bundled with the code in the `vendor` dir
 
 ## Important
 
-`whosonfirst/go-webhookd/v2` does not introduce any new functionality relative to `whosonfirst/go-webhookd` "v1" but does make substantial changes to the package's interfaces and config file definitions.
+`whosonfirst/go-webhookd/v3` does not introduce any _new_ functionality relative to `whosonfirst/go-webhookd/v2` but no longer comes with support for external platforms (GitHub, Slack, etc.) enabled by default. This functionality has been moved in to a number of separate `go-webhookd-{PLATFORM}` packages. This was done to make developing and adding custom receivers, transformations and dispatchers easier and modular.
 
-Once all the kinks have been worked out of `whosonfirst/go-webhookd/v2` it will quickly be superseded by `whosonfirst/go-webhookd/v3` which will move most of the platform or vendor specific functionalities in to their own packages.
+## Upgrading from `whosonfirst/go-webhookd/v2` 
 
-## Upgrading from `whosonfirst/go-webhookd` "v1"
+You will need to add the relevant packages to your `cmd/webhookd/main.go` program. For example if your `webhookd` config file defines a GitHub receiver, a GitHub transformation and an AWS dispatcher you would need to import the [go-webhookd-github](https://github.com/whosonfirst/go-webhookd-github) and [go-webhookd-aws](https://github.com/whosonfirst/go-webhookd-aws) packages. Here's an abbreviated example in code, with error handling removed for the sake of brevity:
 
-* The `-config` flag has been replaced by a `-config-uri` flag which is a fully-qualified [Go Cloud runtimevar URI](https://gocloud.dev/concepts/urls/).
-* The config file itself has been simplified. Daemon, receiver, dispatcher and tranformation settings are now defined as URI strings rather than dictionaries. `whosonfirst/go-webhookd` "v1" config files will need to be updated manually.
+```
+package main
+
+import (
+	"context"
+	"github.com/sfomuseum/go-flags/flagset"
+	"github.com/whosonfirst/go-webhookd/v3/config"
+	"github.com/whosonfirst/go-webhookd/v3/daemon"
+	_ "github.com/whosonfirst/go-webhookd-aws"
+	_ "github.com/whosonfirst/go-webhookd-github"		
+	"log"
+	"os"
+)
+
+func main() {
+
+	fs := flagset.NewFlagSet("webhooks")
+
+	config_uri := fs.String("config-uri", "", "A valid Go Cloud runtimevar URI representing your webhookd config.")
+
+	flagset.Parse(fs)
+
+	ctx := context.Background()
+
+	cfg, _ := config.NewConfigFromURI(ctx, *config_uri)
+
+	wh_daemon, _ := daemon.NewWebhookDaemonFromConfig(ctx, cfg)
+
+	wh_daemon.Start(ctx)
+}
+
+```
 
 ## Usage
 
@@ -168,7 +198,8 @@ import (
 	"github.com/whosonfirst/go-webhookd/v3/dispatchers"
 	"github.com/whosonfirst/go-webhookd/v3/receivers"
 	"github.com/whosonfirst/go-webhookd/v3/transformations"
-	"github.com/whosonfirst/go-webhookd/v3/webhook"	
+	"github.com/whosonfirst/go-webhookd/v3/webhook"
+	_ "github.com/whosonfirst/go-webhookd-pubsub"		
 )
 
 ctx := context.Background()
@@ -187,7 +218,10 @@ wh_daemon.AddWebhook(ctx, wh)
 wh_daemon.Start(ctx)
 ```
 
-See the way we're using an `Insecure` receiver and a `PubSub` dispatcher with a `Null` transformation? All are these are discussed in detail below.
+Two important things to note:
+
+* We're using an `Insecure` receiver with a `Null` transformation? These are included with the base `go-webhookd` package and are discussed in detail below.
+* We're using a `PubSub` dispatcher which is made available by importing the [go-webhookd-pubsub](https://github.com/whosonfirst/go-webhookd-pubsub) package.
 
 ## Sending stuff to webhookd
 
@@ -231,12 +265,14 @@ Valid daemon URI strings can be anything supported by the [aaronland/go-http-ser
 
 ```
 	"receivers": {
-		"insecure": "insecure://",
+		"insecure": "insecure://"
 		"github": "github://?secret=s33kret"
 	}
 ```
 
 The `receivers` section is a dictionary of "named" receiver configuations. This allows the actual [webhook configurations (described below)](#webhooks) to signal their respective receivers using the dictionary "name" as a simple short-hand.
+
+_Note: This example includes a `github://` receiver which assumes you've imported the [go-webhookd-github](https://github.com/whosonfirst/go-webhookd-github) package in your code._
 
 ### transformations
 
@@ -258,6 +294,8 @@ The `transformations` section is a dictionary of "named" tranformation configuat
 
 The `dispatchers` section is a dictionary of "named" dispatcher configuations. This allows the actual [webhook configurations (described below)](#webhooks) to signal their respective dispatchers using the dictionary "name" as a simple short-hand.
 
+_Note: This example includes a `pubsub://` receiver which assumes you've imported the [go-webhookd-github](https://github.com/whosonfirst/go-webhookd-pubsub) package in your code._
+
 ### webhooks
 
 ```
@@ -271,12 +309,6 @@ The `dispatchers` section is a dictionary of "named" dispatcher configuations. T
 			"endpoint": "/insecure-test",
 		 	"receiver": "insecure",
 			"dispatchers": [ "pubsub" ]
-		},
-		{
-			"endpoint": "/slack-test",
-			"receiver": "slack",
-			"transformations": [ "slack", "chicken" ],
-			"dispatchers": [ "slack", "log"]
 		}
 	]
 ```
