@@ -45,17 +45,14 @@ import (
 func main() {
 
 	fs := flagset.NewFlagSet("webhooks")
-
 	config_uri := fs.String("config-uri", "", "A valid Go Cloud runtimevar URI representing your webhookd config.")
 
 	flagset.Parse(fs)
 
 	ctx := context.Background()
-
 	cfg, _ := config.NewConfigFromURI(ctx, *config_uri)
 
 	wh_daemon, _ := daemon.NewWebhookDaemonFromConfig(ctx, cfg)
-
 	wh_daemon.Start(ctx)
 }
 
