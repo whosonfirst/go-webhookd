@@ -15,7 +15,11 @@ In between (receivers and dispatchers) are an optional chain of transformations 
 You will need to have both `Go` (specifically version [1.12](https://golang.org/dl) or higher) and the `make` programs installed on your computer. Assuming you do just type:
 
 ```
-make tools
+$ > make cli
+go build -mod vendor -o bin/webhookd cmd/webhookd/main.go
+go build -mod vendor -o bin/webhookd-generate-hook cmd/webhookd-generate-hook/main.go
+go build -mod vendor -o bin/webhookd-flatten-config cmd/webhookd-flatten-config/main.go
+go build -mod vendor -o bin/webhookd-inflate-config cmd/webhookd-inflate-config/main.go
 ```
 
 All of this package's dependencies are bundled with the code in the `vendor` directory.
