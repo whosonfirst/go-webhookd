@@ -5,7 +5,7 @@ import (
 	"fmt"
 	emoji "github.com/aaronland/go-chicken/emoji"
 	"github.com/aaronland/go-chicken/strings"
-	"github.com/aaronland/go-ucd"
+	"github.com/aaronland/go-ucd/v13"
 	"log"
 	"math/rand"
 	"regexp"

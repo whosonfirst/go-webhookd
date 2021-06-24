@@ -2,6 +2,8 @@ github.com/aaronland/go-ucd v0.0.0-20190520134908-684059ca9156 h1:SsNFRFNm6Gn8Dg
 github.com/aaronland/go-ucd v0.0.0-20190520134908-684059ca9156/go.mod h1:DoKBDoY4iuDSNErkKy6n1SRdUEOLwTm2gy7X3GtUQaI=
 github.com/aaronland/go-ucd v12.0.1+incompatible h1:uR/VbmA6SMQ8Ua6HArLEPjKyPFS/uC6n8f+xzJn+VeY=
 github.com/aaronland/go-ucd v12.0.1+incompatible/go.mod h1:CadKBZkk96fATzdzz2g0RAdsZXwjDRzH3dwtOHVE4nI=
+github.com/aaronland/go-ucd/v13 v13.0.0 h1:+pKeJj2KG4uSoEAjl3dfUMK9bnyxB0aI2RJu7nO4THQ=
+github.com/aaronland/go-ucd/v13 v13.0.0/go.mod h1:VhXooaIYT3dVPSHMRLGvmF6CtiV1pdmi0RUEomjoS/s=
 github.com/cooperhewitt/go-ucd v0.0.0-20170323200852-c4101e1ef9a6 h1:P3t+wrVJz+Cey5VNf/8SYv56kniN8+feDX8dUgSRsA0=
 github.com/cooperhewitt/go-ucd v0.0.0-20170323200852-c4101e1ef9a6/go.mod h1:76WUZ+6G1smA8yhoi9mNx95mpMvIPIpeEDAZrEFRK30=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
@@ -26,5 +28,6 @@ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZN
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/tidwall/pretty v0.0.0-20190325000000-1166b9ac2b65e46a43d8618d30d1554f4652d49b/go.mod h1:XNkn88O1ChpSDQmQeStsy+sBenx6DDtFZJxhVysOjyk=
+github.com/tidwall/pretty v1.0.5/go.mod h1:XNkn88O1ChpSDQmQeStsy+sBenx6DDtFZJxhVysOjyk=
 github.com/whosonfirst/go-sanitize v0.1.0 h1:ygSqCnakwdzH/m8UEa15zXGDsoo5/JJeRkgmAjXZrBU=
 github.com/whosonfirst/go-sanitize v0.1.0/go.mod h1:p/emgbafMM0p5iVAz2XWwecYPl06Tw4Jos9rhTKIrt8=

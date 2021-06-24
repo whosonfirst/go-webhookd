@@ -139,7 +139,11 @@ func NewHTTPServer(ctx context.Context, uri string) (Server, error) {
 }
 
 func (s *HTTPServer) Address() string {
-	return s.url.String()
+
+	u, _ := url.Parse(s.url.String())
+	u.RawQuery = ""
+
+	return u.String()
 }
 
 func (s *HTTPServer) ListenAndServe(ctx context.Context, mux *http.ServeMux) error {
