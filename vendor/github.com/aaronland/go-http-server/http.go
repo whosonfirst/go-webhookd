@@ -146,7 +146,7 @@ func (s *HTTPServer) Address() string {
 	return u.String()
 }
 
-func (s *HTTPServer) ListenAndServe(ctx context.Context, mux *http.ServeMux) error {
+func (s *HTTPServer) ListenAndServe(ctx context.Context, mux http.Handler) error {
 
 	idleConnsClosed := make(chan struct{})
 

@@ -10,7 +10,7 @@ import (
 )
 
 type Server interface {
-	ListenAndServe(context.Context, *http.ServeMux) error
+	ListenAndServe(context.Context, http.Handler) error
 	Address() string
 }
 
