@@ -34,7 +34,7 @@ type SimpleEmailReceipt struct {
 	SpamVerdict          SimpleEmailVerdict       `json:"spamVerdict"`
 	DKIMVerdict          SimpleEmailVerdict       `json:"dkimVerdict"`
 	DMARCVerdict         SimpleEmailVerdict       `json:"dmarcVerdict"`
-	DMARCPolicy          string                   `json:"dmarcPolicy"`
+	DMARCPolicy          SimpleEmailVerdict       `json:"dmarcPolicy"`
 	SPFVerdict           SimpleEmailVerdict       `json:"spfVerdict"`
 	VirusVerdict         SimpleEmailVerdict       `json:"virusVerdict"`
 	Action               SimpleEmailReceiptAction `json:"action"`

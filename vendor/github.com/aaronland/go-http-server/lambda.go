@@ -2,7 +2,7 @@ package server
 
 import (
 	"context"
-	"github.com/whosonfirst/algnhsa"
+	"github.com/akrylysov/algnhsa"
 	_ "log"
 	"net/http"
 	"net/url"

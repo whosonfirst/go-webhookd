@@ -3,7 +3,7 @@
 github.com/aaronland/go-chicken
 github.com/aaronland/go-chicken/emoji
 github.com/aaronland/go-chicken/strings
-# github.com/aaronland/go-http-server v0.0.7
+# github.com/aaronland/go-http-server v0.1.0
 ## explicit
 github.com/aaronland/go-http-server
 # github.com/aaronland/go-roster v0.0.2
@@ -13,7 +13,9 @@ github.com/aaronland/go-roster
 github.com/aaronland/go-ucd/v13
 github.com/aaronland/go-ucd/v13/unicodedata
 github.com/aaronland/go-ucd/v13/unihan
-# github.com/aws/aws-lambda-go v1.10.0
+# github.com/akrylysov/algnhsa v0.12.1
+github.com/akrylysov/algnhsa
+# github.com/aws/aws-lambda-go v1.9.0
 github.com/aws/aws-lambda-go/events
 github.com/aws/aws-lambda-go/lambda
 github.com/aws/aws-lambda-go/lambda/handlertrace
@@ -29,7 +31,7 @@ github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
-# github.com/googleapis/gax-go/v2 v2.1.0
+# github.com/googleapis/gax-go/v2 v2.2.0
 github.com/googleapis/gax-go/v2
 github.com/googleapis/gax-go/v2/apierror
 github.com/googleapis/gax-go/v2/apierror/internal/proto
@@ -39,8 +41,6 @@ github.com/sfomuseum/go-flags/flagset
 # github.com/tidwall/pretty v1.2.0
 ## explicit
 github.com/tidwall/pretty
-# github.com/whosonfirst/algnhsa v0.1.0
-github.com/whosonfirst/algnhsa
 # go.opencensus.io v0.23.0
 go.opencensus.io
 go.opencensus.io/internal
@@ -57,7 +57,7 @@ go.opencensus.io/trace
 go.opencensus.io/trace/internal
 go.opencensus.io/trace/propagation
 go.opencensus.io/trace/tracestate
-# gocloud.dev v0.24.0
+# gocloud.dev v0.25.0
 ## explicit
 gocloud.dev/gcerrors
 gocloud.dev/internal/gcerr
@@ -70,14 +70,14 @@ gocloud.dev/runtimevar/driver
 gocloud.dev/runtimevar/filevar
 gocloud.dev/secrets
 gocloud.dev/secrets/driver
-# golang.org/x/net v0.0.0-20210825183410-e898025ed96a
+# golang.org/x/net v0.0.0-20220401154927-543a649e0bdd
 golang.org/x/net/http/httpguts
 golang.org/x/net/http2
 golang.org/x/net/http2/hpack
 golang.org/x/net/idna
 golang.org/x/net/internal/timeseries
 golang.org/x/net/trace
-# golang.org/x/sys v0.0.0-20210831042530-f4d43177bf5e
+# golang.org/x/sys v0.0.0-20220330033206-e17cdc41300f
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
 # golang.org/x/text v0.3.7
@@ -88,14 +88,14 @@ golang.org/x/text/unicode/norm
 # golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1
 golang.org/x/xerrors
 golang.org/x/xerrors/internal
-# google.golang.org/api v0.56.0
+# google.golang.org/api v0.74.0
 google.golang.org/api/googleapi
 google.golang.org/api/internal/third_party/uritemplates
-# google.golang.org/genproto v0.0.0-20210831024726-fe130286e0e2
+# google.golang.org/genproto v0.0.0-20220401170504-314d38edb7de
 google.golang.org/genproto/googleapis/rpc/code
 google.golang.org/genproto/googleapis/rpc/errdetails
 google.golang.org/genproto/googleapis/rpc/status
-# google.golang.org/grpc v1.40.0
+# google.golang.org/grpc v1.45.0
 google.golang.org/grpc
 google.golang.org/grpc/attributes
 google.golang.org/grpc/backoff
@@ -107,6 +107,7 @@ google.golang.org/grpc/binarylog/grpc_binarylog_v1
 google.golang.org/grpc/codes
 google.golang.org/grpc/connectivity
 google.golang.org/grpc/credentials
+google.golang.org/grpc/credentials/insecure
 google.golang.org/grpc/encoding
 google.golang.org/grpc/encoding/proto
 google.golang.org/grpc/grpclog
@@ -140,7 +141,7 @@ google.golang.org/grpc/serviceconfig
 google.golang.org/grpc/stats
 google.golang.org/grpc/status
 google.golang.org/grpc/tap
-# google.golang.org/protobuf v1.27.1
+# google.golang.org/protobuf v1.28.0
 google.golang.org/protobuf/encoding/protojson
 google.golang.org/protobuf/encoding/prototext
 google.golang.org/protobuf/encoding/protowire
