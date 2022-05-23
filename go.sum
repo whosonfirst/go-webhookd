@@ -108,10 +108,10 @@ github.com/Masterminds/semver/v3 v3.1.1/go.mod h1:VPu/7SZ7ePZ3QOrcuXROw5FAcLl4a0
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/aaronland/go-chicken v0.2.2 h1:0i3A1VMcCaZSuU6AWBxxvqRUAf96kcCW5toBGSSciZI=
 github.com/aaronland/go-chicken v0.2.2/go.mod h1:ZGet+ivqsO/MvvXvCzrJupJREzNWa4CZgbpjYpMW96E=
-github.com/aaronland/go-http-server v0.1.0 h1:lOA/7A2vLyXFH1UmT8/dpLR7m8Z3vB6P6YJCy6rYuXQ=
-github.com/aaronland/go-http-server v0.1.0/go.mod h1:fO/4BYsFgbhIpDuyIyKhjI3F5sTNqP0gSiGgbIXmeZ8=
-github.com/aaronland/go-roster v0.0.2 h1:2Fu7v4VQLRLRL/Zgr6R9S5JxsW75Ab/K88QtMVX532s=
-github.com/aaronland/go-roster v0.0.2/go.mod h1:AcovpxlG1XxJxX2Fjqlm63fEIBhCjEIBV4lP87FZDmI=
+github.com/aaronland/go-http-server v1.0.0 h1:AF+4JLEyXNj7Mulpcx8yaek1RWGojWOQMg5vinEDDVs=
+github.com/aaronland/go-http-server v1.0.0/go.mod h1:gJ2TDOB9EhK8IULIf3UqVYcv1TaEa5N2er9YaBvD2M0=
+github.com/aaronland/go-roster v1.0.0 h1:FRDGrTqsYySKjWnAhbBGXyeGlI/o5/t9FZYCbUmyQtI=
+github.com/aaronland/go-roster v1.0.0/go.mod h1:KIsYZgrJlAsyb9LsXSCvlqvbcCBVjCSqcQiZx42i9ro=
 github.com/aaronland/go-ucd/v13 v13.0.0 h1:+pKeJj2KG4uSoEAjl3dfUMK9bnyxB0aI2RJu7nO4THQ=
 github.com/aaronland/go-ucd/v13 v13.0.0/go.mod h1:VhXooaIYT3dVPSHMRLGvmF6CtiV1pdmi0RUEomjoS/s=
 github.com/akrylysov/algnhsa v0.12.1 h1:A9Ojt4hZrL77mhBc3qGO3Sn9reyf+tvM3DmR0SfXguc=
