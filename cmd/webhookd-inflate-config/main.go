@@ -2,16 +2,16 @@ package main
 
 import (
 	_ "context"
-	"flag"
-	"net/url"
-	"log"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"github.com/tidwall/pretty"
 	"github.com/whosonfirst/go-webhookd/v3/config"
+	"log"
+	"net/url"
 )
 
-func main (){
+func main() {
 
 	flag.Parse()
 
@@ -22,7 +22,7 @@ func main (){
 		if err != nil {
 			log.Fatal(err)
 		}
-		
+
 		q := u.Query()
 
 		val := q.Get("val")

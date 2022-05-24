@@ -2,7 +2,7 @@
     "daemon": "http://localhost:8080",
     "receivers": {
 	"insecure": "insecure://",
-	"github": "github://?secret=s33kret&ref=refs/heads/master",
+	"github": "github://?secret=s33kret&ref=refs/heads/main",
 	"slack": "slack://"
     },	
     "transformations": {
