@@ -1,8 +1,8 @@
+// package daemon provides methods for implementing a long-running daemon to listen for and process webhooks.
 package daemon
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/aaronland/go-http-server"
 	"github.com/whosonfirst/go-webhookd/v3"
@@ -20,35 +20,43 @@ import (
 	"time"
 )
 
+// type WebhookDaemon is a struct that implements a long-running daemon to listen for	and process webhooks.
 type WebhookDaemon struct {
-	server     server.Server
-	webhooks   map[string]webhookd.WebhookHandler
+	// server is a `aaronland/go-http-server.Server` instance that handles HTTP requests and responses.
+	server server.Server
+	// webhooks is a dictionary of URIs and their corresponding `webhookd.WebhookHandler` instances.
+	webhooks map[string]webhookd.WebhookHandler
+	// AllowDebug is a boolean flag to enable debugging reporting in webhook responses.
 	AllowDebug bool
 }
 
+// NewWebhookDaemonFromConfig() returns a new `WebhookDaemon` derived from configuration data in 'cfg'.
 func NewWebhookDaemonFromConfig(ctx context.Context, cfg *config.WebhookConfig) (*WebhookDaemon, error) {
 
 	d, err := NewWebhookDaemon(ctx, cfg.Daemon)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Failed to create new webhookd daemon, %w", err)
 	}
 
 	err = d.AddWebhooksFromConfig(ctx, cfg)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Failed to add webhooks to daemon, %w", err)
 	}
 
 	return d, nil
 }
 
+// NewWebhookDaemon() returns a `WebhookDaemon` instance derived from 'uri' which is expected to take
+// the form of any valid `aaronland/go-http-server.Server` URI with the following parameters:
+// * `?allow_debug=` An optional boolean flag to enable debugging output in webhook responses.
 func NewWebhookDaemon(ctx context.Context, uri string) (*WebhookDaemon, error) {
 
 	u, err := url.Parse(uri)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Failed to parse daemon URI, %w", err)
 	}
 
 	q := u.Query()
@@ -62,7 +70,7 @@ func NewWebhookDaemon(ctx context.Context, uri string) (*WebhookDaemon, error) {
 		v, err := strconv.ParseBool(str_debug)
 
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("Invalid ?allow_debug parameter, %w", err)
 		}
 
 		allow_debug = v
@@ -71,7 +79,7 @@ func NewWebhookDaemon(ctx context.Context, uri string) (*WebhookDaemon, error) {
 	srv, err := server.NewServer(ctx, uri)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Failed to create new server instance, %w", err)
 	}
 
 	webhooks := make(map[string]webhookd.WebhookHandler)
@@ -85,40 +93,37 @@ func NewWebhookDaemon(ctx context.Context, uri string) (*WebhookDaemon, error) {
 	return &d, nil
 }
 
+// AddWebhooksFromConfig() appends the webhooks defined in 'cfg' to 'd'.
 func (d *WebhookDaemon) AddWebhooksFromConfig(ctx context.Context, cfg *config.WebhookConfig) error {
 
 	if len(cfg.Webhooks) == 0 {
-		return errors.New("No webhooks defined")
+		return fmt.Errorf("No webhooks defined")
 	}
 
 	for i, hook := range cfg.Webhooks {
 
 		if hook.Endpoint == "" {
-			msg := fmt.Sprintf("Missing endpoint at offset %d", i+1)
-			return errors.New(msg)
+			return fmt.Errorf("Missing endpoint at offset %d", i+1)
 		}
 
 		if hook.Receiver == "" {
-			msg := fmt.Sprintf("Missing receiver at offset %d", i+1)
-			return errors.New(msg)
+			return fmt.Errorf("Missing receiver at offset %d", i+1)
 		}
 
 		if len(hook.Dispatchers) == 0 {
-			msg := fmt.Sprintf("Missing dispatchers at offset %d", i+1)
-			return errors.New(msg)
+			return fmt.Errorf("Missing dispatchers at offset %d", i+1)
 		}
 
 		receiver_uri, err := cfg.GetReceiverConfigByName(hook.Receiver)
 
 		if err != nil {
-			return err
+			return fmt.Errorf("Failed to get receiver config for '%s', %w", hook.Receiver, err)
 		}
 
 		receiver, err := receiver.NewReceiver(ctx, receiver_uri)
 
 		if err != nil {
-			log.Println("RECEIVER", receiver_uri)
-			return err
+			return fmt.Errorf("Failed to add receiver '%s', %w", receiver_uri, err)
 		}
 
 		var steps []webhookd.WebhookTransformation
@@ -132,14 +137,13 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(ctx context.Context, cfg *config.W
 			transformation_uri, err := cfg.GetTransformationConfigByName(name)
 
 			if err != nil {
-				return err
+				return fmt.Errorf("Failed to get transformation configuration for '%s', %w", name, err)
 			}
 
 			step, err := transformation.NewTransformation(ctx, transformation_uri)
 
 			if err != nil {
-				log.Println("TRANSFORM", name, transformation_uri)
-				return err
+				return fmt.Errorf("Failed to create new transformation for '%s', %w", transformation_uri, err)
 			}
 
 			steps = append(steps, step)
@@ -156,14 +160,13 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(ctx context.Context, cfg *config.W
 			dispatcher_uri, err := cfg.GetDispatcherConfigByName(name)
 
 			if err != nil {
-				return err
+				return fmt.Errorf("Failed to get dispatcher configuration for '%s', %w", name, err)
 			}
 
 			dispatcher, err := dispatcher.NewDispatcher(ctx, dispatcher_uri)
 
 			if err != nil {
-				log.Println("DISPATCHER", name, dispatcher_uri)
-				return err
+				return fmt.Errorf("Failed to create dispatcher for '%s', %w", dispatcher_uri, err)
 			}
 
 			sendto = append(sendto, dispatcher)
@@ -172,13 +175,13 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(ctx context.Context, cfg *config.W
 		wh, err := webhook.NewWebhook(ctx, hook.Endpoint, receiver, steps, sendto)
 
 		if err != nil {
-			return err
+			return fmt.Errorf("Failed to create new webhook for '%s', %w", hook.Endpoint, err)
 		}
 
 		err = d.AddWebhook(ctx, wh)
 
 		if err != nil {
-			return err
+			return fmt.Errorf("Failed to add new webhook for '%s', %w", hook.Endpoint, err)
 		}
 
 	}
@@ -186,20 +189,29 @@ func (d *WebhookDaemon) AddWebhooksFromConfig(ctx context.Context, cfg *config.W
 	return nil
 }
 
+// AddWebhook() adds 'wh' to 'd'.
 func (d *WebhookDaemon) AddWebhook(ctx context.Context, wh webhook.Webhook) error {
 
 	endpoint := wh.Endpoint()
 	_, ok := d.webhooks[endpoint]
 
 	if ok {
-		return errors.New("endpoint already configured")
+		return fmt.Errorf("endpoint already configured")
 	}
 
 	d.webhooks[endpoint] = wh
 	return nil
 }
 
+// HandlerFunc() returns a `http.HandlerFunc` that handles HTTP (webhook) requests and response for 'd'.
 func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
+	logger := log.Default()
+	return d.HandlerFuncWithLogger(logger)
+}
+
+// HandlerFuncWithLogger() returns a `http.HandlerFunc` that handles HTTP (webhook) requests and response for 'd'
+// logging events to 'logger'.
+func (d *WebhookDaemon) HandlerFuncWithLogger(logger *log.Logger) (http.HandlerFunc, error) {
 
 	handler := func(rsp http.ResponseWriter, req *http.Request) {
 
@@ -286,7 +298,7 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 				err = d.Dispatch(ctx, body)
 
 				if err != nil {
-					log.Printf("FAILED TO DISPATCH W/ %T, %v\n", d, err)
+					logger.Printf("FAILED TO DISPATCH W/ %T, %v\n", d, err)
 					ch <- err
 				}
 
@@ -343,12 +355,19 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 	return http.HandlerFunc(handler), nil
 }
 
+// Start() causes 'd' to listen for, and process, requests.
 func (d *WebhookDaemon) Start(ctx context.Context) error {
+	logger := log.Default()
+	return d.StartWithLogger(ctx, logger)
+}
 
-	handler, err := d.HandlerFunc()
+// StartWithLogger() causes 'd' to listen for, and process, requests logging events to 'logger'.
+func (d *WebhookDaemon) StartWithLogger(ctx context.Context, logger *log.Logger) error {
+
+	handler, err := d.HandlerFuncWithLogger(logger)
 
 	if err != nil {
-		return err
+		return fmt.Errorf("Failed to create handler func, %w", err)
 	}
 
 	mux := http.NewServeMux()
@@ -356,12 +375,12 @@ func (d *WebhookDaemon) Start(ctx context.Context) error {
 
 	svr := d.server
 
-	log.Printf("webhookd listening for requests on %s\n", svr.Address())
+	logger.Printf("webhookd listening for requests on %s\n", svr.Address())
 
 	err = svr.ListenAndServe(ctx, mux)
 
 	if err != nil {
-		return err
+		return fmt.Errorf("Failed to listen for requests, %w", err)
 	}
 
 	return nil
