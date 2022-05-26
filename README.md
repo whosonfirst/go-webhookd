@@ -2,9 +2,9 @@
 
 ![](docs/images/webhookd-arch.png)
 
-What is the simplest webhook-wrangling server-daemon-thing.
+What is the simplest webhook-wrangling server-daemon-thing?
 
-In many ways this is nothing more than a fancy bucket-brigade. By design.
+`go-webhook` is a Go package that implements a bucket-brigrade style webhook server where requests are relayed through a receiver, one or more transformations and one or more dispatchers each of which have interfaces and are defined using a URI-based syntax to allow for custom processing.
 
 Receivers handle the actual webhook side of things, doing auth and basic sanity checking and validation. Assuming everything is as it should be receivers return a bag of bytes (the actual webhook message that may or may not be massaged depending the receiver). That bag is then handed to one or more dispatchers which do _something_ with those bytes. Those details, including security considerations are left as an exercise to the reader.
 
