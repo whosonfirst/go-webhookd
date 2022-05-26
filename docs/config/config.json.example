@@ -1,34 +1,22 @@
 {
     "daemon": "http://localhost:8080",
     "receivers": {
-	"insecure": "insecure://",
-	"github": "github://?secret=s33kret&ref=refs/heads/main",
-	"slack": "slack://"
+	"insecure": "insecure://"
     },	
     "transformations": {
 	"null": "null://",
 	"chicken": "chicken://zxx",
-	"clucking": "chicken://eng?clucking=true",
-	"slack": "slacktext://",
-	"commits": "githubcommits://?exclude_additions=false&exclude_modifications=true&exclude_deletions=true"
+	"clucking": "chicken://eng?clucking=true"
     },
     "dispatchers": {
 	"null": "null://",
-	"log": "log://",
-	"pubsub": "pubsub://localhost:6379/webhookd",
-	"slack": "slack:///path/to/.slackcat.conf"
+	"log": "log://"
     },
     "webhooks": [
 	{
-	    "endpoint": "/github-test",
-	    "receiver": "github",
-	    "transformations": [ "commits" ],		    
-	    "dispatchers": [ "log" ]
-	},
-	{
 	    "endpoint": "/insecure-test",
 	    "receiver": "insecure",
-	    "transformations": [ "commits" ],
+	    "transformations": [ "chicken" ],
 	    "dispatchers": [ "log" ]
 	}
     ]
