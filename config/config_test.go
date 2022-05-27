@@ -81,8 +81,8 @@ func TestGetReceiverConfigByName(t *testing.T) {
 		t.Fatalf("Failed to create new config from URI, %v", err)
 	}
 
-	name := "github"
-	expected := "github://?secret=s33kret&ref=refs/heads/main"
+	name := "insecure"
+	expected := "insecure://"
 
 	uri, err := cfg.GetReceiverConfigByName(name)
 
