@@ -15,17 +15,23 @@ func init() {
 	}
 }
 
+// NullDispatcher implements the `webhookd.WebhookDispatcher` interface for dispatching messages to nowhere.
 type NullDispatcher struct {
 	webhookd.WebhookDispatcher
 }
 
+// NewNullDispatcher returns a new `NullDispatcher` instance that dispatches messages to nowhere
+// configured by 'uri' in the form of:
+//
+//	null://
 func NewNullDispatcher(ctx context.Context, uri string) (webhookd.WebhookDispatcher, error) {
 
-	n := NullDispatcher{}
-	return &n, nil
+	d := NullDispatcher{}
+	return &d, nil
 }
 
-func (n *NullDispatcher) Dispatch(ctx context.Context, body []byte) *webhookd.WebhookError {
+// Dispatch sends 'body' to nowhere.
+func (d *NullDispatcher) Dispatch(ctx context.Context, body []byte) *webhookd.WebhookError {
 
 	return nil
 }
