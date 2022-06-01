@@ -45,7 +45,7 @@ func TestNewLogDispatcherWithLogger(t *testing.T) {
 		t.Fatalf("Failed to dispatch message, %v", err2)
 	}
 
-	expected := "testing log.go:52: hello world"
+	expected := "testing log.go:50: hello world"
 	output := strings.TrimSpace(buf.String())
 
 	if output != expected {

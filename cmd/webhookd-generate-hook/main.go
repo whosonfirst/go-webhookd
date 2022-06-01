@@ -1,9 +1,11 @@
+// webhookd-generate-hook is a command line tool for generating a random webhook endpoint URI.
 package main
 
 import (
 	"flag"
 	"fmt"
 	"math/rand"
+	"os"
 	"time"
 )
 
@@ -40,6 +42,12 @@ func main() {
 
 	var length = flag.Int("length", 64, "The length of your webhook")
 
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "webhookd-generate-hook is a command line tool for generating	a random webhook endpoint URI.\n")
+		fmt.Fprintf(os.Stderr, "Usage:\n\t %s [options]\n", os.Args[0])
+		flag.PrintDefaults()
+	}
+	
 	flag.Parse()
 
 	fmt.Println(RandomString(*length))

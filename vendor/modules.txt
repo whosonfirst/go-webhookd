@@ -38,9 +38,6 @@ github.com/googleapis/gax-go/v2/apierror/internal/proto
 # github.com/sfomuseum/go-flags v0.8.2
 ## explicit
 github.com/sfomuseum/go-flags/flagset
-# github.com/tidwall/pretty v1.2.0
-## explicit
-github.com/tidwall/pretty
 # go.opencensus.io v0.23.0
 go.opencensus.io
 go.opencensus.io/internal

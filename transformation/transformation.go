@@ -1,3 +1,4 @@
+// package transformation provides an interface to altering (transforming) webhook messages.
 package transformation
 
 import (
