@@ -10,6 +10,10 @@ Receivers handle the actual webhook side of things, doing auth and basic sanity 
 
 In between (receivers and dispatchers) are an optional chain of transformations which accept bytes as their input, do _something_ with those bytes, and then return bytes.
 
+## Documentation
+
+[![Go Reference](https://pkg.go.dev/badge/github.com/whosonfirst/go-webhookd.svg)](https://pkg.go.dev/github.com/whosonfirst/go-webhookd)
+
 ## Install
 
 You will need to have both `Go` (specifically version [1.16](https://golang.org/dl) or higher) and the `make` programs installed on your computer. Assuming you do just type:
