@@ -1,4 +1,4 @@
-// package daemon provides methods for implementing a long-running daemon to listen for and process webhooks.
+// Package daemon provides methods for implementing a long-running daemon to listen for and process webhooks.
 package daemon
 
 import (

@@ -1,4 +1,4 @@
-// package dispatcher provides methods for relaying webhook messages after they have been transformed.
+// Package dispatcher provides methods for relaying webhook messages after they have been transformed.
 package dispatcher
 
 import (

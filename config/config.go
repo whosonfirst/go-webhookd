@@ -1,4 +1,4 @@
-// package config provides data structures and methods for configuring a `webhookd` instance.
+// Package config provides data structures and methods for configuring a `webhookd` instance.
 package config
 
 import (

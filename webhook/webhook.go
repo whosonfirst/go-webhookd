@@ -1,4 +1,4 @@
-// package webhook provides data structures and methods for definining and configuring individual webhooks.
+// Package webhook provides data structures and methods for definining and configuring individual webhooks.
 package webhook
 
 import (

@@ -1,4 +1,4 @@
-// package receiver provides an interface for the receipt of webhook messages.
+// Package receiver provides an interface for the receipt of webhook messages.
 package receiver
 
 import (
