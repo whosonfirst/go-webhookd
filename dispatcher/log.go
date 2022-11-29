@@ -25,7 +25,7 @@ type LogDispatcher struct {
 
 // NewLogDispatcher returns a new `LogDispatcher` instance configured by 'uri' in the form of:
 //
-// 	log://
+//	log://
 //
 // Messasges are dispatched to the default `log.Default()` instance.
 func NewLogDispatcher(ctx context.Context, uri string) (webhookd.WebhookDispatcher, error) {

@@ -24,7 +24,7 @@ type InsecureReceiver struct {
 
 // NewInsecureReceiver returns a new `InsecureReceiver` instance configured by 'uri' in the form of:
 //
-// 	insecure://
+//	insecure://
 func NewInsecureReceiver(ctx context.Context, uri string) (webhookd.WebhookReceiver, error) {
 
 	wh := InsecureReceiver{}

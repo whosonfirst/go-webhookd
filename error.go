@@ -4,6 +4,10 @@ import (
 	"fmt"
 )
 
+const UnhandledEvent int = -1
+
+const HaltEvent int = -2
+
 // WebhookError implements the `error` interface for wrapping webhookd error codes and messages.
 type WebhookError struct {
 	error

@@ -23,7 +23,7 @@ type NullTransformation struct {
 
 // NewInsecureTransformation returns a new `NullTransformation` instance configured by 'uri' in the form of:
 //
-// 	null://
+//	null://
 func NewNullTransformation(ctx context.Context, uri string) (webhookd.WebhookTransformation, error) {
 
 	p := NullTransformation{}

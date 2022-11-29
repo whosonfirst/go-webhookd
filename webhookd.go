@@ -24,13 +24,13 @@ type WebhookReceiver interface {
 	Receive(context.Context, *http.Request) ([]byte, *WebhookError)
 }
 
-//WebhookTransformation is an interface that defines methods for altering (transforming) the body of a (webhook) message after receipt.
+// WebhookTransformation is an interface that defines methods for altering (transforming) the body of a (webhook) message after receipt.
 type WebhookTransformation interface {
 	// Transforms() alters the body of a (webhook) message (according to rules defined by the package implementing the `WebhookTransformation` interface).
 	Transform(context.Context, []byte) ([]byte, *WebhookError)
 }
 
-//WebhookDispatcher is an interface that defines methods for relaying the body of a (webhook) message after it has been transformed.
+// WebhookDispatcher is an interface that defines methods for relaying the body of a (webhook) message after it has been transformed.
 type WebhookDispatcher interface {
 	// Dispatch() relays the body of a message (according to rules defined defined by the package implementing the `WebhookDispatcher` interface).
 	Dispatch(context.Context, []byte) *WebhookError
