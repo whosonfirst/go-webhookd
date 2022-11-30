@@ -248,13 +248,17 @@ func (d *WebhookDaemon) HandlerFuncWithLogger(logger *log.Logger) (http.HandlerF
 		// not an error, for example when github sends a ping message
 		// (20190212/thisisaaronland)
 
-		if err != nil && err.Code == -1 {
-			return
-		}
-
 		if err != nil {
-			http.Error(rsp, err.Error(), err.Code)
-			return
+
+			switch err.Code {
+			case webhookd.UnhandledEvent, webhookd.HaltEvent:
+				logger.Printf("Receiver step (%T)  returned non-fatal error and exiting, %v", rcvr, err)
+				return
+			default:
+				logger.Printf("Receiver step (%T) failed, %v", rcvr, err)
+				http.Error(rsp, err.Error(), err.Code)
+				return
+			}
 		}
 
 		tb = time.Since(ta)
@@ -263,13 +267,21 @@ func (d *WebhookDaemon) HandlerFuncWithLogger(logger *log.Logger) (http.HandlerF
 
 		ta = time.Now()
 
-		for _, step := range wh.Transformations() {
+		for idx, step := range wh.Transformations() {
 
 			body, err = step.Transform(ctx, body)
 
 			if err != nil {
-				http.Error(rsp, err.Error(), err.Code)
-				return
+
+				switch err.Code {
+				case webhookd.UnhandledEvent, webhookd.HaltEvent:
+					logger.Printf("Transformation step (%T) at offset %d returned non-fatal error and exiting, %v", step, idx, err)
+					return
+				default:
+					logger.Printf("Transformation step (%T) at offset %d failed, %v", step, idx, err)
+					http.Error(rsp, err.Error(), err.Code)
+					return
+				}
 			}
 
 			// check to see if there is anything left the transformation
@@ -287,22 +299,29 @@ func (d *WebhookDaemon) HandlerFuncWithLogger(logger *log.Logger) (http.HandlerF
 		wg := new(sync.WaitGroup)
 		ch := make(chan *webhookd.WebhookError)
 
-		for _, d := range wh.Dispatchers() {
+		for idx, d := range wh.Dispatchers() {
 
 			wg.Add(1)
 
-			go func(d webhookd.WebhookDispatcher, body []byte) {
+			go func(idx int, d webhookd.WebhookDispatcher, body []byte) {
 
 				defer wg.Done()
 
 				err = d.Dispatch(ctx, body)
 
 				if err != nil {
-					logger.Printf("FAILED TO DISPATCH W/ %T, %v\n", d, err)
-					ch <- err
+
+					switch err.Code {
+					case webhookd.UnhandledEvent, webhookd.HaltEvent:
+						logger.Printf("Dispatch step (%T) at offset %d returned non-fatal error and exiting, %v", d, idx, err)
+						return
+					default:
+						logger.Printf("Dispatch step (%T) at offset %d failed, %v", d, idx, err)
+						ch <- err
+					}
 				}
 
-			}(d, body)
+			}(idx, d, body)
 		}
 
 		// https://github.com/whosonfirst/go-webhookd/issues/14

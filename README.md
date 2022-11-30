@@ -16,10 +16,10 @@ In between (receivers and dispatchers) are an optional chain of transformations 
 
 ## Install
 
-You will need to have both `Go` (specifically version [1.16](https://golang.org/dl) or higher) and the `make` programs installed on your computer. Assuming you do just type:
+You will need to have both `Go` (specifically version [1.18](https://golang.org/dl) or higher) and the `make` programs installed on your computer. Assuming you do just type:
 
 ```
-$ > make cli
+$> make cli
 go build -mod vendor -o bin/webhookd cmd/webhookd/main.go
 go build -mod vendor -o bin/webhookd-generate-hook cmd/webhookd-generate-hook/main.go
 go build -mod vendor -o bin/webhookd-flatten-config cmd/webhookd-flatten-config/main.go
@@ -27,44 +27,6 @@ go build -mod vendor -o bin/webhookd-inflate-config cmd/webhookd-inflate-config/
 ```
 
 All of this package's dependencies are bundled with the code in the `vendor` directory.
-
-## Important
-
-`whosonfirst/go-webhookd/v3` does not introduce any _new_ functionality relative to `whosonfirst/go-webhookd/v2` but no longer comes with support for external platforms (GitHub, Slack, etc.) enabled by default. This functionality has been moved in to a number of separate `go-webhookd-{PLATFORM}` packages. This was done to make developing and adding custom receivers, transformations and dispatchers easier and modular.
-
-## Upgrading from `whosonfirst/go-webhookd/v2` 
-
-You will need to add the relevant packages to your `cmd/webhookd/main.go` program. For example if your `webhookd` config file defines a GitHub receiver, a GitHub transformation and an AWS dispatcher you would need to import the [go-webhookd-github](https://github.com/whosonfirst/go-webhookd-github) and [go-webhookd-aws](https://github.com/whosonfirst/go-webhookd-aws) packages. Here's an abbreviated example in code, with error handling removed for the sake of brevity:
-
-```
-package main
-
-import (
-	"context"
-	"github.com/sfomuseum/go-flags/flagset"
-	"github.com/whosonfirst/go-webhookd/v3/config"
-	"github.com/whosonfirst/go-webhookd/v3/daemon"
-	_ "github.com/whosonfirst/go-webhookd-aws"
-	_ "github.com/whosonfirst/go-webhookd-github"		
-	"log"
-	"os"
-)
-
-func main() {
-
-	fs := flagset.NewFlagSet("webhooks")
-	config_uri := fs.String("config-uri", "", "A valid Go Cloud runtimevar URI representing your webhookd config.")
-
-	flagset.Parse(fs)
-
-	ctx := context.Background()
-	cfg, _ := config.NewConfigFromURI(ctx, *config_uri)
-
-	wh_daemon, _ := daemon.NewWebhookDaemonFromConfig(ctx, cfg)
-	wh_daemon.Start(ctx)
-}
-
-```
 
 ## Usage
 
@@ -382,6 +344,10 @@ The `Null` dispatcher will send messages in to the vortex, never to be seen agai
 null://
 ```
 
+## Halting a `webhookd` processing flow
+
+As of `go-webhookd` v3.2.0 it is possible to "halt" a processing flow in mid-stream. This occurs is a receiver or transformation returns a `webhookd.WebhookError` with `Code` property whose value is `webhookd.HaltEvent`. These errors are treated as non-fatal but are treated as a signal to end processing and return immediately. Support for `webhookd.HaltEvent` in dispatchers is also enabled but they do not stop processing since dispatchers are invoked asynchronously.
+
 ## Testing
 
 In advance of proper tests. In a terminal start `webhookd` like this:
@@ -421,6 +387,42 @@ e3a18d4de60a5e50ca78ca1733238735ddfaef4c,sfomuseum-data-flights-2020-05,data/171
 * [Add a general purpose "shared-secret/signed-message" receiver](https://github.com/whosonfirst/go-webhookd/issues/5)
 * [Restrict access to receivers by host/IP](https://github.com/whosonfirst/go-webhookd/issues/6)
 * Better logging
+
+## Upgrading from `whosonfirst/go-webhookd/v2` 
+
+`whosonfirst/go-webhookd/v3` does not introduce any _new_ functionality relative to `whosonfirst/go-webhookd/v2` but no longer comes with support for external platforms (GitHub, Slack, etc.) enabled by default. This functionality has been moved in to a number of separate `go-webhookd-{PLATFORM}` packages. This was done to make developing and adding custom receivers, transformations and dispatchers easier and modular.
+
+You will need to add the relevant packages to your `cmd/webhookd/main.go` program. For example if your `webhookd` config file defines a GitHub receiver, a GitHub transformation and an AWS dispatcher you would need to import the [go-webhookd-github](https://github.com/whosonfirst/go-webhookd-github) and [go-webhookd-aws](https://github.com/whosonfirst/go-webhookd-aws) packages. Here's an abbreviated example in code, with error handling removed for the sake of brevity:
+
+```
+package main
+
+import (
+	"context"
+	"github.com/sfomuseum/go-flags/flagset"
+	"github.com/whosonfirst/go-webhookd/v3/config"
+	"github.com/whosonfirst/go-webhookd/v3/daemon"
+	_ "github.com/whosonfirst/go-webhookd-aws"
+	_ "github.com/whosonfirst/go-webhookd-github"		
+	"log"
+	"os"
+)
+
+func main() {
+
+	fs := flagset.NewFlagSet("webhooks")
+	config_uri := fs.String("config-uri", "", "A valid Go Cloud runtimevar URI representing your webhookd config.")
+
+	flagset.Parse(fs)
+
+	ctx := context.Background()
+	cfg, _ := config.NewConfigFromURI(ctx, *config_uri)
+
+	wh_daemon, _ := daemon.NewWebhookDaemonFromConfig(ctx, cfg)
+	wh_daemon.Start(ctx)
+}
+
+```
 
 ## See also
 

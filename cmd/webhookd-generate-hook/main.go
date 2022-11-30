@@ -47,7 +47,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Usage:\n\t %s [options]\n", os.Args[0])
 		flag.PrintDefaults()
 	}
-	
+
 	flag.Parse()
 
 	fmt.Println(RandomString(*length))

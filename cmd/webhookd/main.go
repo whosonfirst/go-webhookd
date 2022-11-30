@@ -22,7 +22,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Usage:\n\t %s [options]\n", os.Args[0])
 		fs.PrintDefaults()
 	}
-	
+
 	flagset.Parse(fs)
 
 	err := flagset.SetFlagsFromEnvVarsWithFeedback(fs, "WEBHOOKD", false)

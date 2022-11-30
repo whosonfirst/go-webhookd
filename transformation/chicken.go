@@ -28,7 +28,7 @@ type ChickenTransformation struct {
 
 // NewInsecureTransformation returns a new `ChickenTransformation` instance configured by 'uri' in the form of:
 //
-// 	chicken://{LANGUAGE_TAG}?{PARAMETERS}
+//	chicken://{LANGUAGE_TAG}?{PARAMETERS}
 //
 // Where {LANGUAGE_TAG} is any valid language tag supported by the `aaronland/go-chicken` package. Valid {PARAMETERS} are:
 // * `clucking={BOOLEAN}` A boolean flag to indicate whether messages should be transformed in the form of chicken noises.
