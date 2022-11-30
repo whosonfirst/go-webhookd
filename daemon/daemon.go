@@ -310,8 +310,15 @@ func (d *WebhookDaemon) HandlerFuncWithLogger(logger *log.Logger) (http.HandlerF
 				err = d.Dispatch(ctx, body)
 
 				if err != nil {
-					logger.Printf("Dispatch step (%T) at offset %d failed, %v", d, idx, err)
-					ch <- err
+
+					switch err.Code {
+					case webhookd.UnhandledEvent, webhookd.HaltEvent:
+						logger.Printf("Dispatch step (%T) at offset %d returned non-fatal error and exiting, %v", d, idx, err)
+						return
+					default:
+						logger.Printf("Dispatch step (%T) at offset %d failed, %v", d, idx, err)
+						ch <- err
+					}
 				}
 
 			}(idx, d, body)
