@@ -21,3 +21,8 @@ type WebhookError struct {
 func (e WebhookError) Error() string {
 	return fmt.Sprintf("%d %s", e.Code, e.Message)
 }
+
+// String returns a string representation of 'e'.
+func (e WebhookError) String() string {
+	return e.Error()
+}
