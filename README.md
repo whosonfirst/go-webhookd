@@ -403,13 +403,14 @@ package main
 
 import (
 	"context"
+	"log"
+	"os"
+
 	"github.com/sfomuseum/go-flags/flagset"
 	"github.com/whosonfirst/go-webhookd/v3/config"
 	"github.com/whosonfirst/go-webhookd/v3/daemon"
 	_ "github.com/whosonfirst/go-webhookd-aws"
 	_ "github.com/whosonfirst/go-webhookd-github"		
-	"log"
-	"os"
 )
 
 func main() {
@@ -438,4 +439,5 @@ func main() {
 ## Related
 
 * https://github.com/aaronland/go-http-server
+* https://github.com/sfomuseum/runtimevar
 * https://gocloud.dev/howto/runtimevar
