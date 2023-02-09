@@ -4,10 +4,11 @@ package receiver
 import (
 	"context"
 	"fmt"
-	"github.com/aaronland/go-roster"
-	"github.com/whosonfirst/go-webhookd/v3"
 	"net/url"
 	"sort"
+
+	"github.com/aaronland/go-roster"
+	"github.com/whosonfirst/go-webhookd/v3"	
 )
 
 // receiver is a `aaronland/go-roster.Roster` instance used to maintain a list of registered `webhookd.WebhookReceiver` initialization functions.

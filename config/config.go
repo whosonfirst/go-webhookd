@@ -5,12 +5,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"gocloud.dev/runtimevar"
-	_ "gocloud.dev/runtimevar/constantvar"
-	_ "gocloud.dev/runtimevar/filevar"
 	"io"
 	_ "log"
 	"strings"
+
+	"github.com/sfomuseum/runtimevar"
 )
 
 // type WebhookConfig is a struct containing configuration information for a `webhookd` instance.
@@ -51,19 +50,12 @@ type WebhookWebhooksConfig struct {
 // a valid `gocloud.dev/runtimevar` URI. The value of that URI is expected to be a JSON-encoded `WebhookConfig` string.
 func NewConfigFromURI(ctx context.Context, uri string) (*WebhookConfig, error) {
 
-	v, err := runtimevar.OpenVariable(ctx, uri)
+	str_cfg, err := runtimevar.StringVar(ctx, uri)
 
 	if err != nil {
 		return nil, fmt.Errorf("Failed to open config URI, %w", err)
 	}
 
-	latest, err := v.Latest(ctx)
-
-	if err != nil {
-		return nil, fmt.Errorf("Failed to determine latest value for config URI, %w", err)
-	}
-
-	str_cfg := latest.Value.(string)
 	cfg_fh := strings.NewReader(str_cfg)
 
 	return NewConfigFromReader(ctx, cfg_fh)
