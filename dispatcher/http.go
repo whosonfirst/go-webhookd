@@ -1,7 +1,6 @@
 package dispatcher
 
 import (
-	"bytes"
 	"context"
 	"log"
 	"net/http"
@@ -52,9 +51,9 @@ func NewHTTPDispatcherWithLogger(ctx context.Context, logger *log.Logger) (webho
 // Dispatch sends 'body' to the `log.Logger` that 'd' has been instantiated with.
 func (d *HTTPDispatcher) Dispatch(ctx context.Context, body []byte) *webhookd.WebhookError {
 
-	d.logger.Println("POST:", d.url, "forwarding body: ", string(body))
+	d.logger.Println("GET:", d.url, "forwarding body: ", string(body))
 
-	resp, err := http.Post(d.url, "application/json", bytes.NewBuffer(body))
+	resp, err := http.Get(d.url)
 	if err != nil {
 		d.logger.Println(err)
 	}
