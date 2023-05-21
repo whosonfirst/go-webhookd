@@ -1,6 +1,7 @@
 package dispatcher
 
 import (
+	"bytes"
 	"context"
 	"log"
 	"net/http"
@@ -25,6 +26,8 @@ type HTTPDispatcher struct {
 	logger *log.Logger
 	// url to send the message to
 	url string
+	// method to use when sending the message
+	method string
 }
 
 // NewHTTPDispatcher returns a new `HTTPDispatcher` instance configured by 'uri' in the form of:
@@ -34,6 +37,7 @@ type HTTPDispatcher struct {
 // Messasges are dispatched to the default `HTTP.Default()` instance.
 func NewHTTPDispatcher(ctx context.Context, uri string) (webhookd.WebhookDispatcher, error) {
 	logger := log.Default()
+	ctx = context.WithValue(ctx, ctxMethod{}, "POST")
 	return NewHTTPDispatcherWithLogger(ctx, logger)
 }
 
@@ -43,6 +47,7 @@ func NewHTTPDispatcherWithLogger(ctx context.Context, logger *log.Logger) (webho
 	d := HTTPDispatcher{
 		logger: logger,
 		url:    ctx.Value(ctxUrl{}).(string),
+		method: ctx.Value(ctxMethod{}).(string),
 	}
 
 	return &d, nil
@@ -50,10 +55,17 @@ func NewHTTPDispatcherWithLogger(ctx context.Context, logger *log.Logger) (webho
 
 // Dispatch sends 'body' to the `log.Logger` that 'd' has been instantiated with.
 func (d *HTTPDispatcher) Dispatch(ctx context.Context, body []byte) *webhookd.WebhookError {
+	var resp *http.Response
+	var err error
 
-	d.logger.Println("GET:", d.url, "forwarding body: ", string(body))
+	if d.method == "GET" {
+		d.logger.Println("GET:", d.url, "not forwarding body: ", string(body))
+		resp, err = http.Get(d.url)
+	} else {
+		d.logger.Println("POST:", d.url, "forwarding body: ", string(body))
+		resp, err = http.Post(d.url, "application/json", bytes.NewBuffer(body))
+	}
 
-	resp, err := http.Get(d.url)
 	if err != nil {
 		d.logger.Println(err)
 	}

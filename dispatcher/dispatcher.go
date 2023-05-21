@@ -17,7 +17,11 @@ var dispatchers roster.Roster
 // DispatcherInitializationFunc is a function used to initialize an implementation of the `webhookd.WebhookDispatcher` interface.
 type DispatcherInitializationFunc func(ctx context.Context, uri string) (webhookd.WebhookDispatcher, error)
 
+// ctxUrl is a `context.Context` key used to store the URL that a `HTTPDispatcher` instance is configured to send messages to.
 type ctxUrl struct{}
+
+// ctxMethod is a `context.Context` key used to store the HTTP method that a `HTTPDispatcher` instance is configured to use.
+type ctxMethod struct{}
 
 // NewDispatcher() returns a new `webhookd.WebhookDispatcher` instance derived from 'uri'. The semantics of and requirements for
 // 'uri' as specific to the package implementing the interface.
