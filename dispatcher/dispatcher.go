@@ -38,7 +38,11 @@ func NewDispatcher(ctx context.Context, uri string) (webhookd.WebhookDispatcher,
 	scheme := parsed.Scheme
 
 	i, err := dispatchers.Driver(ctx, scheme)
-	ctx = context.WithValue(ctx, ctxUrl{}, fmt.Sprintf("%s://%s%s", scheme, parsed.Host, parsed.Path))
+	if len(parsed.Query()) > 0 {
+		ctx = context.WithValue(ctx, ctxUrl{}, fmt.Sprintf("%s://%s%s?%s", scheme, parsed.Host, parsed.Path, parsed.RawQuery))
+	} else {
+		ctx = context.WithValue(ctx, ctxUrl{}, fmt.Sprintf("%s://%s%s", scheme, parsed.Host, parsed.Path))
+	}
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to find initialization function for '%s', %w", scheme, err)
