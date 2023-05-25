@@ -20,6 +20,11 @@ func init() {
 		panic(err)
 	}
 
+	err = RegisterDispatcher(ctx, "http-2", NewHTTPDispatcher)
+	if err != nil {
+		panic(err)
+	}
+
 	err = RegisterDispatcher(ctx, "https", NewHTTPDispatcher)
 	if err != nil {
 		panic(err)
@@ -98,10 +103,22 @@ func (d *HTTPDispatcher) Dispatch(ctx context.Context, body []byte) *webhookd.We
 	if d.method == GET {
 		d.logger.Println("Dispatching GET:", d.url.String(), "not forwarding body: ", string(body))
 		resp, err = d.client.Get(d.url.String())
+		fmt.Print(resp, "GET")
 	} else {
 		d.logger.Println("Dispatching POST:", d.url.String(), "forwarding body: ", string(body))
 		resp, err = d.client.Post(d.url.String(), "application/json", bytes.NewBuffer(body))
+		fmt.Print(resp, "POST")
 	}
+
+	// if we get a nil response the destination is unreachable
+	if resp == nil {
+		code := http.StatusNotFound
+		message := "Failed to dispatch message"
+		whErr := &webhookd.WebhookError{Code: code, Message: message}
+		d.logger.Println(err)
+		return whErr
+	}
+
 	defer resp.Body.Close()
 
 	if err != nil {
