@@ -3,27 +3,26 @@ package dispatcher
 import (
 	"bytes"
 	"context"
-	"fmt"
+	"io"
+	"io/ioutil"
 	"log"
+	"net/http"
+	"net/url"
 	"strings"
 	"testing"
 )
 
-func TestNewHTTPDispatcher(t *testing.T) {
+type MockHTTPClient struct {
+	Resp  *http.Response
+	Error error
+}
 
-	ctx := context.Background()
+func (m *MockHTTPClient) Get(url string) (*http.Response, error) {
+	return m.Resp, m.Error
+}
 
-	d, err := NewDispatcher(ctx, "http://")
-
-	if err != nil {
-		t.Fatalf("Failed to create new dispatcher, %v", err)
-	}
-
-	err2 := d.Dispatch(ctx, []byte("hello world"))
-
-	if err2 != nil {
-		t.Fatalf("Failed to dispatch message, %v", err2)
-	}
+func (m *MockHTTPClient) Post(url string, contentType string, body io.Reader) (*http.Response, error) {
+	return m.Resp, m.Error
 }
 
 func TestNewHTTPDispatcherWithLogger(t *testing.T) {
@@ -34,11 +33,27 @@ func TestNewHTTPDispatcherWithLogger(t *testing.T) {
 
 	logger := log.New(&buf, "testing ", log.Lshortfile)
 
-	d, err := NewLogDispatcherWithLogger(ctx, logger)
-	fmt.Print("http run")
+	parsed, err := url.Parse("http://testing?method=GET")
+	if err != nil {
+		t.Fatalf("Failed to parse url, %v", err)
+	}
+
+	// Create a mock response
+	mockResponse := &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       ioutil.NopCloser(strings.NewReader("Mock response body")),
+	}
+
+	// Create a mock HTTP client with the desired behavior
+	mockClient := &MockHTTPClient{
+		Resp:  mockResponse,
+		Error: nil,
+	}
+
+	d, err := NewHTTPDispatcherWithLogger(ctx, logger, *parsed, mockClient)
 
 	if err != nil {
-		t.Fatalf("Failed to create new dispatcher with logger, %v", err)
+		t.Fatalf("Failed to create new http dispatcher with logger, %v", err)
 	}
 
 	err2 := d.Dispatch(ctx, []byte("hello world"))
@@ -47,7 +62,7 @@ func TestNewHTTPDispatcherWithLogger(t *testing.T) {
 		t.Fatalf("Failed to dispatch message, %v", err2)
 	}
 
-	expected := "testing log.go:50: hello world"
+	expected := "testing http.go:76: Parsed dispatcher URL: http://testing?method=GET\ntesting http.go:99: Dispatching GET: http://testing?method=GET not forwarding body:  hello world"
 	output := strings.TrimSpace(buf.String())
 
 	if output != expected {

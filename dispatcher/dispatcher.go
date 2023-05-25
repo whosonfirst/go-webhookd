@@ -17,12 +17,6 @@ var dispatchers roster.Roster
 // DispatcherInitializationFunc is a function used to initialize an implementation of the `webhookd.WebhookDispatcher` interface.
 type DispatcherInitializationFunc func(ctx context.Context, uri string) (webhookd.WebhookDispatcher, error)
 
-// ctxUrl is a `context.Context` key used to store the URL that a `HTTPDispatcher` instance is configured to send messages to.
-type ctxUrl struct{}
-
-// ctxMethod is a `context.Context` key used to store the HTTP method that a `HTTPDispatcher` instance is configured to use.
-type ctxMethod struct{}
-
 // NewDispatcher() returns a new `webhookd.WebhookDispatcher` instance derived from 'uri'. The semantics of and requirements for
 // 'uri' as specific to the package implementing the interface.
 func NewDispatcher(ctx context.Context, uri string) (webhookd.WebhookDispatcher, error) {
@@ -30,26 +24,21 @@ func NewDispatcher(ctx context.Context, uri string) (webhookd.WebhookDispatcher,
 	err := ensureDispatcherRoster()
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to ensure dispatcher roster, %w", err)
+		return nil, fmt.Errorf("Failed to ensure dispatcher roster, %w", err)
 	}
 
 	parsed, err := url.Parse(uri)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse URI, %w", err)
+		return nil, fmt.Errorf("Failed to parse URI, %w", err)
 	}
 
 	scheme := parsed.Scheme
 
 	i, err := dispatchers.Driver(ctx, scheme)
-	if len(parsed.Query()) > 0 {
-		ctx = context.WithValue(ctx, ctxUrl{}, fmt.Sprintf("%s://%s%s?%s", scheme, parsed.Host, parsed.Path, parsed.RawQuery))
-	} else {
-		ctx = context.WithValue(ctx, ctxUrl{}, fmt.Sprintf("%s://%s%s", scheme, parsed.Host, parsed.Path))
-	}
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to find initialization function for '%s', %w", scheme, err)
+		return nil, fmt.Errorf("Failed to find initialization function for '%s', %w", scheme, err)
 	}
 
 	init_func := i.(DispatcherInitializationFunc)
@@ -62,7 +51,7 @@ func RegisterDispatcher(ctx context.Context, scheme string, init_func Dispatcher
 	err := ensureDispatcherRoster()
 
 	if err != nil {
-		return fmt.Errorf("failed to ensure dispatcher roster, %w", err)
+		return fmt.Errorf("Failed to ensure dispatcher roster, %w", err)
 	}
 
 	return dispatchers.Register(ctx, scheme, init_func)
@@ -77,7 +66,7 @@ func ensureDispatcherRoster() error {
 		r, err := roster.NewDefaultRoster()
 
 		if err != nil {
-			return fmt.Errorf("failed to create new roster, %w", err)
+			return fmt.Errorf("Failed to create new roster, %w", err)
 		}
 
 		dispatchers = r
