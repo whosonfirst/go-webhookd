@@ -25,7 +25,7 @@ func (m *MockHTTPClient) Post(url string, contentType string, body io.Reader) (*
 	return m.Resp, m.Error
 }
 
-func TestNewHTTPDispatcherWithLogger(t *testing.T) {
+func TestNewHTTPDispatcherWithOptions(t *testing.T) {
 
 	ctx := context.Background()
 
@@ -50,7 +50,7 @@ func TestNewHTTPDispatcherWithLogger(t *testing.T) {
 		Error: nil,
 	}
 
-	d, err := NewHTTPDispatcherWithLogger(ctx, logger, *parsed, mockClient)
+	d, err := NewHTTPDispatcherWithOptions(ctx, &HTTPDispatcherOptions{logger, *parsed, mockClient})
 
 	if err != nil {
 		t.Fatalf("Failed to create new http dispatcher with logger, %v", err)
@@ -62,7 +62,7 @@ func TestNewHTTPDispatcherWithLogger(t *testing.T) {
 		t.Fatalf("Failed to dispatch message, %v", err2)
 	}
 
-	expected := "testing http.go:76: Parsed dispatcher URL: http://testing?method=GET\ntesting http.go:99: Dispatching GET: http://testing?method=GET not forwarding body:  hello world"
+	expected := "testing http.go:89: Parsed dispatcher URL: http://testing?method=GET\ntesting http.go:113: Dispatching GET: http://testing?method=GET not forwarding body:  hello world"
 	output := strings.TrimSpace(buf.String())
 
 	if output != expected {

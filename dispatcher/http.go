@@ -49,6 +49,16 @@ type HTTPClient interface {
 	Post(url string, contentType string, body io.Reader) (*http.Response, error)
 }
 
+// HTTPDispatcherOptions is a struct containing the options for `NewHTTPDispatcherWithOptions`.
+type HTTPDispatcherOptions struct {
+	// Logger is the `log.Logger` instance associated with the dispatcher.
+	Logger *log.Logger
+	// URL to send the message to
+	URL url.URL
+	// Client to use when sending the message
+	Client HTTPClient
+}
+
 // NewHTTPDispatcher returns a new `HTTPDispatcher` instance configured by 'uri' in the form of:
 //
 //	http://
@@ -64,27 +74,31 @@ func NewHTTPDispatcher(ctx context.Context, uri string) (webhookd.WebhookDispatc
 		return nil, fmt.Errorf("Failed to parse URI, %w", err)
 	}
 
-	return NewHTTPDispatcherWithLogger(ctx, logger, *parsed, &http.Client{})
+	opts := HTTPDispatcherOptions{
+		Logger: logger,
+		URL:    *parsed,
+		Client: &http.Client{},
+	}
+
+	return NewHTTPDispatcherWithOptions(ctx, &opts)
 }
 
 // NewHTTPDispatcher returns a new `HTTPDispatcher` instance that dispatches messages to `http.Get` or `http.Post`.
-func NewHTTPDispatcherWithLogger(ctx context.Context, logger *log.Logger, url url.URL, client HTTPClient) (webhookd.WebhookDispatcher, error) {
-	display := fmt.Sprintf("%s://%s%s", url.Scheme, url.Host, url.Path)
-	if len(url.Query()) > 0 {
-		display += fmt.Sprintf("?%s", url.RawQuery)
-	}
-	logger.Print("Parsed dispatcher URL: ", display)
+func NewHTTPDispatcherWithOptions(ctx context.Context, opts *HTTPDispatcherOptions) (webhookd.WebhookDispatcher, error) {
 
-	method := url.Query().Get("method")
+	opts.Logger.Print("Parsed dispatcher URL: ", opts.URL.String())
+
+	// check the method and default to POST
+	method := opts.URL.Query().Get("method")
 	if method != GET {
 		method = POST
 	}
 
 	d := HTTPDispatcher{
-		logger: logger,
-		url:    url,
+		logger: opts.Logger,
+		url:    opts.URL,
 		method: method,
-		client: client,
+		client: opts.Client,
 	}
 
 	return &d, nil
@@ -111,6 +125,8 @@ func (d *HTTPDispatcher) Dispatch(ctx context.Context, body []byte) *webhookd.We
 		return whErr
 	}
 
+	defer resp.Body.Close()
+
 	// if we get any other status code than 200
 	if resp.StatusCode != http.StatusOK {
 		code := resp.StatusCode
@@ -118,8 +134,6 @@ func (d *HTTPDispatcher) Dispatch(ctx context.Context, body []byte) *webhookd.We
 		whErr := &webhookd.WebhookError{Code: code, Message: message}
 		return whErr
 	}
-
-	defer resp.Body.Close()
 
 	if err != nil {
 		code := http.StatusInternalServerError
