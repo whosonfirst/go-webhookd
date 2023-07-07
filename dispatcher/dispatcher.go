@@ -4,10 +4,11 @@ package dispatcher
 import (
 	"context"
 	"fmt"
-	"github.com/aaronland/go-roster"
-	"github.com/whosonfirst/go-webhookd/v3"
 	"net/url"
 	"sort"
+
+	"github.com/aaronland/go-roster"
+	"github.com/whosonfirst/go-webhookd/v3"
 )
 
 // dispatcher is a `aaronland/go-roster.Roster` instance used to maintain a list of registered `webhookd.WebhookDispatcher` initialization functions.
