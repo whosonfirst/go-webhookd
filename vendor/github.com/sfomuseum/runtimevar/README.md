@@ -15,6 +15,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	
 	"github.com/sfomuseum/runtimevar"
 	_ "gocloud.dev/runtimevar/awsparamstore"
 	_ "gocloud.dev/runtimevar/constantvar"
@@ -36,7 +37,19 @@ func main() {
 
 ## Tools
 
+```
+$> make cli
+go build -mod vendor -ldflags="-s -w" -o bin/runtimevar cmd/runtimevar/main.go
+```
+
 ### runtimevar
+
+```
+$> ./bin/runtimevar -h
+Usage of ./bin/runtimevar:
+  -timeout int
+    	The maximum number of second in which a variable can be resolved. If 0 no timeout is applied.
+```
 
 ```
 $> go run cmd/runtimevar/main.go 'constant://?val=hello+world'
@@ -50,7 +63,7 @@ The following Go Cloud `runtimevar` services are supported by the runtimevar too
 
 ### AWS Parameter Store
 
-It is possible to load runtime variables from AWS Parameter Store using [aaronland/go-aws-session](https://github.com/aaronland/go-aws-session) credential strings. For example:
+It is possible to load runtime variables from AWS Parameter Store using [aaronland/go-aws-auth](https://github.com/aaronland/go-aws-auth) credential strings. For example:
 
 ```
 $> go run cmd/runtimevar/main.go 'awsparamstore://hello-world?region=us-west-2&credentials=session'
@@ -71,4 +84,4 @@ Credentials for AWS sessions are defined as string labels. They are:
 ## See also
 
 * https://gocloud.dev/howto/runtimevar
-* https://github.com/aaronland/go-aws-session
+* https://github.com/aaronland/go-aws-auth

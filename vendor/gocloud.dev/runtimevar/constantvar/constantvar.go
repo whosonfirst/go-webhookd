@@ -13,7 +13,7 @@
 // limitations under the License.
 
 // Package constantvar provides a runtimevar implementation with Variables
-// that never change. Use New, NewBytes, or NewError to construct a
+// that never change. Use New, NewBytes, NewFromEnv, or NewError to construct a
 // *runtimevar.Variable.
 //
 // # URLs
@@ -32,6 +32,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"os"
 	"time"
 
 	"gocloud.dev/gcerrors"
@@ -53,12 +54,14 @@ const Scheme = "constant"
 // The following URL parameters are supported:
 //   - val: The value to use for the constant Variable. The bytes from val
 //     are passed to NewBytes.
+//   - envvar: The name of an environment variable to read the value from.
 //   - err: The error to use for the constant Variable. A new error is created
 //     using errors.New and passed to NewError.
 //   - decoder: The decoder to use. Defaults to runtimevar.BytesDecoder.
 //     See runtimevar.DecoderByName for supported values.
 //
-// If both "err" and "val" are provided, "val" is ignored.
+// If multiple of "val", "envvar", or "err" are provided, "err" wins, then "envvar",
+// then "val".
 type URLOpener struct {
 	// Decoder specifies the decoder to use if one is not specified in the URL.
 	// Defaults to runtimevar.BytesDecoder.
@@ -72,6 +75,9 @@ func (o *URLOpener) OpenVariableURL(ctx context.Context, u *url.URL) (*runtimeva
 
 	val := q.Get("val")
 	q.Del("val")
+
+	envvar := q.Get("envvar")
+	q.Del("envvar")
 
 	errVal := q.Get("err")
 	q.Del("err")
@@ -89,13 +95,16 @@ func (o *URLOpener) OpenVariableURL(ctx context.Context, u *url.URL) (*runtimeva
 	if errVal != "" {
 		return NewError(errors.New(errVal)), nil
 	}
+	if envvar != "" {
+		return NewFromEnv(envvar, decoder), nil
+	}
 	return NewBytes([]byte(val), decoder), nil
 }
 
 var errNotExist = errors.New("variable does not exist")
 
 // New constructs a *runtimevar.Variable holding value.
-func New(value interface{}) *runtimevar.Variable {
+func New(value any) *runtimevar.Variable {
 	return runtimevar.New(&watcher{value: value, t: time.Now()})
 }
 
@@ -104,6 +113,22 @@ func New(value interface{}) *runtimevar.Variable {
 // constructs a runtimevar.Variable that always fails with the error.
 func NewBytes(b []byte, decoder *runtimevar.Decoder) *runtimevar.Variable {
 	value, err := decoder.Decode(context.Background(), b)
+	if err != nil {
+		return NewError(err)
+	}
+	return New(value)
+}
+
+// NewFromEnv reads an environment variable and uses decoder to decode it.
+// If the decode succeeds, it constructs a *runtimevar.Variable holding the
+// decoded value. If the decode fails, it constructs a runtimevar.Variable
+// that always fails with the error.
+// Note that the value of the constantvar is frozen at initialization time;
+// it does not get a new value if the underlying environment variable value
+// changes.
+func NewFromEnv(envVarName string, decoder *runtimevar.Decoder) *runtimevar.Variable {
+	val := os.Getenv(envVarName)
+	value, err := decoder.Decode(context.Background(), []byte(val))
 	if err != nil {
 		return NewError(err)
 	}
@@ -119,13 +144,13 @@ func NewError(err error) *runtimevar.Variable {
 
 // watcher implements driver.Watcher and driver.State.
 type watcher struct {
-	value interface{}
+	value any
 	err   error
 	t     time.Time
 }
 
 // Value implements driver.State.Value.
-func (w *watcher) Value() (interface{}, error) {
+func (w *watcher) Value() (any, error) {
 	return w.value, w.err
 }
 
@@ -135,7 +160,7 @@ func (w *watcher) UpdateTime() time.Time {
 }
 
 // As implements driver.State.As.
-func (w *watcher) As(i interface{}) bool {
+func (w *watcher) As(i any) bool {
 	return false
 }
 
@@ -155,7 +180,7 @@ func (w *watcher) WatchVariable(ctx context.Context, prev driver.State) (driver.
 func (*watcher) Close() error { return nil }
 
 // ErrorAs implements driver.ErrorAs.
-func (*watcher) ErrorAs(err error, i interface{}) bool { return false }
+func (*watcher) ErrorAs(err error, i any) bool { return false }
 
 // ErrorCode implements driver.ErrorCode
 func (*watcher) ErrorCode(err error) gcerrors.ErrorCode {

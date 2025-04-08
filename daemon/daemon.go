@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -12,7 +13,6 @@ import (
 	"sync"
 	"time"
 
-	aa_log "github.com/aaronland/go-log/v2"	
 	"github.com/aaronland/go-http-server"
 	"github.com/whosonfirst/go-webhookd/v3"
 	"github.com/whosonfirst/go-webhookd/v3/config"
@@ -227,7 +227,7 @@ func (d *WebhookDaemon) HandlerFuncWithLogger(logger *log.Logger) (http.HandlerF
 		wh, ok := d.webhooks[endpoint]
 
 		if !ok {
-			aa_log.Warning(logger, "Endpoint not found, %s", endpoint)
+			slog.Warn("Endpoint not found", "endpoint", endpoint)
 			http.Error(rsp, "404 Not found", http.StatusNotFound)
 			return
 		}
