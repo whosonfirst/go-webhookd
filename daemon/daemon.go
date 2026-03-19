@@ -4,8 +4,7 @@ package daemon
 import (
 	"context"
 	"fmt"
-	"log"
-	"log/slog"
+	log_slog "log/slog"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -13,7 +12,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aaronland/go-http-server"
+	"github.com/aaronland/go-http/v4/server"
+	"github.com/aaronland/go-http/v4/slog"	
 	"github.com/whosonfirst/go-webhookd/v3"
 	"github.com/whosonfirst/go-webhookd/v3/config"
 	"github.com/whosonfirst/go-webhookd/v3/dispatcher"
@@ -207,16 +207,11 @@ func (d *WebhookDaemon) AddWebhook(ctx context.Context, wh webhook.Webhook) erro
 
 // HandlerFunc() returns a `http.HandlerFunc` that handles HTTP (webhook) requests and response for 'd'.
 func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
-	logger := log.Default()
-	return d.HandlerFuncWithLogger(logger)
-}
-
-// HandlerFuncWithLogger() returns a `http.HandlerFunc` that handles HTTP (webhook) requests and response for 'd'
-// logging events to 'logger'.
-func (d *WebhookDaemon) HandlerFuncWithLogger(logger *log.Logger) (http.HandlerFunc, error) {
 
 	handler := func(rsp http.ResponseWriter, req *http.Request) {
 
+		logger := slog.LoggerWithRequest(req, nil)
+		
 		ctx := req.Context()
 
 		ctx, cancel := context.WithCancel(ctx)
@@ -227,7 +222,7 @@ func (d *WebhookDaemon) HandlerFuncWithLogger(logger *log.Logger) (http.HandlerF
 		wh, ok := d.webhooks[endpoint]
 
 		if !ok {
-			slog.Warn("Endpoint not found", "endpoint", endpoint)
+			logger.Warn("Endpoint not found", "endpoint", endpoint)
 			http.Error(rsp, "404 Not found", http.StatusNotFound)
 			return
 		}
@@ -244,7 +239,8 @@ func (d *WebhookDaemon) HandlerFuncWithLogger(logger *log.Logger) (http.HandlerF
 		ta = time.Now()
 
 		rcvr := wh.Receiver()
-
+		logger = logger.With("receiver", fmt.Sprintf("%T", rcvr))
+		
 		body, err := rcvr.Receive(ctx, req)
 
 		// we use -1 to signal that this is an unhandled event but
@@ -255,10 +251,10 @@ func (d *WebhookDaemon) HandlerFuncWithLogger(logger *log.Logger) (http.HandlerF
 
 			switch err.Code {
 			case webhookd.UnhandledEvent, webhookd.HaltEvent:
-				aa_log.Info(logger, "Receiver step (%T)  returned non-fatal error and exiting, %v", rcvr, err)
+				logger.Info("Receiver step returned non-fatal error and exiting", "error", err)
 				return
 			default:
-				aa_log.Error(logger, "Receiver step (%T) failed, %v", rcvr, err)
+				logger.Error("Receiver step failed", "error", err)
 				http.Error(rsp, err.Error(), err.Code)
 				return
 			}
@@ -278,10 +274,10 @@ func (d *WebhookDaemon) HandlerFuncWithLogger(logger *log.Logger) (http.HandlerF
 
 				switch err.Code {
 				case webhookd.UnhandledEvent, webhookd.HaltEvent:
-					aa_log.Info(logger, "Transformation step (%T) at offset %d returned non-fatal error and exiting, %v", step, idx, err)
+					logger.Info("Transformation step at returned non-fatal error and exiting", "step", fmt.Sprintf("%T", step), "offset", idx, "error", err)
 					return
 				default:
-					aa_log.Error(logger, "Transformation step (%T) at offset %d failed, %v", step, idx, err)
+					logger.Error("Transformation step at failed", "step", fmt.Sprintf("%T", step), "offset", idx, "error", err)
 					http.Error(rsp, err.Error(), err.Code)
 					return
 				}
@@ -316,10 +312,10 @@ func (d *WebhookDaemon) HandlerFuncWithLogger(logger *log.Logger) (http.HandlerF
 
 					switch err.Code {
 					case webhookd.UnhandledEvent, webhookd.HaltEvent:
-						aa_log.Info(logger, "Dispatch step (%T) at offset %d returned non-fatal error and exiting, %v", d, idx, err)
+						logger.Info("Dispatch step returned non-fatal error and exiting", "step", fmt.Sprintf("%T", d), "offset", idx, "error", err)
 						return
 					default:
-						aa_log.Error(logger, "Dispatch step (%T) at offset %d failed, %v", d, idx, err)
+						logger.Error("Dispatch step failed", "step", fmt.Sprintf("%T", d), "offset", idx, "error", err)
 						ch <- err
 					}
 				}
@@ -354,10 +350,10 @@ func (d *WebhookDaemon) HandlerFuncWithLogger(logger *log.Logger) (http.HandlerF
 
 		t2 := time.Since(t1)
 
-		aa_log.Debug(logger, "Time to receive: %v", ttr)
-		aa_log.Debug(logger, "Time to transform: %v", ttt)
-		aa_log.Debug(logger, "Time to dispatch: %v", ttd)
-		aa_log.Debug(logger, "Time to process: %v", t2)		
+		logger.Debug("Time to receive", "time", ttr)
+		logger.Debug("Time to transform", "time", ttt)
+		logger.Debug("Time to dispatch", "time", ttd)
+		logger.Debug("Time to process", "time", t2)		
 		
 		rsp.Header().Set("X-Webhookd-Time-To-Receive", fmt.Sprintf("%v", ttr))
 		rsp.Header().Set("X-Webhookd-Time-To-Transform", fmt.Sprintf("%v", ttt))
@@ -384,14 +380,8 @@ func (d *WebhookDaemon) HandlerFuncWithLogger(logger *log.Logger) (http.HandlerF
 
 // Start() causes 'd' to listen for, and process, requests.
 func (d *WebhookDaemon) Start(ctx context.Context) error {
-	logger := log.Default()
-	return d.StartWithLogger(ctx, logger)
-}
 
-// StartWithLogger() causes 'd' to listen for, and process, requests logging events to 'logger'.
-func (d *WebhookDaemon) StartWithLogger(ctx context.Context, logger *log.Logger) error {
-
-	handler, err := d.HandlerFuncWithLogger(logger)
+	handler, err := d.HandlerFunc()
 
 	if err != nil {
 		return fmt.Errorf("Failed to create handler func, %w", err)
@@ -402,7 +392,7 @@ func (d *WebhookDaemon) StartWithLogger(ctx context.Context, logger *log.Logger)
 
 	svr := d.server
 
-	aa_log.Info(logger, "webhookd listening for requests on %s\n", svr.Address())
+	log_slog.Info("webhookd listening for requests", "address", svr.Address())
 
 	err = svr.ListenAndServe(ctx, mux)
 

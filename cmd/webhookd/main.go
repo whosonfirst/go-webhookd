@@ -4,11 +4,12 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/sfomuseum/go-flags/flagset"
-	"github.com/whosonfirst/go-webhookd/v3/config"
-	"github.com/whosonfirst/go-webhookd/v3/daemon"
 	"log"
 	"os"
+
+	"github.com/sfomuseum/go-flags/flagset"
+	"github.com/whosonfirst/go-webhookd/v3/config"
+	"github.com/whosonfirst/go-webhookd/v3/daemon"	
 )
 
 func main() {

@@ -3,10 +3,11 @@ package transformation
 import (
 	"context"
 	"fmt"
-	"github.com/aaronland/go-chicken"
-	"github.com/whosonfirst/go-webhookd/v3"
 	"net/url"
 	"strconv"
+
+	"github.com/aaronland/go-chicken"
+	"github.com/whosonfirst/go-webhookd/v3"	
 )
 
 func init() {

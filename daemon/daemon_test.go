@@ -3,12 +3,13 @@ package daemon
 import (
 	"context"
 	"fmt"
-	"github.com/whosonfirst/go-webhookd/v3/config"
 	"log"
 	"net/http"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/whosonfirst/go-webhookd/v3/config"	
 )
 
 const example_config string = "../docs/config/config.json.example"

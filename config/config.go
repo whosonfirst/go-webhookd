@@ -9,7 +9,7 @@ import (
 	_ "log"
 	"strings"
 
-	"github.com/sfomuseum/runtimevar"
+	"github.com/aaronland/gocloud/runtimevar"
 )
 
 // type WebhookConfig is a struct containing configuration information for a `webhookd` instance.
