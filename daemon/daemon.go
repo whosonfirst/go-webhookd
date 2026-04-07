@@ -12,17 +12,17 @@ import (
 	"sync"
 	"time"
 
-	aa_log "github.com/aaronland/go-log/v2"	
-	"github.com/aaronland/go-http-server"
+	server "github.com/aaronland/go-http-server"
+	aa_log "github.com/aaronland/go-log/v2"
 	"github.com/whosonfirst/go-webhookd/v3"
 	"github.com/whosonfirst/go-webhookd/v3/config"
 	"github.com/whosonfirst/go-webhookd/v3/dispatcher"
 	"github.com/whosonfirst/go-webhookd/v3/receiver"
 	"github.com/whosonfirst/go-webhookd/v3/transformation"
-	"github.com/whosonfirst/go-webhookd/v3/webhook"	
+	"github.com/whosonfirst/go-webhookd/v3/webhook"
 )
 
-// type WebhookDaemon is a struct that implements a long-running daemon to listen for	and process webhooks.
+// type WebhookDaemon is a struct that implements a long-running daemon to listen for and process webhooks.
 type WebhookDaemon struct {
 	// server is a `aaronland/go-http-server.Server` instance that handles HTTP requests and responses.
 	server server.Server
@@ -198,7 +198,7 @@ func (d *WebhookDaemon) AddWebhook(ctx context.Context, wh webhook.Webhook) erro
 	_, ok := d.webhooks[endpoint]
 
 	if ok {
-		return fmt.Errorf("endpoint already configured")
+		return fmt.Errorf("Endpoint already configured")
 	}
 
 	d.webhooks[endpoint] = wh
@@ -357,8 +357,8 @@ func (d *WebhookDaemon) HandlerFuncWithLogger(logger *log.Logger) (http.HandlerF
 		aa_log.Debug(logger, "Time to receive: %v", ttr)
 		aa_log.Debug(logger, "Time to transform: %v", ttt)
 		aa_log.Debug(logger, "Time to dispatch: %v", ttd)
-		aa_log.Debug(logger, "Time to process: %v", t2)		
-		
+		aa_log.Debug(logger, "Time to process: %v", t2)
+
 		rsp.Header().Set("X-Webhookd-Time-To-Receive", fmt.Sprintf("%v", ttr))
 		rsp.Header().Set("X-Webhookd-Time-To-Transform", fmt.Sprintf("%v", ttt))
 		rsp.Header().Set("X-Webhookd-Time-To-Dispatch", fmt.Sprintf("%v", ttd))
@@ -375,8 +375,6 @@ func (d *WebhookDaemon) HandlerFuncWithLogger(logger *log.Logger) (http.HandlerF
 				rsp.Write(body)
 			}
 		}
-
-		return
 	}
 
 	return http.HandlerFunc(handler), nil
@@ -402,7 +400,7 @@ func (d *WebhookDaemon) StartWithLogger(ctx context.Context, logger *log.Logger)
 
 	svr := d.server
 
-	aa_log.Info(logger, "webhookd listening for requests on %s\n", svr.Address())
+	aa_log.Info(logger, "Webhookd listening for requests on %s\n", svr.Address())
 
 	err = svr.ListenAndServe(ctx, mux)
 
