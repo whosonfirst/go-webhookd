@@ -1,3 +1,27 @@
+# v1.7.12 (2026-06-03)
+
+* No change notes available for this release.
+
+# v1.7.11 (2026-05-29)
+
+* **Dependency Update**: Update to smithy-go v1.26.0.
+
+# v1.7.10 (2026-04-29)
+
+* **Dependency Update**: Update to smithy-go v1.25.1.
+
+# v1.7.9 (2026-04-17)
+
+* **Dependency Update**: Bump smithy-go to 1.25.0 to support endpointBdd trait
+
+# v1.7.8 (2026-03-23)
+
+* No change notes available for this release.
+
+# v1.7.7 (2026-03-13)
+
+* **Bug Fix**: Replace usages of the old ioutil/ package throughout the SDK.
+
 # v1.7.6 (2026-03-03)
 
 * **Bug Fix**: Modernize non codegen files with go fix
