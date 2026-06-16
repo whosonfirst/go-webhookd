@@ -8,7 +8,7 @@ import (
 	"sort"
 
 	"github.com/aaronland/go-roster"
-	"github.com/whosonfirst/go-webhookd/v3"	
+	"github.com/whosonfirst/go-webhookd/v4"
 )
 
 // dispatcher is a `aaronland/go-roster.Roster` instance used to maintain a list of registered `webhookd.WebhookDispatcher` initialization functions.

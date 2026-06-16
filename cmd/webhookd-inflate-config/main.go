@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"os"
 
-	"github.com/whosonfirst/go-webhookd/v3/config"	
+	"github.com/whosonfirst/go-webhookd/v4/config"
 )
 
 func main() {

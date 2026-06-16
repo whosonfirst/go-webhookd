@@ -8,8 +8,8 @@ import (
 	"os"
 
 	"github.com/sfomuseum/go-flags/flagset"
-	"github.com/whosonfirst/go-webhookd/v3/config"
-	"github.com/whosonfirst/go-webhookd/v3/daemon"	
+	"github.com/whosonfirst/go-webhookd/v4/config"
+	"github.com/whosonfirst/go-webhookd/v4/daemon"
 )
 
 func main() {

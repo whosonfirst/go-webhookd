@@ -13,13 +13,13 @@ import (
 	"time"
 
 	"github.com/aaronland/go-http/v4/server"
-	"github.com/aaronland/go-http/v4/slog"	
-	"github.com/whosonfirst/go-webhookd/v3"
-	"github.com/whosonfirst/go-webhookd/v3/config"
-	"github.com/whosonfirst/go-webhookd/v3/dispatcher"
-	"github.com/whosonfirst/go-webhookd/v3/receiver"
-	"github.com/whosonfirst/go-webhookd/v3/transformation"
-	"github.com/whosonfirst/go-webhookd/v3/webhook"	
+	"github.com/aaronland/go-http/v4/slog"
+	"github.com/whosonfirst/go-webhookd/v4"
+	"github.com/whosonfirst/go-webhookd/v4/config"
+	"github.com/whosonfirst/go-webhookd/v4/dispatcher"
+	"github.com/whosonfirst/go-webhookd/v4/receiver"
+	"github.com/whosonfirst/go-webhookd/v4/transformation"
+	"github.com/whosonfirst/go-webhookd/v4/webhook"
 )
 
 // type WebhookDaemon is a struct that implements a long-running daemon to listen for	and process webhooks.
@@ -211,7 +211,7 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 	handler := func(rsp http.ResponseWriter, req *http.Request) {
 
 		logger := slog.LoggerWithRequest(req, nil)
-		
+
 		ctx := req.Context()
 
 		ctx, cancel := context.WithCancel(ctx)
@@ -240,7 +240,7 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 
 		rcvr := wh.Receiver()
 		logger = logger.With("receiver", fmt.Sprintf("%T", rcvr))
-		
+
 		body, err := rcvr.Receive(ctx, req)
 
 		// we use -1 to signal that this is an unhandled event but
@@ -284,14 +284,14 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 			}
 
 			// check to see if there is anything left the transformation
-			// https://github.com/whosonfirst/go-webhookd/v3/issues/7
+			// https://github.com/whosonfirst/go-webhookd/v4/issues/7
 		}
 
 		tb = time.Since(ta)
 		ttt = tb
 
 		// check to see if there is anything to dispatch
-		// https://github.com/whosonfirst/go-webhookd/v3/issues/7
+		// https://github.com/whosonfirst/go-webhookd/v4/issues/7
 
 		ta = time.Now()
 
@@ -353,8 +353,8 @@ func (d *WebhookDaemon) HandlerFunc() (http.HandlerFunc, error) {
 		logger.Debug("Time to receive", "time", ttr)
 		logger.Debug("Time to transform", "time", ttt)
 		logger.Debug("Time to dispatch", "time", ttd)
-		logger.Debug("Time to process", "time", t2)		
-		
+		logger.Debug("Time to process", "time", t2)
+
 		rsp.Header().Set("X-Webhookd-Time-To-Receive", fmt.Sprintf("%v", ttr))
 		rsp.Header().Set("X-Webhookd-Time-To-Transform", fmt.Sprintf("%v", ttt))
 		rsp.Header().Set("X-Webhookd-Time-To-Dispatch", fmt.Sprintf("%v", ttd))

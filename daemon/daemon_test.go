@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/whosonfirst/go-webhookd/v3/config"	
+	"github.com/whosonfirst/go-webhookd/v4/config"
 )
 
 const example_config string = "../docs/config/config.json.example"

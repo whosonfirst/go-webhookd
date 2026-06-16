@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/whosonfirst/go-webhookd/v3"	
+	"github.com/whosonfirst/go-webhookd/v4"
 )
 
 func init() {
