@@ -18,12 +18,23 @@
 //
 // See https://gocloud.dev/howto/secrets/ for a detailed how-to guide.
 //
-// # OpenCensus Integration
+// # Errors
 //
-// OpenCensus supports tracing and metric collection for multiple languages and
-// backend providers. See https://opencensus.io.
+// The errors returned from this package can be inspected in several ways:
 //
-// This API collects OpenCensus traces and metrics for the following methods:
+// The Code function from gocloud.dev/gcerrors will return an error code, also
+// defined in that package, when invoked on an error. Alternatively, errors.Is
+// can be used with the code-specific errors from the same package (e.g., ErrInternal).
+//
+// The Keeper.ErrorAs method can retrieve the driver error underlying the returned
+// error. Alternatively, errors.As can be used in the same way.
+//
+// # OpenTelemetry Integration
+//
+// OpenTelemetry supports tracing and metric collection for multiple languages and
+// backend providers. See https://opentelemetry.io.
+//
+// This API collects OpenTelemetry traces and metrics for the following methods:
 //   - Encrypt
 //   - Decrypt
 //
@@ -35,10 +46,8 @@
 // by driver and method.
 // For example, "gocloud.dev/secrets/latency".
 //
-// To enable trace collection in your application, see "Configure Exporter" at
-// https://opencensus.io/quickstart/go/tracing.
-// To enable metric collection in your application, see "Exporting stats" at
-// https://opencensus.io/quickstart/go/metrics.
+// To enable trace collection in your application, see the OpenTelemetry documentation at
+// https://opentelemetry.io/docs/instrumentation/go/getting-started/.
 package secrets // import "gocloud.dev/secrets"
 
 import (
@@ -47,8 +56,8 @@ import (
 	"sync"
 
 	"gocloud.dev/internal/gcerr"
-	"gocloud.dev/internal/oc"
 	"gocloud.dev/internal/openurl"
+	gcdkotel "gocloud.dev/internal/otel"
 	"gocloud.dev/secrets/driver"
 )
 
@@ -56,7 +65,7 @@ import (
 // found in driver subpackages.
 type Keeper struct {
 	k      driver.Keeper
-	tracer *oc.Tracer
+	tracer *gcdkotel.Tracer
 
 	// mu protects the closed variable.
 	// Read locks are kept to allow holding a read lock for long-running calls,
@@ -71,30 +80,25 @@ var NewKeeper = newKeeper
 // newKeeper creates a Keeper.
 func newKeeper(k driver.Keeper) *Keeper {
 	return &Keeper{
-		k: k,
-		tracer: &oc.Tracer{
-			Package:        pkgName,
-			Provider:       oc.ProviderName(k),
-			LatencyMeasure: latencyMeasure,
-		},
+		k:      k,
+		tracer: gcdkotel.NewTracer(pkgName, gcdkotel.ProviderName(k)),
 	}
 }
 
 const pkgName = "gocloud.dev/secrets"
 
 var (
-	latencyMeasure = oc.LatencyMeasure(pkgName)
 
-	// OpenCensusViews are predefined views for OpenCensus metrics.
+	// OpenTelemetryViews are predefined views for OpenTelemetry metrics.
 	// The views include counts and latency distributions for API method calls.
-	// See the example at https://godoc.org/go.opencensus.io/stats/view for usage.
-	OpenCensusViews = oc.Views(pkgName, latencyMeasure)
+	// See the explanations at https://opentelemetry.io/docs/specs/otel/metrics/data-model/ for usage.
+	OpenTelemetryViews = gcdkotel.Views(pkgName)
 )
 
 // Encrypt encrypts the plaintext and returns the cipher message.
 func (k *Keeper) Encrypt(ctx context.Context, plaintext []byte) (ciphertext []byte, err error) {
-	ctx = k.tracer.Start(ctx, "Encrypt")
-	defer func() { k.tracer.End(ctx, err) }()
+	ctx, span := k.tracer.Start(ctx, "Encrypt")
+	defer func() { k.tracer.End(ctx, span, err) }()
 
 	k.mu.RLock()
 	defer k.mu.RUnlock()
@@ -111,8 +115,8 @@ func (k *Keeper) Encrypt(ctx context.Context, plaintext []byte) (ciphertext []by
 
 // Decrypt decrypts the ciphertext and returns the plaintext.
 func (k *Keeper) Decrypt(ctx context.Context, ciphertext []byte) (plaintext []byte, err error) {
-	ctx = k.tracer.Start(ctx, "Decrypt")
-	defer func() { k.tracer.End(ctx, err) }()
+	ctx, span := k.tracer.Start(ctx, "Decrypt")
+	defer func() { k.tracer.End(ctx, span, err) }()
 
 	k.mu.RLock()
 	defer k.mu.RUnlock()
@@ -148,7 +152,7 @@ func (k *Keeper) Close() error {
 //
 // ErrorAs panics if i is nil or not a pointer.
 // ErrorAs returns false if err == nil.
-func (k *Keeper) ErrorAs(err error, i interface{}) bool {
+func (k *Keeper) ErrorAs(err error, i any) bool {
 	return gcerr.ErrorAs(err, i, k.k.ErrorAs)
 }
 

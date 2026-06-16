@@ -18,16 +18,27 @@
 //
 // See https://gocloud.dev/howto/runtimevar/ for a detailed how-to guide.
 //
-// # OpenCensus Integration
+// # Errors
 //
-// OpenCensus supports tracing and metric collection for multiple languages and
-// backend providers. See https://opencensus.io.
+// The errors returned from this package can be inspected in several ways:
 //
-// This API collects an OpenCensus metric "gocloud.dev/runtimevar/value_changes",
+// The Code function from gocloud.dev/gcerrors will return an error code, also
+// defined in that package, when invoked on an error. Alternatively, errors.Is
+// can be used with the code-specific errors from the same package (e.g., ErrInternal).
+//
+// The Variable.ErrorAs method can retrieve the driver error underlying the returned
+// error. Alternatively, errors.As can be used in the same way.
+//
+// # OpenTelemetry Integration
+//
+// OpenTelemetry supports tracing and metric collection for multiple languages and
+// backend providers. See https://opentelemetry.io.
+//
+// This API collects an OpenTelemetry metric "gocloud.dev/runtimevar/value_changes",
 // a count of the number of times all variables have changed values, by driver.
 //
-// To enable metric collection in your application, see "Exporting stats" at
-// https://opencensus.io/quickstart/go/metrics.
+// To enable metric collection in your application, see the OpenTelemetry documentation at
+// https://opentelemetry.io/docs/instrumentation/go/getting-started/
 package runtimevar // import "gocloud.dev/runtimevar"
 
 import (
@@ -44,14 +55,13 @@ import (
 	"sync"
 	"time"
 
-	"go.opencensus.io/stats"
-	"go.opencensus.io/stats/view"
-	"go.opencensus.io/tag"
+	"go.opentelemetry.io/otel/metric"
 	"gocloud.dev/internal/gcerr"
-	"gocloud.dev/internal/oc"
 	"gocloud.dev/internal/openurl"
 	"gocloud.dev/runtimevar/driver"
 	"gocloud.dev/secrets"
+
+	gcdkotel "gocloud.dev/internal/otel"
 )
 
 // Snapshot contains a snapshot of a variable's value and metadata about it.
@@ -59,19 +69,19 @@ import (
 type Snapshot struct {
 	// Value contains the value of the variable.
 	// The type for Value depends on the decoder used when creating the Variable.
-	Value interface{}
+	Value any
 
 	// UpdateTime is the time when the last change was detected.
 	UpdateTime time.Time
 
-	asFunc func(interface{}) bool
+	asFunc func(any) bool
 }
 
 // As converts i to driver-specific types.
 // See https://gocloud.dev/concepts/as/ for background information, the "As"
 // examples in this package for examples, and the driver package
 // documentation for the specific types supported for that driver.
-func (s *Snapshot) As(i interface{}) bool {
+func (s *Snapshot) As(i any) bool {
 	if s.asFunc == nil {
 		return false
 	}
@@ -81,25 +91,15 @@ func (s *Snapshot) As(i interface{}) bool {
 const pkgName = "gocloud.dev/runtimevar"
 
 var (
-	changeMeasure = stats.Int64(pkgName+"/value_changes", "Count of variable value changes",
-		stats.UnitDimensionless)
-	// OpenCensusViews are predefined views for OpenCensus metrics.
-	OpenCensusViews = []*view.View{
-		{
-			Name:        pkgName + "/value_changes",
-			Measure:     changeMeasure,
-			Description: "Count of variable value changes by driver.",
-			TagKeys:     []tag.Key{oc.ProviderKey},
-			Aggregation: view.Count(),
-		},
-	}
+	OpenTelemetryViews = gcdkotel.CounterView(pkgName, "/value_changes",
+		"Count of variable value changes by driver.")
 )
 
 // Variable provides an easy and portable way to watch runtime configuration
 // variables. To create a Variable, use constructors found in driver subpackages.
 type Variable struct {
-	dw       driver.Watcher
-	provider string // for metric collection; refers to driver package name
+	dw            driver.Watcher
+	changeMeasure metric.Int64Counter
 
 	// For cancelling the background goroutine, and noticing when it has exited.
 	backgroundCancel context.CancelFunc
@@ -126,9 +126,13 @@ var New = newVar
 func newVar(w driver.Watcher) *Variable {
 	ctx, cancel := context.WithCancel(context.Background())
 	changed := make(chan struct{})
+
+	providerName := gcdkotel.ProviderName(w)
+
 	v := &Variable{
-		dw:               w,
-		provider:         oc.ProviderName(w),
+		dw: w,
+		changeMeasure: gcdkotel.DimensionlessMeasure(pkgName, providerName, "/value_changes",
+			"Count of variable value changes by driver"),
 		backgroundCancel: cancel,
 		backgroundDone:   make(chan struct{}),
 		haveGoodCh:       make(chan struct{}),
@@ -173,7 +177,7 @@ func (c *Variable) Watch(ctx context.Context) (Snapshot, error) {
 	}
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	if c.lastErr == ErrClosed {
+	if errors.Is(c.lastErr, ErrClosed) {
 		return Snapshot{}, ErrClosed
 	} else if ctxErr != nil {
 		return Snapshot{}, ctxErr
@@ -203,12 +207,12 @@ func (c *Variable) background(ctx context.Context) {
 
 		// There's something new to return!
 		prevState = curState
-		_ = stats.RecordWithTags(ctx, []tag.Mutator{tag.Upsert(oc.ProviderKey, c.provider)}, changeMeasure.M(1))
+		c.changeMeasure.Add(ctx, 1)
 		// Error from RecordWithTags is not possible.
 
 		// Updates under the lock.
 		c.mu.Lock()
-		if c.lastErr == ErrClosed {
+		if errors.Is(c.lastErr, ErrClosed) {
 			close(c.backgroundDone)
 			c.mu.Unlock()
 			return
@@ -267,7 +271,7 @@ func (c *Variable) Latest(ctx context.Context) (Snapshot, error) {
 	}
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-	if haveGood && c.lastErr != ErrClosed {
+	if haveGood && !errors.Is(c.lastErr, ErrClosed) {
 		return c.lastGood, nil
 	}
 	return Snapshot{}, c.lastErr
@@ -279,7 +283,7 @@ func (c *Variable) CheckHealth() error {
 	haveGood := c.haveGood()
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-	if haveGood && c.lastErr != ErrClosed {
+	if haveGood && !errors.Is(c.lastErr, ErrClosed) {
 		return nil
 	}
 	return c.lastErr
@@ -289,7 +293,7 @@ func (c *Variable) CheckHealth() error {
 func (c *Variable) Close() error {
 	// Record that we're closing. Subsequent calls to Watch/Latest will return ErrClosed.
 	c.mu.Lock()
-	if c.lastErr == ErrClosed {
+	if errors.Is(c.lastErr, ErrClosed) {
 		c.mu.Unlock()
 		return ErrClosed
 	}
@@ -329,7 +333,7 @@ func wrapError(w driver.Watcher, err error) error {
 // ErrorAs panics if i is nil or not a pointer.
 // ErrorAs returns false if err == nil.
 // See https://gocloud.dev/concepts/as/ for background information.
-func (c *Variable) ErrorAs(err error, i interface{}) bool {
+func (c *Variable) ErrorAs(err error, i any) bool {
 	return gcerr.ErrorAs(err, i, c.dw.ErrorAs)
 }
 
@@ -405,7 +409,7 @@ func OpenVariable(ctx context.Context, urlstr string) (*Variable, error) {
 // an arbitrary type. Decode functions are used when creating a Decoder via
 // NewDecoder. This package provides common Decode functions including
 // GobDecode and JSONDecode.
-type Decode func(context.Context, []byte, interface{}) error
+type Decode func(context.Context, []byte, any) error
 
 // Decoder decodes a slice of bytes into a particular Go object.
 //
@@ -423,7 +427,7 @@ type Decoder struct {
 // This package provides some common Decode functions, including JSONDecode
 // and GobDecode, which can be passed to this function to create Decoders for
 // JSON and gob values.
-func NewDecoder(obj interface{}, fn Decode) *Decoder {
+func NewDecoder(obj any, fn Decode) *Decoder {
 	return &Decoder{
 		typ: reflect.TypeOf(obj),
 		fn:  fn,
@@ -431,7 +435,7 @@ func NewDecoder(obj interface{}, fn Decode) *Decoder {
 }
 
 // Decode decodes b into a new instance of the target type.
-func (d *Decoder) Decode(ctx context.Context, b []byte) (interface{}, error) {
+func (d *Decoder) Decode(ctx context.Context, b []byte) (any, error) {
 	nv := reflect.New(d.typ).Interface()
 	if err := d.fn(ctx, b, nv); err != nil {
 		return nil, err
@@ -449,24 +453,24 @@ var (
 )
 
 // JSONDecode can be passed to NewDecoder when decoding JSON (https://golang.org/pkg/encoding/json/).
-func JSONDecode(ctx context.Context, data []byte, obj interface{}) error {
+func JSONDecode(ctx context.Context, data []byte, obj any) error {
 	return json.Unmarshal(data, obj)
 }
 
 // GobDecode can be passed to NewDecoder when decoding gobs (https://golang.org/pkg/encoding/gob/).
-func GobDecode(ctx context.Context, data []byte, obj interface{}) error {
+func GobDecode(ctx context.Context, data []byte, obj any) error {
 	return gob.NewDecoder(bytes.NewBuffer(data)).Decode(obj)
 }
 
 // StringDecode decodes raw bytes b into a string.
-func StringDecode(ctx context.Context, b []byte, obj interface{}) error {
+func StringDecode(ctx context.Context, b []byte, obj any) error {
 	v := obj.(*string)
 	*v = string(b)
 	return nil
 }
 
 // BytesDecode copies the slice of bytes b into obj.
-func BytesDecode(ctx context.Context, b []byte, obj interface{}) error {
+func BytesDecode(ctx context.Context, b []byte, obj any) error {
 	v := obj.(*[]byte)
 	*v = b[:]
 	return nil
@@ -478,7 +482,7 @@ func BytesDecode(ctx context.Context, b []byte, obj interface{}) error {
 // post defaults to BytesDecode. An optional decoder can be passed in to do
 // further decode operation based on the decrypted message.
 func DecryptDecode(k *secrets.Keeper, post Decode) Decode {
-	return func(ctx context.Context, b []byte, obj interface{}) error {
+	return func(ctx context.Context, b []byte, obj any) error {
 		decrypted, err := k.Decrypt(ctx, b)
 		if err != nil {
 			return err
@@ -499,8 +503,8 @@ func DecryptDecode(k *secrets.Keeper, post Decode) Decode {
 //     BytesDecoder if URLOpener.Decoder is nil (which is true if you're
 //     using the default URLOpener).
 //   - "bytes": Returns a BytesDecoder; Snapshot.Value will be of type []byte.
-//   - "jsonmap": Returns a JSON decoder for a map[string]interface{};
-//     Snapshot.Value will be of type *map[string]interface{}.
+//   - "jsonmap": Returns a JSON decoder for a map[string]any;
+//     Snapshot.Value will be of type *map[string]any.
 //   - "string": Returns StringDecoder; Snapshot.Value will be of type string.
 //
 // It also supports using "decrypt+<decoderName>" (or "decrypt" for default
@@ -524,7 +528,7 @@ func DecoderByName(ctx context.Context, decoderName string, dflt *Decoder) (*Dec
 	case "bytes":
 		return maybeDecrypt(ctx, k, BytesDecoder), nil
 	case "jsonmap":
-		var m map[string]interface{}
+		var m map[string]any
 		return maybeDecrypt(ctx, k, NewDecoder(&m, JSONDecode)), nil
 	case "string":
 		return maybeDecrypt(ctx, k, StringDecoder), nil

@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -13,9 +12,10 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/internal/sdk"
+	"github.com/aws/aws-sdk-go-v2/internal/shareddefaults"
 )
 
-var osUserHomeDur = os.UserHomeDir
+var osUserHomeDur = shareddefaults.UserHomeDir
 
 // StandardCachedTokenFilepath returns the filepath for the cached SSO token file, or
 // error if unable get derive the path. Key that will be used to compute a SHA1
@@ -25,13 +25,12 @@ var osUserHomeDur = os.UserHomeDir
 //
 //	~/.aws/sso/cache/<sha1-hex-encoded-key>.json
 func StandardCachedTokenFilepath(key string) (string, error) {
-	homeDir, err := osUserHomeDur()
-	if err != nil {
-		return "", fmt.Errorf("unable to get USER's home directory for cached token, %w", err)
+	homeDir := osUserHomeDur()
+	if len(homeDir) == 0 {
+		return "", fmt.Errorf("unable to get USER's home directory for cached token")
 	}
-
 	hash := sha1.New()
-	if _, err = hash.Write([]byte(key)); err != nil {
+	if _, err := hash.Write([]byte(key)); err != nil {
 		return "", fmt.Errorf("unable to compute cached token filepath key SHA1 hash, %w", err)
 	}
 
@@ -145,7 +144,7 @@ func getTokenFieldRFC3339(v interface{}, value **rfc3339) error {
 }
 
 func loadCachedToken(filename string) (token, error) {
-	fileBytes, err := ioutil.ReadFile(filename)
+	fileBytes, err := os.ReadFile(filename)
 	if err != nil {
 		return token{}, fmt.Errorf("failed to read cached SSO token file, %w", err)
 	}
@@ -225,7 +224,7 @@ func (r *rfc3339) UnmarshalJSON(bytes []byte) (err error) {
 }
 
 func (r *rfc3339) MarshalJSON() ([]byte, error) {
-	value := time.Time(*r).Format(time.RFC3339)
+	value := time.Time(*r).UTC().Format(time.RFC3339)
 
 	// Use JSON unmarshal to unescape the quoted value making use of JSON's
 	// quoting rules.

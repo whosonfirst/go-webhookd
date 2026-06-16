@@ -3,6 +3,8 @@
 package events
 
 import (
+	"encoding/json"
+	"net/url"
 	"time"
 )
 
@@ -13,15 +15,20 @@ type S3Event struct {
 
 // S3EventRecord which wrap record data
 type S3EventRecord struct {
-	EventVersion      string              `json:"eventVersion"`
-	EventSource       string              `json:"eventSource"`
-	AWSRegion         string              `json:"awsRegion"`
-	EventTime         time.Time           `json:"eventTime"`
-	EventName         string              `json:"eventName"`
-	PrincipalID       S3UserIdentity      `json:"userIdentity"`
-	RequestParameters S3RequestParameters `json:"requestParameters"`
-	ResponseElements  map[string]string   `json:"responseElements"`
-	S3                S3Entity            `json:"s3"`
+	EventVersion                string                         `json:"eventVersion"`
+	EventSource                 string                         `json:"eventSource"`
+	AWSRegion                   string                         `json:"awsRegion"`
+	EventTime                   time.Time                      `json:"eventTime"`
+	EventName                   string                         `json:"eventName"`
+	PrincipalID                 S3UserIdentity                 `json:"userIdentity"`
+	RequestParameters           S3RequestParameters            `json:"requestParameters"`
+	ResponseElements            map[string]string              `json:"responseElements"`
+	S3                          S3Entity                       `json:"s3"`
+	GlacierEventData            *S3GlacierEventData            `json:"glacierEventData,omitempty"`
+	RestoreEventData            *S3RestoreEventData            `json:"restoreEventData,omitempty"`
+	ReplicationEventData        *S3ReplicationEventData        `json:"replicationEventData,omitempty"`
+	IntelligentTieringEventData *S3IntelligentTieringEventData `json:"intelligentTieringEventData,omitempty"`
+	LifecycleEventData          *S3LifecycleEventData          `json:"lifecycleEventData,omitempty"`
 }
 
 type S3UserIdentity struct {
@@ -42,16 +49,59 @@ type S3Entity struct {
 type S3Bucket struct {
 	Name          string         `json:"name"`
 	OwnerIdentity S3UserIdentity `json:"ownerIdentity"`
-	Arn           string         `json:"arn"`
+	Arn           string         `json:"arn"` //nolint: staticcheck
 }
 
 type S3Object struct {
 	Key           string `json:"key"`
-	Size          int64  `json:"size"`
+	Size          int64  `json:"size,omitempty"`
 	URLDecodedKey string `json:"urlDecodedKey"`
 	VersionID     string `json:"versionId"`
 	ETag          string `json:"eTag"`
 	Sequencer     string `json:"sequencer"`
+}
+
+func (o *S3Object) UnmarshalJSON(data []byte) error {
+	type rawS3Object S3Object
+	if err := json.Unmarshal(data, (*rawS3Object)(o)); err != nil {
+		return err
+	}
+	key, err := url.QueryUnescape(o.Key)
+	if err != nil {
+		return err
+	}
+	o.URLDecodedKey = key
+
+	return nil
+}
+
+type S3GlacierEventData struct {
+	RestoreEventData *S3RestoreEventData `json:"restoreEventData"`
+}
+
+type S3RestoreEventData struct {
+	LifecycleRestorationExpiryTime time.Time `json:"lifecycleRestorationExpiryTime"`
+	LifecycleRestoreStorageClass   string    `json:"lifecycleRestoreStorageClass"`
+}
+
+type S3ReplicationEventData struct {
+	ReplicationRuleID string    `json:"replicationRuleId"`
+	DestinationBucket string    `json:"destinationBucket"`
+	S3Operation       string    `json:"s3Operation"`
+	RequestTime       time.Time `json:"requestTime"`
+	FailureReason     string    `json:"failureReason"`
+}
+
+type S3IntelligentTieringEventData struct {
+	DestinationAccessTier string `json:"destinationAccessTier"`
+}
+
+type S3LifecycleEventData struct {
+	TransitionEventData *S3TransitionEventData `json:"transitionEventData"`
+}
+
+type S3TransitionEventData struct {
+	DestinationStorageClass string `json:"destinationStorageClass"`
 }
 
 type S3TestEvent struct {

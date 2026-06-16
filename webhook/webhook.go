@@ -3,8 +3,8 @@ package webhook
 
 import (
 	"context"
-	
-	"github.com/whosonfirst/go-webhookd/v3"
+
+	"github.com/whosonfirst/go-webhookd/v4"
 )
 
 // type Webhook defines a struct that implements the `webhookd.WebhookHandler` interface for definining and configuring an individual webhook.

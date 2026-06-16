@@ -44,7 +44,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -110,7 +109,9 @@ func (o *URLOpener) OpenVariableURL(ctx context.Context, u *url.URL) (*runtimeva
 		return nil, fmt.Errorf("open variable %v: invalid query parameter %q", u, param)
 	}
 	path := u.Path
-	if os.PathSeparator != '/' {
+	// Hostname == "." means a relative path, so drop the leading "/".
+	// Also drop the leading "/" on Windows.
+	if u.Host == "." || os.PathSeparator != '/' {
 		path = strings.TrimPrefix(path, "/")
 	}
 	return OpenVariable(filepath.FromSlash(path), decoder, &opts)
@@ -185,13 +186,13 @@ func (e *errNotExist) Error() string {
 
 // state implements driver.State.
 type state struct {
-	val        interface{}
+	val        any
 	updateTime time.Time
 	raw        []byte
 	err        error
 }
 
-func (s *state) Value() (interface{}, error) {
+func (s *state) Value() (any, error) {
 	return s.val, s.err
 }
 
@@ -199,7 +200,7 @@ func (s *state) UpdateTime() time.Time {
 	return s.updateTime
 }
 
-func (s *state) As(i interface{}) bool {
+func (s *state) As(i any) bool {
 	return false
 }
 
@@ -280,7 +281,7 @@ func (w *watcher) watch(ctx context.Context, notifier *fsnotify.Watcher, file st
 		}
 
 		// Read the file.
-		b, err := ioutil.ReadFile(file)
+		b, err := os.ReadFile(file)
 		if err != nil {
 			// File probably does not exist. Try again later.
 			cur = w.updateState(&state{err: &errNotExist{err}}, cur)
@@ -334,7 +335,7 @@ func (w *watcher) Close() error {
 }
 
 // ErrorAs implements driver.ErrorAs.
-func (w *watcher) ErrorAs(err error, i interface{}) bool { return false }
+func (w *watcher) ErrorAs(err error, i any) bool { return false }
 
 // ErrorCode implements driver.ErrorCode.
 func (*watcher) ErrorCode(err error) gcerrors.ErrorCode {

@@ -5,12 +5,13 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/whosonfirst/go-webhookd/v3/config"
 	"io"
 	"log"
 	"net/url"
 	"os"
 	"path/filepath"
+
+	"github.com/whosonfirst/go-webhookd/v4/config"
 )
 
 func main() {
